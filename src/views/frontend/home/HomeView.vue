@@ -1,7 +1,7 @@
 <template>
   <MainLayout>
     <template v-slot:main>
-      <Carousel />
+      <MainCarousel />
       <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
           <ProductCards />
@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
   import MainLayout from '@/components/frontend/layouts/MainLayout.vue'
-  import Carousel from '@/components/frontend/home/partials/Carousel.vue';
+  import MainCarousel from '@/components/frontend/home/partials/MainCarousel.vue';
   import Footer from '@/components/frontend/partials/Footer.vue';
   import ProductCards from '@/components/frontend/home/partials/ProductCards.vue';
 </script>
