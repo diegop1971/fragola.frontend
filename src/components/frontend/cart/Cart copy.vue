@@ -12,7 +12,11 @@
             </thead>
             <tbody>
                 <template v-if="sessionCartItems.length === 0" v-bind:value="sessionCartItems">
-                    <h3>Tu carrito está vacío</h3>
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <h3>Tu carrito está vacío</h3>
+                        </td>
+                    </tr>
                 </template>
                 <template v-else>
                     <tr v-for="(sessionCartItem, key) in sessionCartItems" v-bind:key="sessionCartItem.productId">
@@ -60,14 +64,11 @@
     import GetCartProductsService from '@/services/cart/GetCartProductsService';
     import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem';
 
-    import { useCartItemCountStore } from '@/stores/cartItemCount.ts';
+    import { useCartItemCountStore } from '@/stores/cartItemCount';
     const cartItemCountStore = useCartItemCountStore();
 
     const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([]);
     const visible = ref(false);
-    const productId = ref<string>('');
-    const productQty = ref<number>(0);
-    const productUnitPrice =ref<number>(0);
 
     axios.defaults.withCredentials = true;
 
@@ -82,7 +83,7 @@
     });
 
     const getProductUnitPrice = computed(() => {
-        return (sessionCartItem) => {
+        return (sessionCartItem: ISessionCartItem) => {
             return onFormatNumber(sessionCartItem.productUnitPrice);
         };
     });
@@ -92,10 +93,10 @@
         return formattedNumber.formatNumber(numberToFormat);
     };
 
-    const onDeleteItem = async (index: string):Promise<void> => {
+    const onDeleteItem = async (index: number):Promise<void> => {
         try {
             const cartItemRemover = await new CartItemRemoverService(index);
-            const response = await cartItemRemover.deleteCartItem();
+            await cartItemRemover.deleteCartItem();
             await getItems();
         }catch(error){
             console.log(error);
@@ -107,7 +108,8 @@
             const getCartProducts = new GetCartProductsService();
             const response = await getCartProducts.getProductsList();
 
-            sessionCartItems.value = response.data.map(item => ({
+            sessionCartItems.value = response.sessionCartItems.map(
+                item => ({
                 productId: item.productId,
                 productName: item.productName,
                 productQty: item.productQty,
@@ -138,7 +140,7 @@
     const increment = async (sessionCartItem: ISessionCartItem) => {
         sessionCartItem.productQty += 1;
         await modifyCartItemQuantity(sessionCartItem.productId, sessionCartItem.productQty);
-        let cant = await cantItems();
+        await cantItems();
         cartItemCountStore.incrementBy(1);
     }
 
@@ -146,7 +148,7 @@
         if (sessionCartItem.productQty > 1) {
             sessionCartItem.productQty--;
             await modifyCartItemQuantity(sessionCartItem.productId, sessionCartItem.productQty);
-            let cant = await cantItems();
+            await cantItems();
             cartItemCountStore.decrementBy(1);
         }
     }
@@ -154,7 +156,7 @@
     const modifyCartItemQuantity = async (productId: string, productQty: number) => {
         try {
             const modifyCartItemQuantity = new ModifyCartItemQuantityService(productId, productQty);
-            const response = await modifyCartItemQuantity.getModifyCartItemQuantity();
+            await modifyCartItemQuantity.getModifyCartItemQuantity();
             await getItems();
         } catch (error) {
             console.log(error);

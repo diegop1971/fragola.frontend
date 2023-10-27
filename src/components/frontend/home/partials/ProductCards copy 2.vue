@@ -38,6 +38,7 @@
     import type { Ref } from 'vue';
     import { onMounted } from 'vue';
     import axios from 'axios';
+    import type { AxiosResponse } from 'axios';
     import type { IApiResponse}  from '@/interfaces/IApiResponse';
     import GetProductCardListService from '@/services/home/GetProductsCardListService';
     import AddProductToCartService from '@/services/cart/AddProductToCartService';
@@ -75,10 +76,9 @@
     const getItems = async (): Promise<void> => {
         try {
             const getCartProducts = new GetCartProductsService();
-            const response = await getCartProducts.getProductsList();
+            const response: AxiosResponse<ISessionCartItem[]> = await getCartProducts.getProductsList();
 
-            sessionCartItems.value = response.sessionCartItems.map(
-                item => ({
+            sessionCartItems.value = response.data.map(item => ({
                 productId: item.productId,
                 productName: item.productName,
                 productQty: item.productQty,

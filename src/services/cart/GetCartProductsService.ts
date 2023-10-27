@@ -1,23 +1,13 @@
 import axios from 'axios';
-import type { ISessionCartItem }  from '@/interfaces/ISessionCartItem';
+import type { ISessionCartItemResponse}  from '@/interfaces/ISessionCartItemResponse';
 
 class GetCartProductsService
 {
-    private response: Array<ISessionCartItem> = [];
-
     constructor(){}
     
-    public getProductsList = async (): Array<ISessionCartItem> => {
-        await this.getProducts();
-        return this.response;
-    } 
-
-    private getProducts = async (): promise<void> => {
-        try {
-            this.response = await axios.get('http://localhost:8000/api/cart/axios');
-        } catch(error) {
-            throw error;
-        }
+    public getProductsList = async (): Promise<ISessionCartItemResponse> => {
+        const productList = await axios.get<ISessionCartItemResponse>('http://localhost:8000/api/cart/axios');        
+        return productList.data;         
     }
-}
+} 
 export default GetCartProductsService;
