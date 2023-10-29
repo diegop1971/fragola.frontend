@@ -40,9 +40,9 @@
     import axios from 'axios';
     import type { IApiResponse}  from '@/interfaces/IApiResponse';
     import GetProductCardListService from '@/services/home/GetProductsCardListService';
-    import AddProductToCartService from '@/services/cart/AddProductToCartService';
+    import AddProductToCartService from '@/services/cart/CartProductCreatorService';
     import ErrorHandlingService from '@/services/shared/ErrorHandlingService';
-    import GetCartProductsService from '@/services/cart/GetCartProductsService';
+    import GetCartProductsService from '@/services/cart/CartProductsGetterService';
     import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem'; 
 
     import { useCartItemCountStore } from '@/stores/cartItemCount';
@@ -72,6 +72,19 @@
       }
     });
 
+    const productQty:number = 1;
+
+    const onAddToCart = async (productId: string) => {
+      try {
+        const addProductToCartService = new AddProductToCartService(productId, productQty);
+        await addProductToCartService.getAddToCartResponse();
+        cartItemCountStore.incrementBy(productQty);
+
+      } catch (error) {
+        errorHandling.handleApiError(error);
+      }
+    }
+
     const getItems = async (): Promise<void> => {
         try {
             const getCartProducts = new GetCartProductsService();
@@ -93,19 +106,6 @@
     const cantItems = async () => {
        let cant = await sessionCartItems.value.reduce((cant, item) => cant + item.productQty, 0);
        return cant;
-    }
-
-    const productQty:number = 1;
-
-    const onAddToCart = async (productId: string) => {
-      try {
-        const addProductToCartService = new AddProductToCartService(productId, productQty);
-        await addProductToCartService.getAddToCartResponse();
-        cartItemCountStore.incrementBy(productQty);
-
-      } catch (error) {
-        errorHandling.handleApiError(error);
-      }
     }
     
 </script>

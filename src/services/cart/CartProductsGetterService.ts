@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { ISessionCartItemResponse}  from '@/interfaces/ISessionCartItemResponse';
 
-class GetCartProductsService
+class CartProductsGetterService
 {
     constructor(){}
     
@@ -10,4 +10,4 @@ class GetCartProductsService
         return productList.data;         
     }
 } 
-export default GetCartProductsService;
+export default CartProductsGetterService;

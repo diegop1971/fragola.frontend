@@ -55,9 +55,9 @@
     import axios from 'axios';
 
     import NumberFormatterService from '@/services/shared/NumberFormatterService';
-    import CartItemRemoverService from '@/services/cart/CartItemRemoverService';
-    import ModifyCartItemQuantityService from '@/services/cart/ModifyCartItemQuantityService';
-    import GetCartProductsService from '@/services/cart/GetCartProductsService';
+    import CartProductRemoverService from '@/services/cart/CartProductRemoverService';
+    import ModifyCartItemQuantityService from '@/services/cart/CartProductQuantityModifierService';
+    import GetCartProductsService from '@/services/cart/CartProductsGetterService';
     import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem';
 
     import { useCartItemCountStore } from '@/stores/cartItemCount';
@@ -78,6 +78,16 @@
         }
     });
 
+    const onDeleteItem = async (index: number):Promise<void> => {
+        try {
+            const cartItemRemover = await new CartProductRemoverService(index);
+            await cartItemRemover.deleteCartProduct();
+            await getItems();
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     const getProductUnitPrice = computed(() => {
         return (sessionCartItem: ISessionCartItem) => {
             return onFormatNumber(sessionCartItem.productUnitPrice);
@@ -88,16 +98,6 @@
         let formattedNumber = new NumberFormatterService();
         return formattedNumber.formatNumber(numberToFormat);
     };
-
-    const onDeleteItem = async (index: number):Promise<void> => {
-        try {
-            const cartItemRemover = await new CartItemRemoverService(index);
-            await cartItemRemover.deleteCartItem();
-            await getItems();
-        }catch(error){
-            console.log(error);
-        }
-    }
 
     const getItems = async (): Promise<void> => {
         try {
