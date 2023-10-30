@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-class CartProductRemoverService
+class DeleteCartProduct
 {
     private itemIndex: number;
 
@@ -16,4 +16,4 @@ class CartProductRemoverService
         await axios.delete('http://localhost:8000/api/cart/delete-item/' + this.itemIndex);
     }
 }
-export default CartProductRemoverService;
+export default DeleteCartProduct;

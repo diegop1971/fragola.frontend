@@ -27,11 +27,10 @@
 
 <script setup lang="ts">
     import {ref} from 'vue';
-    import type { Ref } from 'vue';
     import axios from 'axios';
     import LoginService from '@/services/auth/LoginService';
-    import ErrorHandlingService from '@/services/shared/ErrorHandlingService';
-    
+    import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
+
     axios.defaults.withCredentials = true;
 
     const form = ref({

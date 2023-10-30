@@ -40,9 +40,10 @@
     import axios from 'axios';
     import type { IApiResponse}  from '@/interfaces/IApiResponse';
     import GetProductCardListService from '@/services/home/GetProductsCardListService';
-    import AddProductToCartService from '@/services/cart/CartProductCreatorService';
-    import ErrorHandlingService from '@/services/shared/ErrorHandlingService';
-    import GetCartProductsService from '@/services/cart/CartProductsGetterService';
+    //import AddProductToCartService from '@app/frontoffice/cart/infrastructure/persistence/Axios/CreateCartProduct';
+    import CartProductCreatorService from '@app/frontoffice/cart/application/create/CartProductCreatorService';
+    import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
+    import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService';
     import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem'; 
 
     import { useCartItemCountStore } from '@/stores/cartItemCount';
@@ -76,8 +77,8 @@
 
     const onAddToCart = async (productId: string) => {
       try {
-        const addProductToCartService = new AddProductToCartService(productId, productQty);
-        await addProductToCartService.getAddToCartResponse();
+        const cartProductCreatorService = new CartProductCreatorService(productId, productQty);
+        await cartProductCreatorService.create();
         cartItemCountStore.incrementBy(productQty);
 
       } catch (error) {
@@ -87,8 +88,8 @@
 
     const getItems = async (): Promise<void> => {
         try {
-            const getCartProducts = new GetCartProductsService();
-            const response = await getCartProducts.getProductsList();
+            const getCartProducts = new CartProductsGetterService();
+            const response = await getCartProducts.getCartProductsList();
 
             sessionCartItems.value = response.sessionCartItems.map(
                 item => ({

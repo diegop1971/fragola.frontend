@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-class CartProductQuantityModifierService
+class UpdateCartProductQuantity
 {
     private productId: string;
     private productQty: number;
@@ -23,4 +23,4 @@ class CartProductQuantityModifierService
         });
     }
 }
-export default CartProductQuantityModifierService;
+export default UpdateCartProductQuantity;

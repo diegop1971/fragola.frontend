@@ -54,10 +54,10 @@
     import { onMounted } from 'vue';
     import axios from 'axios';
 
-    import NumberFormatterService from '@/services/shared/NumberFormatterService';
-    import CartProductRemoverService from '@/services/cart/CartProductRemoverService';
-    import ModifyCartItemQuantityService from '@/services/cart/CartProductQuantityModifierService';
-    import GetCartProductsService from '@/services/cart/CartProductsGetterService';
+    import NumberFormatterService from '@app/shared/application/NumberFormatterService';
+    import CartProductRemoverService from '@app/frontoffice/cart/infrastructure/persistence/Axios/DeleteCartProduct';
+    import ModifyCartItemQuantityService from '@app/frontoffice/cart/infrastructure/persistence/Axios/UpdateCartProductQuantity';
+    import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService';
     import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem';
 
     import { useCartItemCountStore } from '@/stores/cartItemCount';
@@ -101,8 +101,8 @@
 
     const getItems = async (): Promise<void> => {
         try {
-            const getCartProducts = new GetCartProductsService();
-            const response = await getCartProducts.getProductsList();
+            const getCartProducts = new CartProductsGetterService();
+            const response = await getCartProducts.getCartProductsList();
 
             sessionCartItems.value = response.sessionCartItems.map(
                 item => ({
