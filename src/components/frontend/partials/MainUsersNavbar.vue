@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-    import LogoutService from '@/services/auth/LogoutService';
+    import LogoutService from '@app/frontoffice/auth/LogoutService';
     import NavbarCartButton from '@/components/frontend/partials/NavbarCartButton.vue'; 
 
     async function onLogout() {

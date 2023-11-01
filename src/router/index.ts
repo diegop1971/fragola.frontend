@@ -1,9 +1,8 @@
 import { createRouter, createWebHistory} from 'vue-router'
-import type { RouteRecordRaw } from 'vue-router'
 
 import Home from '../views/frontend/home/HomeView.vue';
 import Cart from '../views/frontend/cart/CartView.vue';
-import Login from '../views/frontend/auth/Login.vue';
+import Login from '../views/frontend/auth/UsersLogin.vue';
 import Register from '../components/Register.vue';
 
 const router = createRouter({

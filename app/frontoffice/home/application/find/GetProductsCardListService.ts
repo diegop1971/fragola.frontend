@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import type { IApiResponse}  from '@/interfaces/IApiResponse';
 
 class GetProductCardListService 
@@ -12,16 +12,12 @@ class GetProductCardListService
     constructor() {}
 
     public async getApiResponse(): Promise<IApiResponse> {
-        try {
-            await this.getProductList();
-            return this.apiResponse;
-        } catch (error) {
-            throw error;
-        }
+        await this.getProductList();
+        return this.apiResponse;
     }
 
     private async getProductList(): Promise<void> {
-        let response = await axios.get<IApiResponse>("http://localhost:8000/api/productsCardList");
+        const response = await axios.get<IApiResponse>("http://localhost:8000/api/productsCardList");
         this.apiResponse = response.data;
     }
 }

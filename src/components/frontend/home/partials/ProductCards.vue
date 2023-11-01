@@ -39,7 +39,7 @@
     import { onMounted } from 'vue';
     import axios from 'axios';
     import type { IApiResponse}  from '@/interfaces/IApiResponse';
-    import GetProductCardListService from '@/services/home/GetProductsCardListService';
+    import GetProductCardListService from '@app/frontoffice/home/application/find/GetProductsCardListService';
     import CartProductCreatorService from '@app/frontoffice/cart/application/create/CartProductCreatorService';
     import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
     import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService';

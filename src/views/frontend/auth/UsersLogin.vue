@@ -28,7 +28,7 @@
 <script setup lang="ts">
     import {ref} from 'vue';
     import axios from 'axios';
-    import LoginService from '@/services/auth/LoginService';
+    import LoginService from '@app/frontoffice/auth/LoginService';
     import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
 
     axios.defaults.withCredentials = true;

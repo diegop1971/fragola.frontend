@@ -6,6 +6,6 @@
 </template>
 
 <script setup lang="ts">
-    import { useCartItemCountStore } from '@/stores/cartItemCount.ts';
+    import { useCartItemCountStore } from '@/stores/cartItemCount';
     const cartItemCountStore = useCartItemCountStore();
 </script>
