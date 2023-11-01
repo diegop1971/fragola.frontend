@@ -1,19 +1,21 @@
+import { injectable } from "inversify";
+import "reflect-metadata";
+import container from '@app/shared/infrastructure/inversifyServiceProvider/inversify.config';
+import TYPES from '@app/shared/infrastructure/inversifyServiceProvider/types';
+import type { ICartRepository } from '@app/frontoffice/cart/domain/interfaces/ICartRepository';
+
 import type { ISessionCartItemResponse}  from '@/interfaces/ISessionCartItemResponse';
-import CartRepository from '@app/frontoffice/cart/infrastructure/persistence/CartRepository';
 import GetCartProducts from '@app/frontoffice/cart/infrastructure/persistence/Axios/GetCartProducts';
 
+@injectable()
 class CartProductsGetterService
 {
-    private getCartProducts: GetCartProducts;
+    constructor() { }
 
-    constructor() {
-        this.getCartProducts = new GetCartProducts();
-    }
-    
     public getCartProductsList = async (): Promise<ISessionCartItemResponse> => {
-        const cartRepository = new CartRepository();
-        const productCartList = cartRepository.searchAll(this.getCartProducts);
-        return productCartList;   
+        const getCartProducts = container.get<ICartRepository>(TYPES.ICartRepository);
+        const response = await getCartProducts.searchAll((new GetCartProducts));
+        return response;
     }
 } 
 export default CartProductsGetterService;

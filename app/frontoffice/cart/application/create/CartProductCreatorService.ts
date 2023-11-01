@@ -14,7 +14,8 @@ class CartProductCreatorService
 
     public create = async () => {
         const cartRepository = new CartRepository();
-        cartRepository.create(new CreateCartProduct(this.productId, this.productQty))
+        const createCartProduct = new CreateCartProduct(this.productId, this.productQty);
+        cartRepository.create(createCartProduct)
     }
 }
 export default CartProductCreatorService;
