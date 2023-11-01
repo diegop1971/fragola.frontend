@@ -1,10 +1,12 @@
 import type { ISessionCartItemResponse}  from '@/interfaces/ISessionCartItemResponse';
-import GetCartProducts from '@app/frontoffice/cart/infrastructure/persistence/Axios/GetCartProducts';
-import CreateCartProduct from '@app/frontoffice/cart/infrastructure/persistence/Axios/CreateCartProduct';
 
 export interface ICartRepository {
 
-    searchAll(getCartProducts: GetCartProducts): Promise<ISessionCartItemResponse>;
+    searchAll(): Promise<ISessionCartItemResponse>;
 
-    create(createCartProduct: CreateCartProduct): Promise<void>;
+    create(productId: string, productQty: number): Promise<void>;
+
+    update(productId: string, productQty: number): Promise<void>;
+
+    delete(itemIndex: number): Promise<void>;
 }

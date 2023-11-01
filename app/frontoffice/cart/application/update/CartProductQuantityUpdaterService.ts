@@ -5,7 +5,7 @@ import TYPES from '@app/shared/infrastructure/inversifyServiceProvider/types';
 import type { ICartRepository } from '@app/frontoffice/cart/domain/interfaces/ICartRepository';
 
 @injectable()
-class CartProductCreatorService
+class CartProductQuantityUpdaterService
 {
     private productId: string;
     private productQty: number;
@@ -16,9 +16,9 @@ class CartProductCreatorService
         this.productQty = productQty;
     }
 
-    public create = async () => {
+    public update = async () => {
         const cartRepository = container.get<ICartRepository>(TYPES.ICartRepository);
-        cartRepository.create(this.productId, this.productQty)
+        cartRepository.update(this.productId, this.productQty)
     }
 }
-export default CartProductCreatorService;
+export default CartProductQuantityUpdaterService;

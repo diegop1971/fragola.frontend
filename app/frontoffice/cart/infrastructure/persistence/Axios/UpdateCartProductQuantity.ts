@@ -11,12 +11,7 @@ class UpdateCartProductQuantity
         this.productQty = productQty;
     }
 
-    public getModifyCartItemQuantity = async (): Promise<void> => {
-        await this.modifyCartItemQuantity();
-    }
-
-    private modifyCartItemQuantity = async (): Promise<void> => {
-
+    public update = async (): Promise<void> => {
         await axios.post('http://localhost:8000/api/cart/cart-item-qty', {
                 id: this.productId,
                 qty: this.productQty

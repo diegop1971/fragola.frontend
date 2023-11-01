@@ -16,5 +16,5 @@ constructor(productId: string, productQty: number) {
             qty: this.productQty,
         });
     } 
-} 
+}
 export default CreateCartProduct;

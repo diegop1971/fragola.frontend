@@ -55,12 +55,12 @@ import { onMounted } from 'vue';
 import axios from 'axios';
 
 import NumberFormatterService from '@app/shared/application/NumberFormatterService';
-import CartProductRemoverService from '@app/frontoffice/cart/infrastructure/persistence/Axios/DeleteCartProduct';
-import ModifyCartItemQuantityService from '@app/frontoffice/cart/infrastructure/persistence/Axios/UpdateCartProductQuantity';
+import CartProductRemoverService from '@app/frontoffice/cart/application/delete/CartProductRemoverService';
 import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService';
 import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem';
-
 import { useCartItemCountStore } from '@/stores/cartItemCount';
+import CartProductQuantityUpdaterService from '@app/frontoffice/cart/application/update/CartProductQuantityUpdaterService';
+
 const cartItemCountStore = useCartItemCountStore();
 
 const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([]);
@@ -81,7 +81,7 @@ onMounted(async (): Promise<void> => {
 const onDeleteItem = async (index: number):Promise<void> => {
     try {
         const cartItemRemover = await new CartProductRemoverService(index);
-        await cartItemRemover.deleteCartProduct();
+        await cartItemRemover.delete();
         await getItems();
     }catch(error){
         console.log(error);
@@ -151,8 +151,8 @@ const decrement = async (sessionCartItem: ISessionCartItem) => {
 
 const modifyCartItemQuantity = async (productId: string, productQty: number) => {
     try {
-        const modifyCartItemQuantity = new ModifyCartItemQuantityService(productId, productQty);
-        await modifyCartItemQuantity.getModifyCartItemQuantity();
+        const updateCartItemQuantity = new CartProductQuantityUpdaterService(productId, productQty);
+        await updateCartItemQuantity.update();
         await getItems();
     } catch (error) {
         console.log(error);
