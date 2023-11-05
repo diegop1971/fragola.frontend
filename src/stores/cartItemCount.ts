@@ -1,14 +1,17 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useCartItemCountStore = defineStore('cartItemCount', () => {
 
-    const counter = ref(0)
-
-    const doubleCount = computed(() => count.value * 2)
+    const counter = ref(0);
+    const totalAmountCart = ref(0);
 
     function refreshQty(value: number) {
         counter.value = value
+    }
+
+    function refreshTotalAmountCart(totalAmount: number) {
+        totalAmountCart.value = totalAmount;
     }
     
     function incrementBy(value: number) {
@@ -19,5 +22,5 @@ export const useCartItemCountStore = defineStore('cartItemCount', () => {
         counter.value -= value;
     }
 
-    return { counter, doubleCount, refreshQty, incrementBy, decrementBy }
+    return { counter, totalAmountCart, refreshQty, refreshTotalAmountCart, incrementBy, decrementBy }
 })

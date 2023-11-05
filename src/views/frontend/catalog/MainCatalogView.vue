@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
   import MainLayout from '@/components/frontend/layouts/MainLayout.vue'
-  import MainCarousel from '@/components/frontend/home/partials/MainCarousel.vue';
+  import MainCarousel from '@/components/frontend/catalog/partials/MainCarousel.vue';
   import Footer from '@/components/frontend/partials/Footer.vue';
-  import ProductCards from '@/components/frontend/home/partials/ProductCards.vue';
+  import ProductCards from '@/components/frontend/catalog/partials/ProductCards.vue';
 </script>

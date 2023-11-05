@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { IAuthenticationResult } from '@/interfaces/IAuthenticationResult';
+import type { IAuthenticationResult } from '@app/frontoffice/auth/domain/interfaces/IAuthenticationResult';
 
 class LoginService 
 {
@@ -19,20 +19,16 @@ class LoginService
     }
 
     private async fetchAll(): Promise<IAuthenticationResult> {
-        try {
-            await axios.get("http://localhost:8000/sanctum/csrf-cookie"); 
 
-            const response = await axios.post("http://localhost:8000/login", {
-                email: this.email,
-                password: this.password,
-            });
+        await axios.get("http://localhost:8000/sanctum/csrf-cookie"); 
 
-            const responseData = await response.data;
-            return responseData;
+        const response = await axios.post("http://localhost:8000/login", {
+            email: this.email,
+            password: this.password,
+        });
 
-        } catch (error: any) {
-            throw error;
-        }
+        const responseData = await response.data;
+        return responseData;
     }
 }
 export default LoginService;

@@ -12,7 +12,7 @@ class NumberFormatterService
         minimumFractionDigits: minimumFractionDigits,
         maximumFractionDigits: maximumFractionDigits,
       });
-
+      
       return formattedNumber;
     }
 }

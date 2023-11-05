@@ -62,19 +62,16 @@ import { useCartItemCountStore } from '@/stores/cartItemCount';
 import CartProductQuantityUpdaterService from '@app/frontoffice/cart/application/update/CartProductQuantityUpdaterService';
 import type { ISessionCartItemResponse } from '@/interfaces/ISessionCartItemResponse';
 
+const cartItemCountStore = useCartItemCountStore();
 const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([]);
 const visible = ref(false);
-
-const cartItemCountStore = useCartItemCountStore();
-const cartContentsList: Ref<Array<ISessionCartItem>> = ref([]);
-const cartTotalItemCount: Ref<ISessionCartItemResponse['cartTotalItemCount']> = ref(0);
 const cartTotalAmount: Ref<ISessionCartItemResponse['cartTotalAmount']> = ref(0);
 
 axios.defaults.withCredentials = true;
 
 onMounted(async (): Promise<void> => {
     try {
-        await getCartData();
+        await getItems();
         let cant = await cantItems();
         await cartItemCountStore.refreshQty(cant);
         cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
@@ -87,9 +84,7 @@ const onDeleteItem = async (index: number):Promise<void> => {
     try {
         const cartItemRemover = await new CartProductRemoverService(index);
         await cartItemRemover.delete();
-        await getCartData();
-        cartItemCountStore.refreshQty(cartTotalItemCount.value);
-        cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
+        await getItems();
     }catch(error){
         console.log(error);
     }
@@ -106,11 +101,11 @@ const onFormatNumber = (numberToFormat: number) => {
     return formattedNumber.formatNumber(numberToFormat);
 };
 
-const getCartData = async (): Promise<void> => {
+const getItems = async (): Promise<void> => {
     try {
         const getCartProducts = new CartProductsGetterService();
         const response = await getCartProducts.getCartProductsList();
-
+        
         sessionCartItems.value = response.sessionCartItems.map(
             item => ({
             productId: item.productId,
@@ -119,8 +114,6 @@ const getCartData = async (): Promise<void> => {
             productUnitPrice: item.productUnitPrice,
             subtotal: item.productQty * item.productUnitPrice, 
         }));
-        cartTotalItemCount.value = response.cartTotalItemCount;
-        cartTotalAmount.value = response.cartTotalAmount;
     } catch(error) {
         console.log(error);
     }
@@ -146,8 +139,7 @@ const increment = async (sessionCartItem: ISessionCartItem) => {
     sessionCartItem.productQty += 1;
     await modifyCartItemQuantity(sessionCartItem.productId, sessionCartItem.productQty);
     await cantItems();
-    cartItemCountStore.refreshQty(cartTotalItemCount.value);
-    cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
+    cartItemCountStore.incrementBy(1);
 }
 
 const decrement = async (sessionCartItem: ISessionCartItem) => {
@@ -155,8 +147,7 @@ const decrement = async (sessionCartItem: ISessionCartItem) => {
         sessionCartItem.productQty--;
         await modifyCartItemQuantity(sessionCartItem.productId, sessionCartItem.productQty);
         await cantItems();
-        cartItemCountStore.refreshQty(cartTotalItemCount.value);
-        cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
+        cartItemCountStore.decrementBy(1);
     }
 }
 
@@ -164,7 +155,7 @@ const modifyCartItemQuantity = async (productId: string, productQty: number) => 
     try {
         const updateCartItemQuantity = new CartProductQuantityUpdaterService(productId, productQty);
         await updateCartItemQuantity.update();
-        await getCartData();
+        await getItems();
     } catch (error) {
         console.log(error);
     }

@@ -39,16 +39,20 @@
     import { onMounted } from 'vue';
     import axios from 'axios';
     import type { IApiResponse}  from '@/interfaces/IApiResponse';
-    import GetProductCardListService from '@app/frontoffice/home/application/find/GetProductsCardListService';
+    import GetProductCardListService from '@app/frontoffice/catalog/application/find/GetProductsCardListService';
     import CartProductCreatorService from '@app/frontoffice/cart/application/create/CartProductCreatorService';
     import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
     import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService';
     import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem'; 
 
     import { useCartItemCountStore } from '@/stores/cartItemCount';
+    import type { ISessionCartItemResponse } from '@/interfaces/ISessionCartItemResponse';
 
     const cartItemCountStore = useCartItemCountStore();
-    const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([]);
+    const cartContentsList: Ref<Array<ISessionCartItem>> = ref([]);
+    const cartTotalItemCount: Ref<ISessionCartItemResponse['cartTotalItemCount']> = ref(0);
+    const cartTotalAmount: Ref<ISessionCartItemResponse['cartTotalAmount']> = ref(0);
+
     const products = ref<IApiResponse>({
             title: '',
             metaDescription: '',
@@ -62,11 +66,11 @@
 
     onMounted(async () => {
       try {
-          await getItems();
-          let cant = await cantItems();
-          cartItemCountStore.refreshQty(cant);
-          const response = await productService.getApiResponse();
-        products.value = response;
+            await getCartData();
+            cartItemCountStore.refreshQty(cartTotalItemCount.value); 
+            cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
+            const response = await productService.getApiResponse();
+            products.value = response;
       } catch (error: any) {
         errorHandling.handleApiError(error);
       }
@@ -78,19 +82,20 @@
       try {
         const cartProductCreatorService = new CartProductCreatorService(productId, productQty);
         await cartProductCreatorService.create();
-        cartItemCountStore.incrementBy(productQty);
-
+        await getCartData();
+        cartItemCountStore.refreshQty(cartTotalItemCount.value);
+        cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
       } catch (error) {
         errorHandling.handleApiError(error);
       }
     }
 
-    const getItems = async (): Promise<void> => {
+    const getCartData = async (): Promise<void> => {
         try {
             const getCartProducts = new CartProductsGetterService();
             const response = await getCartProducts.getCartProductsList();
 
-            sessionCartItems.value = response.sessionCartItems.map(
+            cartContentsList.value = response.sessionCartItems.map(
                 item => ({
                 productId: item.productId,
                 productName: item.productName,
@@ -98,14 +103,10 @@
                 productUnitPrice: item.productUnitPrice,
                 subtotal: item.productQty * item.productUnitPrice, 
             }));
+            cartTotalItemCount.value = response.cartTotalItemCount;
+            cartTotalAmount.value = response.cartTotalAmount;
         } catch(error) {
             console.log(error);
         }
     }
-
-    const cantItems = async () => {
-       let cant = await sessionCartItems.value.reduce((cant, item) => cant + item.productQty, 0);
-       return cant;
-    }
-    
 </script>
