@@ -38,18 +38,16 @@
     import type { Ref } from 'vue';
     import { onMounted } from 'vue';
     import axios from 'axios';
+    import { useCartStore } from '@/stores/cartStore';
+
     import type { IApiResponse}  from '@/interfaces/IApiResponse';
     import GetProductCardListService from '@app/frontoffice/catalog/application/find/GetProductsCardListService';
     import CartProductCreatorService from '@app/frontoffice/cart/application/create/CartProductCreatorService';
     import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
     import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService';
-    import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem'; 
-
-    import { useCartItemCountStore } from '@/stores/cartItemCount';
     import type { ISessionCartItemResponse } from '@/interfaces/ISessionCartItemResponse';
 
-    const cartItemCountStore = useCartItemCountStore();
-    const cartContentsList: Ref<Array<ISessionCartItem>> = ref([]);
+    const cartStore = useCartStore();
     const cartTotalItemCount: Ref<ISessionCartItemResponse['cartTotalItemCount']> = ref(0);
     const cartTotalAmount: Ref<ISessionCartItemResponse['cartTotalAmount']> = ref(0);
 
@@ -67,10 +65,11 @@
     onMounted(async () => {
       try {
             await getCartData();
-            cartItemCountStore.refreshQty(cartTotalItemCount.value); 
-            cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
+            cartStore.refreshQty(cartTotalItemCount.value); 
+            cartStore.refreshTotalAmountCart(cartTotalAmount.value);
             const response = await productService.getApiResponse();
             products.value = response;
+            cartStore.showCollapsed(true);
       } catch (error: any) {
         errorHandling.handleApiError(error);
       }
@@ -83,8 +82,8 @@
         const cartProductCreatorService = new CartProductCreatorService(productId, productQty);
         await cartProductCreatorService.create();
         await getCartData();
-        cartItemCountStore.refreshQty(cartTotalItemCount.value);
-        cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
+        cartStore.refreshQty(cartTotalItemCount.value);
+        cartStore.refreshTotalAmountCart(cartTotalAmount.value);
       } catch (error) {
         errorHandling.handleApiError(error);
       }
@@ -95,16 +94,9 @@
             const getCartProducts = new CartProductsGetterService();
             const response = await getCartProducts.getCartProductsList();
 
-            cartContentsList.value = response.sessionCartItems.map(
-                item => ({
-                productId: item.productId,
-                productName: item.productName,
-                productQty: item.productQty,
-                productUnitPrice: item.productUnitPrice,
-                subtotal: item.productQty * item.productUnitPrice, 
-            }));
             cartTotalItemCount.value = response.cartTotalItemCount;
             cartTotalAmount.value = response.cartTotalAmount;
+            cartStore.refreshCartItems(response.sessionCartItems);
         } catch(error) {
             console.log(error);
         }

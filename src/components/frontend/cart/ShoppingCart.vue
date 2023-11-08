@@ -58,15 +58,14 @@ import NumberFormatterService from '@app/shared/application/NumberFormatterServi
 import CartProductRemoverService from '@app/frontoffice/cart/application/delete/CartProductRemoverService';
 import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService';
 import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem';
-import { useCartItemCountStore } from '@/stores/cartItemCount';
+import { useCartStore } from '@/stores/cartStore';
 import CartProductQuantityUpdaterService from '@app/frontoffice/cart/application/update/CartProductQuantityUpdaterService';
 import type { ISessionCartItemResponse } from '@/interfaces/ISessionCartItemResponse';
 
 const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([]);
 const visible = ref(false);
 
-const cartItemCountStore = useCartItemCountStore();
-const cartContentsList: Ref<Array<ISessionCartItem>> = ref([]);
+const cartStore = useCartStore();
 const cartTotalItemCount: Ref<ISessionCartItemResponse['cartTotalItemCount']> = ref(0);
 const cartTotalAmount: Ref<ISessionCartItemResponse['cartTotalAmount']> = ref(0);
 
@@ -76,8 +75,9 @@ onMounted(async (): Promise<void> => {
     try {
         await getCartData();
         let cant = await cantItems();
-        await cartItemCountStore.refreshQty(cant);
-        cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
+        await cartStore.refreshQty(cant);
+        cartStore.refreshTotalAmountCart(cartTotalAmount.value);
+        cartStore.showCollapsed(false);
     } catch(error) {
         console.log(error);
     }
@@ -88,8 +88,8 @@ const onDeleteItem = async (index: number):Promise<void> => {
         const cartItemRemover = await new CartProductRemoverService(index);
         await cartItemRemover.delete();
         await getCartData();
-        cartItemCountStore.refreshQty(cartTotalItemCount.value);
-        cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
+        cartStore.refreshQty(cartTotalItemCount.value);
+        cartStore.refreshTotalAmountCart(cartTotalAmount.value);
     }catch(error){
         console.log(error);
     }
@@ -121,6 +121,7 @@ const getCartData = async (): Promise<void> => {
         }));
         cartTotalItemCount.value = response.cartTotalItemCount;
         cartTotalAmount.value = response.cartTotalAmount;
+        cartStore.refreshCartItems(response.sessionCartItems);
     } catch(error) {
         console.log(error);
     }
@@ -146,8 +147,8 @@ const increment = async (sessionCartItem: ISessionCartItem) => {
     sessionCartItem.productQty += 1;
     await modifyCartItemQuantity(sessionCartItem.productId, sessionCartItem.productQty);
     await cantItems();
-    cartItemCountStore.refreshQty(cartTotalItemCount.value);
-    cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
+    cartStore.refreshQty(cartTotalItemCount.value);
+    cartStore.refreshTotalAmountCart(cartTotalAmount.value);
 }
 
 const decrement = async (sessionCartItem: ISessionCartItem) => {
@@ -155,8 +156,8 @@ const decrement = async (sessionCartItem: ISessionCartItem) => {
         sessionCartItem.productQty--;
         await modifyCartItemQuantity(sessionCartItem.productId, sessionCartItem.productQty);
         await cantItems();
-        cartItemCountStore.refreshQty(cartTotalItemCount.value);
-        cartItemCountStore.refreshTotalAmountCart(cartTotalAmount.value);
+        cartStore.refreshQty(cartTotalItemCount.value);
+        cartStore.refreshTotalAmountCart(cartTotalAmount.value);
     }
 }
 
