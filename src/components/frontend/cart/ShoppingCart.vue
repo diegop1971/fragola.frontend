@@ -54,6 +54,7 @@ import { computed } from 'vue';
 import { onMounted } from 'vue';
 import axios from 'axios';
 
+import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
 import NumberFormatterService from '@app/shared/application/NumberFormatterService';
 import CartProductRemoverService from '@app/frontoffice/cart/application/delete/CartProductRemoverService';
 import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService';
@@ -62,6 +63,7 @@ import { useCartStore } from '@/stores/cartStore';
 import CartProductQuantityUpdaterService from '@app/frontoffice/cart/application/update/CartProductQuantityUpdaterService';
 import type { ISessionCartItemResponse } from '@/interfaces/ISessionCartItemResponse';
 
+const errorHandling = new ErrorHandlingService();
 const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([]);
 const visible = ref(false);
 
@@ -78,8 +80,8 @@ onMounted(async (): Promise<void> => {
         await cartStore.refreshQty(cant);
         cartStore.refreshTotalAmountCart(cartTotalAmount.value);
         cartStore.showCollapsed(false);
-    } catch(error) {
-        console.log(error);
+    } catch (error: any) {
+        errorHandling.handleApiError(error);
     }
 });
 
@@ -123,7 +125,7 @@ const getCartData = async (): Promise<void> => {
         cartTotalAmount.value = response.cartTotalAmount;
         cartStore.refreshCartItems(response.sessionCartItems);
     } catch(error) {
-        console.log(error);
+        errorHandling.handleApiError(error);
     }
 }
 
