@@ -1,5 +1,6 @@
 <template>
-    <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+    <v-container>
+      <div class="row justify-content-center">
         <div class="col mb-5" v-for="product in products.homeProducts" :key="product.id">
             <div class="card h-100">
                 <!-- Sale badge-->
@@ -30,7 +31,11 @@
                 </div>
             </div>
         </div>
+        <v-btn>
+                Cart
+            </v-btn>
     </div>
+    </v-container>
 </template>
 
 <script setup lang="ts">

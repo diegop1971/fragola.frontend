@@ -4,6 +4,8 @@ import Home from '../views/frontend/catalog/MainCatalogView.vue';
 import Cart from '../views/frontend/cart/CartView.vue';
 import Login from '../views/frontend/auth/UsersLogin.vue';
 import Register from '../components/Register.vue';
+import Test from '../views/frontend/Test/TestDesignView.vue';
+import GridTest from '../views/frontend/Test/GridTestView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +29,16 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: Register 
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: Test 
+    },
+    {
+      path: '/grid',
+      name: 'grid',
+      component: GridTest 
     },
   ]
 })

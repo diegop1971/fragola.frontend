@@ -1,6 +1,8 @@
 <template>
-    <Navbar/>
+  <Navbar />
+  <v-container>
     <slot name="main"></slot>
+  </v-container>
 </template>
 
 <script setup lang="ts">

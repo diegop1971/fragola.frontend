@@ -1,7 +1,6 @@
 <template>
     <main class="form-signin w-100 m-auto">
         <form @submit.prevent="onLogin">
-            <img class="mb-4" src="../../../assets/brand/bootstrap-logo.svg" alt="Bootstrap Logo" width="72" height="57">
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
     
             <div class="form-floating">

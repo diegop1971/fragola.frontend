@@ -1,44 +1,60 @@
 <template>    
-    <div class="container">
-        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-            <i class="bi-cart-fill me-1"></i>
-            <span class="text-white ms-1 square-pill">{{ cartStore.counter }} item(s) - $ {{ formatTotalCartAmount(cartStore.totalAmountCart) }}</span>
-        </button>
-        <div v-if="cartStore.collapsedState" class="collapsed-element collapse" id="collapseExample">
-            <div v-if="cartStore.cartItemsList.length === 0">
-                <td colspan="6" class="text-center">
-                    <h3>Tu carrito está vacío</h3>
-                </td>
-            </div>
-            <div v-else>
-                <table>
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Cantidad</th>
-                            <th>Importe</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(product, key) in cartStore.cartItemsList" :key="product.productId">
-                            <td>{{ product.productName }}</td>
-                            <td>{{ product.productQty }}</td>
-                            <td class="text-right border-bottom"><p class="h6">$ {{ subtotal(product.productQty, product.productUnitPrice) }}</p></td>
-                            <td>
-                                <a href="cart.delete-item" v-on:click.prevent="onDeleteItem(key)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                                    </svg>
-                                </a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+  <v-dialog width="500">
+    <template v-slot:activator="{ props }">
+      <v-btn v-bind="props" >
+        <v-icon>
+          mdi-cart
+        </v-icon>
+        {{ cartStore.counter }} item(s) - $ {{ formatTotalCartAmount(cartStore.totalAmountCart) }}
+      </v-btn>
+    </template>
 
-    </div>
+    <template v-slot:default="{ isActive }">
+      <v-card title="Shopping Cart">
+        <v-card-text>
+          <div v-if="cartStore.cartItemsList.length === 0">
+            <td colspan="6" class="text-center">
+                <h3>Tu carrito está vacío</h3>
+            </td>
+          </div>
+          <div v-else>
+            <table>
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Importe</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(product, key) in cartStore.cartItemsList" :key="product.productId">
+                  <td>{{ product.productName }}</td>
+                  <td>{{ product.productQty }}</td>
+                  <td class="text-right border-bottom"><p class="h6">$ {{ subtotal(product.productQty, product.productUnitPrice) }}</p></td>
+                  <td>
+                    <a href="cart.delete-item" v-on:click.prevent="onDeleteItem(key)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                      </svg>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </v-card-text>
+
+        <v-card-actions>
+        <v-spacer></v-spacer>
+          <v-btn
+            text="Cerrar"
+            @click="isActive.value = false"
+          ></v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -112,66 +128,39 @@
 </script>
 
 <style scoped>
-.collapsed-element {
-  transition: none !important;
-  display: none;
-  margin-left: -285px;
-  margin-top: 4px;
-  border-radius: 5px;
-  position: absolute;
-  background-color: #fff;
-  color: #201b1b;
-  border: 1px solid #ccc;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  z-index: 1000;
 
-  /* Usar colores de Material Design */
-  background-color: #ffffff;
-  color: #212121;
-  border-color: #212121;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.12);
-
-  /* Usar iconos de Material Design */
-  i {
-    color: #212121;
+  table thead tr th {
+    font-size: 0.95rem;
   }
 
-  /* Usar componentes de Material Design */
-  .square-pill {
-    border-radius: 20px;
+  table tbody tr td {
+    font-size: 0.9rem;
   }
-}
 
-.show {
-  display: block;
-}
+  table thead tr th:nth-child(1) {
+    text-align: left !important;
+  }
 
-table thead tr th {
-  font-size: 0.95rem;
-}
+  table thead tr th:nth-child(2) {
+    text-align: center !important;
+  }
 
-table tbody tr td {
-  font-size: 0.9rem;
-}
+  table thead tr th:nth-child(3) {
+    text-align: right !important;
+  }
 
-table thead tr th:nth-child(2),
-table thead tr th:nth-child(3) {
-  text-align: center !important;
-}
+  table thead tr th:nth-child(2) {
+    text-align: center;
+  }
 
-table thead tr th:nth-child(2) {
-  text-align: center;
-}
+  table tbody tr td:nth-child(2) {
+    text-align: center;
+  }
+  table thead tr th:nth-child(3) {
+    text-align: center;
+  }
 
-table tbody tr td:nth-child(2) {
-  text-align: center;
-}
-table thead tr th:nth-child(3) {
-  text-align: center;
-}
-
-table tbody tr td:nth-child(3) {
-  text-align: center;
-}
+  table tbody tr td:nth-child(3) {
+    text-align: center;
+  }
 </style>
