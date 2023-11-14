@@ -1,13 +1,40 @@
 <template>
   <v-app>
-    <v-app-bar>
-      <v-app-bar-title>Fragola</v-app-bar-title>
-    </v-app-bar>
+    <v-container class="bg-surface-variant mb-6" justify="center" align="center">
+      <v-row justify="center">
+        <v-col>
+          <v-app-bar app class="mx-auto" style="width: 100%;">
+            <v-container>
+              <v-row justify="center">
+                <v-col cols="2">
+                  <v-btn icon>
+                    <v-icon>mdi-menu</v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="6">
+                  <v-app-bar-title>
+                    Navbar
+                  </v-app-bar-title>
+                </v-col>
+                <v-col cols="2">
+                  <v-btn icon>
+                    <v-icon>mdi-bell</v-icon>
+                  </v-btn>
+                  <v-btn icon>
+                    <v-icon>mdi-account</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-app-bar>
+        </v-col>
+      </v-row>
+    </v-container>
 
-    <v-container class="mt-12" justify="center" align="center">
+    <v-container class="bg-surface-variant mb-6" style="display: flex; justify-content: center; align-items: center;">
       <v-row>
-        <v-col cols="1" lg="8" offset-lg="2" margin="20">
-          <v-card>
+        <v-col cols="12" lg="8" style="width: 100%;">
+          <v-card class="mx-auto" style="width: 100%; min-width: 600px;">
             <v-card-title>
               <v-text-field label="Título del panel" v-model="title"></v-text-field>
             </v-card-title>
@@ -43,6 +70,7 @@
     </v-container>
   </v-app>
 </template>
+
 
 <script lang="ts">
 export default {
@@ -80,6 +108,6 @@ export default {
 };
 </script>
 
-<style lang="css">
-/* Puedes eliminar la clase v-container, ya que no es necesaria */
+<style scoped lang="css">
+/* ... tus estilos ... */
 </style>
