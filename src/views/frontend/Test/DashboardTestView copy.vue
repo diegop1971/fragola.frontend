@@ -21,7 +21,6 @@
                   <v-list-item prepend-icon="mdi-account-box" title="Account"></v-list-item>
                   <v-list-item prepend-icon="mdi-gavel" title="Admin"></v-list-item>
                 </v-list>
-                <v-btn class="mi-boton-custom">Mi Botón Personalizado</v-btn>
                 <template v-slot:append>
                   <div class="pa-2">
                     <v-btn block>
@@ -30,51 +29,57 @@
                   </div>
                 </template>
               </v-navigation-drawer>
-              <v-main style="height: 400px; border-bottom: none;"></v-main>
+              <v-main style="height: 400px;"></v-main>
             </v-layout>
           </v-card>
         </v-col>
         <v-col cols="10" margin="20">
-          <v-card>
-            <v-card-title>
-              <v-text-field label="Título del panel" v-model="title" ></v-text-field>
-            </v-card-title>
-            <v-card-text>
-              <v-container>
-                <v-row justify="center" align="center">
-                  <v-col cols="12">
-                    <v-card>
-                      <v-card-title>
-                        <v-icon>mdi-chart-line</v-icon>
-                        Gráfico de ventas
-                      </v-card-title>
-                      <v-card-text>
-                        <canvas id="chart"></canvas>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
-                <v-row justify="center" align="center" >
-                  <v-col cols="12">
-                    <v-card>
-                      <v-card-title>
-                        <v-icon>mdi-table</v-icon>
-                        Tabla de clientes
-                      </v-card-title>
-                      <v-card-text>
-                        <v-data-table
-                          :headers="headers"
-                          :items="data"
-                        ></v-data-table>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-          </v-card>
+          <main class="main-content">
+            <v-card>
+              <v-card-title>
+                <v-text-field label="Título del panel" v-model="title" ></v-text-field>
+              </v-card-title>
+              <v-card-text>
+                <v-container>
+                  <v-row justify="center" align="center">
+                    <v-col cols="12">
+                      <v-card>
+                        <v-card-title>
+                          <v-icon>mdi-chart-line</v-icon>
+                          Gráfico de ventas
+                        </v-card-title>
+                        <v-card-text>
+                          <canvas id="chart"></canvas>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                  <v-row justify="center" align="center" >
+                    <v-col cols="12">
+                      <v-card>
+                        <v-card-title>
+                          <v-icon>mdi-table</v-icon>
+                          Tabla de clientes
+                        </v-card-title>
+                        <v-card-text>
+                          <v-data-table
+                            :headers="headers"
+                            :items="data"
+                          ></v-data-table>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+            </v-card>
+          </main>
         </v-col>
       </v-row>
+      <v-footer app position="fixed">
+        <v-spacer></v-spacer>
+        <span>Copyright © 2023</span>
+      </v-footer>
     </v-container>
   </v-app>
 </template>
@@ -119,18 +124,7 @@ export default {
   .v-col.col-v-navigation {
     border-bottom-style: none;
   }
-  .col-v-navigation {
-    border-bottom-style: none;
+  .col-v-navigation > .v-card {
+      box-shadow: none;
   }
-
-  $button-background-color: #ff0000;
-
-
-/* Tu propio código de estilos personalizados */
-.mi-boton-custom {
-  // Utiliza la clase de Vuetify para estilos base
-  // Agrega tus propias modificaciones
-  background-color: $button-background-color;
-  color: white; /* Cambia el color del texto, por ejemplo */
-}
 </style>

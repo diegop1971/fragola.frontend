@@ -124,11 +124,7 @@ export default {
   .v-col.col-v-navigation {
     border-bottom-style: none;
   }
-  .col-v-navigation {
-
+  .col-v-navigation > .v-card {
+      box-shadow: none;
   }
-
-.col-v-navigation > .v-card {
-    box-shadow: none;
-}
 </style>
