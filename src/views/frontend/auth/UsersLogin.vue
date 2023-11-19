@@ -56,5 +56,5 @@
 </script>
 
 <style scoped>
-    @import '@/assets/css/sign-in.css';
+    
 </style>

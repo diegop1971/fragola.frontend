@@ -22,7 +22,7 @@
                         :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
                         aspect-ratio="1"
                         cover
-                        class="bg-grey-lighten-2"
+                        class="bg-grey-lighten-2 rounded-image"
                         height="300"
                         max-height="300"
                       >
@@ -76,28 +76,33 @@
 </template>
 
 <style lang="scss">
-.price-bold {
-  font-weight: bold;
-  font-size: 20px;
-  color: #1b5e20; /* Verde oscuro */
-}
 
-.price-discount {
-  font-size: 16px;
-  color: #616161; /* Gris */
-}
+  .rounded-image {
+    border-radius: 4px; /* Ajusta el valor según el redondeo que desees */
+  }
 
-.text-description {
-  color: #333; /* Cambia el color del texto de la descripción */
-}
+  .price-bold {
+    font-weight: bold;
+    font-size: 20px;
+    color: #1b5e20; /* Verde oscuro */
+  }
 
-.text-review {
-  color: #333; /* Cambia el color del texto de las reseñas */
-}
+  .price-discount {
+    font-size: 16px;
+    color: #616161; /* Gris */
+  }
 
-.star-icon {
-  color: #333; /* Cambia el color de la estrella */
-}
+  .text-description {
+    color: #333; /* Cambia el color del texto de la descripción */
+  }
+
+  .text-review {
+    color: #333; /* Cambia el color del texto de las reseñas */
+  }
+
+  .star-icon {
+    color: #333; /* Cambia el color de la estrella */
+  }
 
 </style>
 

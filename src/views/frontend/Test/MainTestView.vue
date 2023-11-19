@@ -1,11 +1,9 @@
 <template>
-  <v-app>
-    <v-container>
-      <v-row justify="center">
-        <v-col cols="12" margin="20">
-          <main class="main-content">
-            <v-row>
-              <v-col
+  <v-container>
+    <v-row class="bg-green justify-center align-center">
+      <v-col cols="10">
+        <v-row no-gutters class="bg-red justify-center">
+          <v-col
                 v-for="n in 18"
                 :key="n"
                 class="d-flex child-flex"
@@ -18,8 +16,8 @@
                     <div>
                       <!-- Imagen -->
                       <v-img
-                        :src="`https://picsum.photos/500/300?image=${n * 5 + 10}`"
-                        :lazy-src="`https://picsum.photos/10/6?image=${n * 5 + 10}`"
+                        :src="`https://picsum.photos/300/300?image=${n * 5 + 10}`"
+                        :lazy-src="`https://picsum.photos/10/10?image=${n * 5 + 10}`"
                         aspect-ratio="1"
                         cover
                         class="bg-grey-lighten-2 rounded-image"
@@ -62,17 +60,11 @@
                   <!-- Fin del enlace -->
                 </v-container>
               </v-col>
-            </v-row>
-          </main>
-        </v-col>
-      </v-row>
 
-      <v-footer app position="fixed">
-        <v-spacer></v-spacer>
-        <!-- ... -->
-      </v-footer>
-    </v-container>
-  </v-app>
+        </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <style lang="scss">
@@ -105,10 +97,3 @@
   }
 
 </style>
-
-<script lang="ts">
-export default {
-  data() {
-  }
-};
-</script>
