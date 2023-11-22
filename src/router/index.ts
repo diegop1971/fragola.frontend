@@ -1,15 +1,20 @@
 import { createRouter, createWebHistory} from 'vue-router'
 
-import Home from '../views/frontend/catalog/MainCatalogView.vue';
-import Cart from '../views/frontend/cart/CartView.vue';
-import Login from '../views/frontend/auth/UsersLogin.vue';
+/* frontoffice */
+import Home from '../views/frontoffice/catalog/MainCatalogView.vue';
+import Cart from '../views/frontoffice/cart/CartView.vue';
+import Login from '../views/frontoffice/auth/UsersLogin.vue';
 import Register from '../components/Register.vue';
-import MainTest from '../views/frontend/Test/MainTestView.vue';
-import DashboardTest from '../views/frontend/Test/DashboardTestView.vue';
+import MainTest from '../views/frontoffice/Test/MainTestView.vue';
+import DashboardTest from '../views/frontoffice/Test/DashboardTestView.vue';
+
+/* backoffice */
+import Admin from '../views/backoffice/dashboard/AdminDashboard.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    /* frontoffice */
     {
       path: '/',
       name: 'home',
@@ -34,6 +39,13 @@ const router = createRouter({
       path: '/main',
       name: 'main',
       component: MainTest 
+    },
+
+    /* backoffice */
+    {
+      path: '/admin',
+      name: 'admin',
+      component: Admin 
     },
     {
       path: '/dashboard',

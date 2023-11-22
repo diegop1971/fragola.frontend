@@ -6,5 +6,5 @@
 </template>
 
 <script setup lang="ts">
-  import Navbar from '@/components/frontend/partials/MainUsersNavbar.vue'; 
+  import Navbar from '@/components/frontoffice/partials/MainNavbar.vue'; 
 </script>

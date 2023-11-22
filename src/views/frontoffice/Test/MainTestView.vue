@@ -60,40 +60,39 @@
                   <!-- Fin del enlace -->
                 </v-container>
               </v-col>
-
         </v-row>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
   .rounded-image {
-    border-radius: 4px; /* Ajusta el valor según el redondeo que desees */
+    border-radius: 4px;
   }
 
   .price-bold {
     font-weight: bold;
     font-size: 20px;
-    color: #1b5e20; /* Verde oscuro */
+    color: #1b5e20;
   }
 
   .price-discount {
     font-size: 16px;
-    color: #616161; /* Gris */
+    color: #616161;
   }
 
   .text-description {
-    color: #333; /* Cambia el color del texto de la descripción */
+    color: #333;
   }
 
   .text-review {
-    color: #333; /* Cambia el color del texto de las reseñas */
+    color: #333;
   }
 
   .star-icon {
-    color: #333; /* Cambia el color de la estrella */
+    color: #333;
   }
 
 </style>

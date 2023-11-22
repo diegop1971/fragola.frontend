@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
     import LogoutService from '@app/frontoffice/auth/application/LogoutService';
-    import NavbarCartButton from '@/components/frontend/partials/NavbarCartButton.vue'; 
+    import NavbarCartButton from '@/components/frontoffice/partials/NavbarCartButton.vue'; 
 
     async function onLogout() {
         try {

@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-    import MainLayout from '@/components/frontend/layouts/MainLayout.vue';
-    import Cart from '@/components/frontend/cart/ShoppingCart.vue';
+    import MainLayout from '@/components/frontoffice/layouts/MainLayout.vue';
+    import Cart from '@/components/frontoffice/cart/ShoppingCart.vue';
 </script>
 
