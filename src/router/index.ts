@@ -9,7 +9,7 @@ import MainTest from '../views/frontoffice/Test/MainTestView.vue';
 import DashboardTest from '../views/frontoffice/Test/DashboardTestView.vue';
 
 /* backoffice */
-import Admin from '../views/backoffice/dashboard/AdminDashboard.vue';
+import MainDashboardOverview from '../views/backoffice/dashboard/main/MainOverviewView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,7 +45,7 @@ const router = createRouter({
     {
       path: '/admin',
       name: 'admin',
-      component: Admin 
+      component: MainDashboardOverview 
     },
     {
       path: '/dashboard',

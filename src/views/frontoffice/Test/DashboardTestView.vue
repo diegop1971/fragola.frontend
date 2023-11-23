@@ -32,7 +32,6 @@
               </v-layout>
             </v-card>
           </v-col>
-
           <v-col cols="10" margin="20">
             <!-- Main content -->
             <main class="main-content">

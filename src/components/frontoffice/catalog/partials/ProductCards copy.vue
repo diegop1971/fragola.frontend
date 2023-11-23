@@ -1,69 +1,42 @@
 <template>
     <v-container>
-      <v-row class="justify-center align-center">
-        <v-col cols="10">
-          <v-row no-gutters class="justify-center">
-            <v-col
-                v-for="product in products.homeProducts" :key="product.id"
-                class="d-flex child-flex"
-                cols="3"
-            >
-                <v-container fluid class="text-center">
-                <!-- Inicio del enlace -->
-                <a :href="`https://vuetifyjs.com/product/${1}`" class="text-decoration-none">
-                    <!-- Contenido dentro del enlace -->
-                    <div>
-                    <!-- Imagen -->
-                    <v-img
-                        :src="`https://picsum.photos/300/300?image=${1 * 5 + 10}`"
-                        :lazy-src="`https://picsum.photos/10/10?image=${1 * 5 + 10}`"
-                        aspect-ratio="1"
-                        cover
-                        class="bg-grey-lighten-2 rounded-image"
-                        height="300"
-                        max-height="300"
-                    >
-                        <template v-slot:placeholder>
-                        <!-- ... -->
-                        </template>
-                    </v-img>
-                    
-                    <!-- Descripción, reseñas, precio, botón, etc. -->
-                    <p class="mt-2 text-description" style="font-size: 14px">{{ product.name }} {{ 1 }}</p>
-                    <div class="d-flex justify-center align-center flex-wrap" style="font-size: 12px">
-                        <div class="d-flex align-center mr-1 text-review">
-                        <span>{{ Math.floor(Math.random() * 50) }} reseñas</span>
-                        <v-icon class="star-icon" style="font-size: 14px">mdi-star</v-icon>
+      <div class="row justify-content-center">
+        <div class="col mb-5" v-for="product in products.homeProducts" :key="product.id">
+            <div class="card h-100">
+                <!-- Sale badge-->
+                <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                <!-- Product image-->
+                <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                <!-- Product details-->
+                <div class="card-body p-4">
+                    <div class="text-center">
+                        <!-- Product name-->
+                        <h5 class="fw-bolder">{{ product.name }}</h5>
+                        <!-- Product reviews-->
+                        <div class="d-flex justify-content-center small text-warning mb-2">
+                            <div class="bi-star-fill"></div>
+                            <div class="bi-star-fill"></div>
+                            <div class="bi-star-fill"></div>
+                            <div class="bi-star-fill"></div>
+                            <div class="bi-star-fill"></div>
                         </div>
-                        <div style="font-family: 'Arial', sans-serif; color: #666;">
-                        Tienda: Nombre de la tienda
-                        </div>
+                        <!-- Product price-->
+                        <span class="text-muted text-decoration-line-through">$ {{ product.price }}</span>
+                        {{ product.price }}
                     </div>
-                    <div class="mt-1">
-                        <p class="text-center">
-                        <span class="price-bold" style="font-size: 18px">USD 1,99</span>
-                        <span class="price-discount" style="font-size: 14px"> - >$ {{ product.price }} (30% de descuento)</span>
-                        </p>
-                    </div>
-                    <v-btn
-                        color="primary"
-                        class="mt-1"
-                        font-size="16px"
-                        block
-                    >
-                        <a href="#" v-on:click.prevent="onAddToCart(product.id)" class="btn btn-primary" style="color: white; text-decoration: none;">Agregar Producto</a>
-                    </v-btn>
-                    </div>
-                    <!-- Fin del contenido dentro del enlace -->
-                </a>
-                <!-- Fin del enlace -->
-                </v-container>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
+                </div>
+                <!-- Product actions-->
+                <div class="d-flex justify-content-center mb-3">
+                    <a href="#" v-on:click.prevent="onAddToCart(product.id)" class="btn btn-primary">Agregar Producto</a>
+                </div>
+            </div>
+        </div>
+        <v-btn>
+                Cart
+            </v-btn>
+    </div>
     </v-container>
-  </template>
+</template>
 
 <script setup lang="ts">
     import {ref} from 'vue';
