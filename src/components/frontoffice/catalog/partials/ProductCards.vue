@@ -15,13 +15,13 @@
                     <div>
                     <!-- Imagen -->
                     <v-img
-                        :src="`https://picsum.photos/300/300?image=${1 * 5 + 10}`"
-                        :lazy-src="`https://picsum.photos/10/10?image=${1 * 5 + 10}`"
+                        :src="`http://localhost:8000/images/catalog/320x320.png`"
+                        :lazy-src="`http://localhost:8000/images/catalog/320x320.png`"
                         aspect-ratio="1"
                         cover
                         class="bg-grey-lighten-2 rounded-image"
-                        height="300"
-                        max-height="300"
+                        height="320"
+                        max-height="320"
                     >
                         <template v-slot:placeholder>
                         <!-- ... -->
