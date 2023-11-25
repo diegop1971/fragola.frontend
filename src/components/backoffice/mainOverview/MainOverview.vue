@@ -1,46 +1,39 @@
 <template>
-    <v-card>
-        <v-card-title>
-            <v-text-field label="Título del panel" v-model="title" ></v-text-field>
-        </v-card-title>
-        <v-card-text>
-            <v-container>
-            <v-row justify="center" align="center">
-                <v-col cols="12">
-                <v-card>
-                    <v-card-title>
-                    <v-icon>mdi-chart-line</v-icon>
-                    Gráfico de ventas
-                    </v-card-title>
-                    <v-card-text>
-                    <canvas id="chart"></canvas>
-                    </v-card-text>
-                </v-card>
-                </v-col>
-            </v-row>
-            <v-row justify="center" align="center" >
-                <v-col cols="12">
-                <v-card>
-                    <v-card-title>
-                    <v-icon>mdi-table</v-icon>
-                    Tabla de clientes
-                    </v-card-title>
-                    <v-card-text>
-                    <v-data-table
-                        :headers="headers"
-                        :items="data"
-                    ></v-data-table>
-                    </v-card-text>
-                </v-card>
-                </v-col>
-            </v-row>
-            </v-container>
-        </v-card-text>
+  <v-container>
+    <v-row justify="center" align="center">
+      <v-col cols="12">
+        <v-card>
+          <v-card-title>
+            <v-icon>mdi-chart-line</v-icon>
+            Gráfico de ventas
+          </v-card-title>
+          <v-card-text>
+            <canvas id="chart"></canvas>
+          </v-card-text>
         </v-card>
+      </v-col>
+    </v-row>
+    <v-row justify="center" align="center" >
+      <v-col cols="12">
+        <v-card>
+          <v-card-title>
+            <v-icon>mdi-table</v-icon>
+            Tabla de clientes
+          </v-card-title>
+          <v-card-text>
+          <v-data-table
+              :headers="headers"
+              :items="data"
+          ></v-data-table>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts" setup>
-  const title: string = 'Dashboard';
+
   const headers = [
                     {
                       text: 'Nombre',
