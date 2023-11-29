@@ -1,11 +1,16 @@
 <template>
   <v-layout class="rounded rounded-md">
+    
+    <v-navigation-drawer>
+      <LeftNavigationDrawer />
+    </v-navigation-drawer>
+
     <Navbar />
 
-    <LeftNavigationDrawer />
+    <v-main class="d-flex align-center justify-center" style="min-height: 300px;">
+      Main Content
+    </v-main>
 
-    <MainOverview />
-    
     <AdminFooter />
 
   </v-layout>
@@ -15,7 +20,6 @@
   import Navbar from '@/components/backoffice/partials/MainAdminNavbar.vue';
   import AdminFooter from '@/components/backoffice/partials/AdminFooter.vue';
   import LeftNavigationDrawer from '../partials/LeftNavigationDrawer.vue';
-  import MainOverview from '@/components/backoffice/mainOverview/MainOverview.vue';
 
 </script>
 

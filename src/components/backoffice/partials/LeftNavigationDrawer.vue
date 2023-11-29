@@ -1,18 +1,73 @@
 <template>
-    <v-navigation-drawer class="bg-deep-purple" theme="dark" permanent>
-        <v-list color="transparent">
-            <v-list-item prepend-icon="mdi-view-dashboard" title="Dashboard"></v-list-item>
-            <v-list-item prepend-icon="mdi-account-box" title="Account"></v-list-item>
-            <v-list-item prepend-icon="mdi-gavel" title="Admin"></v-list-item>
-        </v-list>
-        <!-- Template for additional content -->
-        <template v-slot:append>
-            <div class="pa-2">
-            <v-btn block>
-                Logout
-            </v-btn>
-            </div>
-        </template>
-    </v-navigation-drawer>
-    <v-main style="height: 400px;"></v-main>
+  <v-navigation-drawer>
+    <v-card class="mx-auto" width="300" style="border-right: 1px solid #ccc;">
+      <v-list v-model:opened="open">
+        <v-list-item prepend-icon="mdi-home" title="Home"></v-list-item>
+
+        <v-list-group value="Users">
+          <template v-slot:activator="{ props }">
+            <v-list-item
+              v-bind="props"
+              prepend-icon="mdi-account-circle"
+              title="Users"
+            ></v-list-item>
+          </template>
+
+          <v-list-group value="Admin">
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" title="Admin"></v-list-item>
+            </template>
+
+            <v-list-item
+              v-for="([title, icon], i) in admins"
+              :key="i"
+              :title="title"
+              :prepend-icon="icon"
+              :value="title"
+            ></v-list-item>
+          </v-list-group>
+
+          <v-list-group value="Actions">
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" title="Actions"></v-list-item>
+            </template>
+
+            <v-list-item
+              v-for="([title, icon], i) in cruds"
+              :key="i"
+              :value="title"
+              :title="title"
+              :prepend-icon="icon"
+            ></v-list-item>
+          </v-list-group>
+        </v-list-group>
+      </v-list>
+    </v-card>
+</v-navigation-drawer>
 </template>
+
+<script lang="ts">
+export default {
+  data() {
+    return {
+      open: ['Users'],
+      admins: [
+        ['Management', 'mdi-account-multiple-outline'],
+        ['Settings', 'mdi-cog-outline'],
+      ],
+      cruds: [
+        ['Create', 'mdi-plus-outline'],
+        ['Read', 'mdi-file-outline'],
+        ['Update', 'mdi-update'],
+        ['Delete', 'mdi-delete'],
+      ],
+    };
+  },
+};
+</script>
+
+<style lang="css" scoped>
+  .caption {
+    font-size: 8px; /* Tamaño de fuente más pequeño */
+}
+</style>
