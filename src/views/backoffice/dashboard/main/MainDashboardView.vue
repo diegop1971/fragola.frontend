@@ -1,6 +1,6 @@
 <template>
   <AdminDashboardLayout>
-    <template v-slot:main-admin>
+    <template>
       <v-card>
         <v-card-title>
           <v-text-field label="Título del panel" v-model="title" ></v-text-field>

@@ -1,13 +1,9 @@
 <template>
   <v-layout class="rounded rounded-md">
     <Navbar />
-
     <LeftNavigationDrawer />
-
     <MainOverview />
-    
     <AdminFooter />
-
   </v-layout>
 </template>
 
@@ -16,7 +12,6 @@
   import AdminFooter from '@/components/backoffice/partials/AdminFooter.vue';
   import LeftNavigationDrawer from '../partials/LeftNavigationDrawer.vue';
   import MainOverview from '@/components/backoffice/mainOverview/MainOverview.vue';
-
 </script>
 
 <style lang="scss" scoped>
