@@ -9,8 +9,10 @@ import Register from '../components/Register.vue';
 
 /* backoffice */
 import AdminPanel from '@/views/backoffice/adminPanel/AdminPanelView.vue';
-import IndexComponent from '@/components/backoffice/products/IndexComponent.vue';
+import IndexProductsComponent from '@/components/backoffice/products/IndexProductsComponent.vue';
+import IndexCategoriesComponent from '@/components/backoffice/categories/IndexCategoriesComponent.vue';
 import ShowComponent from '@/components/backoffice/products/ShowComponent.vue';
+import dashboardComponent from '@/components/backoffice/dashboard/dashboardComponent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,15 +45,25 @@ const router = createRouter({
       component: AdminPanel,
       children: [
         {
+          path: '',
+          name: 'dashboard',
+          component: dashboardComponent,
+        },
+        {
+          path: 'categories',
+          name: 'categories',
+          component: IndexCategoriesComponent,
+        },
+        {
+          path: 'products',
+          name: 'products',
+          component: IndexProductsComponent,
+        },
+        {
           path: 'show',
           name: 'show',
           component: ShowComponent,
         },
-        {
-          path: '',
-          name: 'index',
-          component: IndexComponent,
-        }
       ]
     },
   ]

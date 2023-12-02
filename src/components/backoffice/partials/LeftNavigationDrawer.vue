@@ -2,7 +2,7 @@
   <v-navigation-drawer>
     <v-card class="mx-auto" width="300" style="border-right: 1px solid #ccc;">
       <v-list>
-        <router-link :to="{ name: 'index' }" class="text-decoration-none text-light">
+        <router-link :to="{ name: 'dashboard' }" class="text-decoration-none text-light">
           <v-list-item prepend-icon="mdi-home"> 
             <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
@@ -60,8 +60,8 @@
   export default {
     data: () => ({
       catalog: [
-        ['Categories', 'mdi-chevron-double-right', 'index'],
-        ['Products', 'mdi-chevron-double-right', 'show'],
+        ['Categories', 'mdi-chevron-double-right', 'categories'],
+        ['Products', 'mdi-chevron-double-right', 'products'],
       ],
       cruds: [
         ['Create', 'mdi-plus-outline'],

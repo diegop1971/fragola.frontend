@@ -9,6 +9,6 @@
 
 <script lang="ts" setup>
   import Navbar from '@/components/backoffice/partials/MainAdminNavbar.vue';
-  import AdminFooter from '@/components/backoffice/partials/AdminFooter.vue';
+  import AdminFooter from '@/components/backoffice/partials/backofficeFooter.vue';
   import LeftNavigationDrawer from '@/components/backoffice/partials/LeftNavigationDrawer.vue';
 </script>
