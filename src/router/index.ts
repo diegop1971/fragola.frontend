@@ -6,11 +6,9 @@ import Home from '../views/frontoffice/catalog/MainCatalogView.vue';
 import Cart from '../views/frontoffice/cart/CartView.vue';
 import Login from '../views/frontoffice/auth/UsersLogin.vue';
 import Register from '../components/Register.vue';
-import MainTest from '../views/frontoffice/Test/MainTestView.vue';
 
 /* backoffice */
-//import MainDashboardview from '../views/backoffice/dashboard/main/MainDashboardView.vue';
-import AdminDashboardLayoutVue from '@/components/backoffice/layouts/AdminDashboardLayout.vue';
+import AdminPanel from '@/views/backoffice/adminPanel/AdminPanelView.vue';
 import IndexComponent from '@/components/backoffice/products/IndexComponent.vue';
 import ShowComponent from '@/components/backoffice/products/ShowComponent.vue';
 
@@ -38,16 +36,11 @@ const router = createRouter({
       name: 'register',
       component: Register 
     },
-    {
-      path: '/main',
-      name: 'main',
-      component: MainTest 
-    },
 
     /* backoffice */
     {
       path: '/admin',
-      component: AdminDashboardLayoutVue,
+      component: AdminPanel,
       children: [
         {
           path: 'show',
