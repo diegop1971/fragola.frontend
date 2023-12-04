@@ -87,7 +87,7 @@
             title: '',
             metaDescription: '',
             homeProducts: []
-        });
+          });
 
     const errorHandling = new ErrorHandlingService();
     const productService = new GetProductCardListService();
