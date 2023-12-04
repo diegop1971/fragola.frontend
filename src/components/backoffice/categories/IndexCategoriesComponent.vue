@@ -19,19 +19,19 @@
                                 <v-icon>mdi-dots-vertical</v-icon>
                             </v-btn>
 
-                                    <template v-slot:extension>
-                            <v-tabs v-model="model" centered>
-                            <v-tab v-for="(item, index) in items" :key="index" :value="item.value">
-                                {{ item.label }}
-                            </v-tab>
-                            </v-tabs>
-                        </template>
+                            <template v-slot:extension>
+                                <v-tabs v-model="model" centered>
+                                    <v-tab v-for="(item, index) in items" :key="index" :value="item.value">
+                                        {{ item.label }}
+                                    </v-tab>
+                                </v-tabs>
+                            </template>
                         </v-toolbar>
 
                         <v-window v-model="model">
                         <v-window-item v-for="(item, index) in items" :key="index" :value="item.value">
                             <v-card>
-                            <v-card-text>{{ item.text }}</v-card-text>
+                                <v-card-text>{{ item.text }}</v-card-text>
                             </v-card>
                         </v-window-item>
                         </v-window>

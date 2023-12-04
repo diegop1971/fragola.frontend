@@ -3,13 +3,24 @@
     <v-container>
       <v-row justify="center">
         <v-col cols="12">
-          <v-data-table :headers="headers" :items="products">
-
-            <template v-slot:item.actions="{ item }">
-              <v-icon small @click="editItem(item)">mdi-pencil</v-icon>
-              <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-            </template>
-          </v-data-table>
+          <v-card class="mx-auto">
+            <v-layout>
+              <v-app-bar color="primary" density="compact">
+                <v-spacer></v-spacer>
+                <v-btn @click="handleNewItem">New Item</v-btn>
+              </v-app-bar>
+              <v-main>
+                <v-container fluid>
+                  <v-data-table :headers="headers" :items="products">
+                    <template v-slot:item.actions="{ item }">
+                      <v-icon small @click="editItem(item)">mdi-pencil</v-icon>
+                      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+                    </template>
+                  </v-data-table>
+                </v-container>
+              </v-main>
+            </v-layout>
+          </v-card>
         </v-col>
       </v-row>
     </v-container>
@@ -26,20 +37,7 @@
 
   const errorHandling = new ErrorHandlingService();
 
-  let products = ref<IProduct[]>([{
-          id: '',
-          category_id: 0,
-          name: '',
-          description: '',
-          description_short: '',
-          price: 0,
-          minimum_quantity: 0,
-          low_stock_threshold: 0,
-          low_stock_alert: 0,
-          enabled: 0,
-          created_at: '',
-          updated_at: '',
-        }]);
+  let products = ref<IProduct[]>([]);
 
   onMounted(async () => {
     try {
@@ -54,21 +52,20 @@
             const getProductsListService = new GetProductListService();
             const response = await getProductsListService.getApiResponse(); 
             products.value = response;
-            console.log(products.value);
         } catch(error) {
             console.log(error);
         }
     }
 
     const headers = [
-      { title: 'Product', key: 'name' },
-      { title: 'Price', key: 'price' },
-      {title: 'Description Short', key: 'description_short'},
+      {title: 'Product', key: 'name' },
+      {title: 'Price', key: 'price' },
+      {title: 'Category', key: 'category.name' },
       {title: 'Minimun Quantity', key: 'minimum_quantity'},
-      {title: 'Low stock threshold quantity', key: 'low_stock_threshold'},
+      {title: 'Low stock threshold', key: 'low_stock_threshold'},
       {title: 'Low stock alert', key: 'low_stock_alert'},
       {title: 'Enabled', key: 'enabled'},
-      { title: 'Actions', key: 'actions', align: 'center' } // Nueva columna para acciones
+      {title: 'Actions', key: 'actions', align: 'center' }
     ];
 
     const getColor = (calories: number): string => {
@@ -76,6 +73,11 @@
       else if (calories > 50) return 'orange';
       else return 'green';
     }
+
+    const handleNewItem = () => {
+      // Lógica para crear un nuevo ítem
+      console.log('Crear un nuevo ítem');
+    };
 
     const editItem = (item: string) => {
       // Lógica para editar el ítem

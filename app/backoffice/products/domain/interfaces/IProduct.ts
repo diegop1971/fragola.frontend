@@ -1,3 +1,5 @@
+import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory'
+
 export interface IProduct {
     id: string;
     category_id: number;
@@ -11,5 +13,6 @@ export interface IProduct {
     enabled: number;
     created_at: string;
     updated_at:string;
+    category: ICategory;
     //total_quantity: string;
 }
