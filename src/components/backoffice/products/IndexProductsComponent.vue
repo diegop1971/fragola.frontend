@@ -1,25 +1,35 @@
 <template>
-  <v-main class="d-flex justify-center" style="min-height: 300px;">
+  <v-main class="d-flex justify-center">
     <v-container>
       <v-row justify="center">
         <v-col cols="12">
-          <v-card class="mx-auto">
-            <v-layout>
-              <v-app-bar color="primary" density="compact">
-                <v-spacer></v-spacer>
-                <v-btn @click="handleNewItem">New Item</v-btn>
-              </v-app-bar>
-              <v-main>
-                <v-container fluid>
-                  <v-data-table :headers="headers" :items="products">
-                    <template v-slot:item.actions="{ item }">
-                      <v-icon small @click="editItem(item)">mdi-pencil</v-icon>
-                      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-                    </template>
-                  </v-data-table>
-                </v-container>
-              </v-main>
-            </v-layout>
+          <v-card
+            color="grey-lighten-4"
+            flat
+            height="1000px"
+            rounded="0"
+          >
+            <v-toolbar border density="compact">
+              <v-app-bar-nav-icon></v-app-bar-nav-icon>
+
+              <v-toolbar-title>Products list</v-toolbar-title>
+
+              <v-spacer></v-spacer>
+
+              <v-btn icon>
+                <v-icon>mdi-magnify</v-icon>
+              </v-btn>
+
+              <v-btn @click="createNewProduct">New Item</v-btn>
+            </v-toolbar>
+              <v-container fluid>
+                <v-data-table :headers="headers" :items="products">
+                  <template v-slot:item.actions="{ item }">
+                    <v-icon small @click="editItem(item)">mdi-pencil</v-icon>
+                    <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+                  </template>
+                </v-data-table>
+              </v-container>
           </v-card>
         </v-col>
       </v-row>
@@ -28,8 +38,9 @@
 </template>
 
 <script setup lang="ts">
-  import {ref} from 'vue';
+  import { ref } from 'vue';
   import { onMounted } from 'vue';
+  import { useRouter } from 'vue-router'
 
   import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
   import type { IProduct}  from '@app/backoffice/products/domain/interfaces/IProduct';
@@ -46,6 +57,8 @@
       errorHandling.handleApiError(error);
     }
   });
+
+  const router = useRouter()
 
   const getProductData = async (): Promise<void> => {
         try {
@@ -74,18 +87,21 @@
       else return 'green';
     }
 
-    const handleNewItem = () => {
+    const createNewProduct = () => {
       // Lógica para crear un nuevo ítem
+      router.push({ name: 'create-product' });
       console.log('Crear un nuevo ítem');
-    };
+    }
 
     const editItem = (item: string) => {
       // Lógica para editar el ítem
+      router.push({ name: 'edit-product' });
       console.log('Editar:', item);
     }
 
     const deleteItem = (item: string) => {
       // Lógica para eliminar el ítem
+      router.push({ name: 'delete-product' });
       console.log('Eliminar:', item);
     }
 

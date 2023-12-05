@@ -12,7 +12,7 @@
               <v-toolbar border density="compact">
                 <v-app-bar-nav-icon></v-app-bar-nav-icon>
   
-                <v-toolbar-title>Categories list</v-toolbar-title>
+                <v-toolbar-title>Create Product</v-toolbar-title>
   
                 <v-spacer></v-spacer>
   
@@ -20,7 +20,10 @@
                   <v-icon>mdi-magnify</v-icon>
                 </v-btn>
   
-                <v-btn >New Item</v-btn>
+                <v-btn @click="goBack">
+                    <v-icon left>mdi-arrow-left</v-icon>
+                    Go back
+                </v-btn>
               </v-toolbar>
                 <v-container fluid>
                   
@@ -30,8 +33,16 @@
         </v-row>
       </v-container>
     </v-main>
-  </template>
-  
-  <script setup lang="ts">
-  
-  </script>
+</template>
+
+<script setup lang="ts">
+
+    import { useRouter } from 'vue-router'
+
+    const router = useRouter()
+
+    const goBack = () => {
+      router.go(-1);
+    }
+
+</script>
