@@ -43,9 +43,9 @@
   import { useRouter } from 'vue-router'
 
   import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
+  import type { IApiGetProductsResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductsResponse';
   import type { IProduct}  from '@app/backoffice/products/domain/interfaces/IProduct';
   import GetProductsListService from '@app/backoffice/products/application/find/GetProductsListService';
-  import type { IApiGetProductsResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductsResponse';
 
   const errorHandling = new ErrorHandlingService();
 
@@ -90,7 +90,7 @@
 
   const editItem = (item: IProduct) => {
     // Lógica para editar el ítem
-    router.push({ name: 'edit-product', params: { id: item.id } });
+    router.push({ name: 'edit-product', params: { productId: item.id } });
   }
 
   const deleteItem = (item: string) => {

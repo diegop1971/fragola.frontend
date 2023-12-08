@@ -40,7 +40,7 @@
   import { useRouter, useRoute  } from 'vue-router'
   import { onMounted } from 'vue'
 
-  import GetProductService from '@app/backoffice/products/application/GetProductService'
+  import GetProductService from '@app/backoffice/products/application/find/GetProductService'
   import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
 
   const errorHandling = new ErrorHandlingService();
@@ -57,14 +57,14 @@
   });
 
   const getProductData = async (): Promise<void> => {
-      try {
-          const id: string = route.params.id;
-          const getProductsListService = new GetProductService();
-          const response = await getProductsListService.getApiResponse(id); 
-          console.log(response.productList.name);
-      } catch(error) {
-          console.log(error);
-      }
+    try {
+        const productId: string[] | string  = route.params.productId;
+        const getProductsListService = new GetProductService();
+        const response = await getProductsListService.getApiResponse(productId); 
+        console.log(response.productList.name);
+    } catch(error) {
+        console.log(error);
+    }
   }
 
   const goBack = () => {
