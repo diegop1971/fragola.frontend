@@ -16,6 +16,8 @@ import CreateProductComponent from '@/components/backoffice/products/CreateProdu
 import EditProductComponent from '@/components/backoffice/products/EditProductComponent.vue'
 import StockComponent from '@/components/backoffice/stock/StockComponent.vue'
 
+import TestComponent from '@/components/backoffice/products/TestComponent.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -77,6 +79,11 @@ const router = createRouter({
           path: 'stock',
           name: 'stock',
           component: StockComponent,
+        },
+        {
+          path: 'test',
+          name: 'test',
+          component: TestComponent,
         },
       ]
     },

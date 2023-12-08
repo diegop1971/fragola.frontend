@@ -63,6 +63,7 @@
         ['Categories', 'mdi-chevron-double-right', 'categories'],
         ['Products', 'mdi-chevron-double-right', 'products'],
         ['Stock', 'mdi-chevron-double-right', 'stock'],
+        ['Test', 'mdi-chevron-double-right', 'test'],
 
       ],
       cruds: [
