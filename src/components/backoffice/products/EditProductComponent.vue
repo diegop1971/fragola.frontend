@@ -37,12 +37,38 @@
 
 <script setup lang="ts">
 
-    import { useRouter } from 'vue-router'
+  import { useRouter, useRoute  } from 'vue-router'
+  import { onMounted } from 'vue'
 
-    const router = useRouter()
+  import GetProductService from '@app/backoffice/products/application/GetProductService'
+  import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
 
-    const goBack = () => {
-      router.go(-1);
+  const errorHandling = new ErrorHandlingService();
+
+  const router = useRouter();
+  const route = useRoute();
+
+  onMounted(async () => {
+    try {
+        await getProductData();
+    } catch (error: any) {
+      errorHandling.handleApiError(error);
     }
+  });
+
+  const getProductData = async (): Promise<void> => {
+      try {
+          const id: string = route.params.id;
+          const getProductsListService = new GetProductService();
+          const response = await getProductsListService.getApiResponse(id); 
+          console.log(response.productList.name);
+      } catch(error) {
+          console.log(error);
+      }
+  }
+
+  const goBack = () => {
+    router.go(-1);
+  }
 
 </script>

@@ -44,11 +44,12 @@
 
   import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
   import type { IProduct}  from '@app/backoffice/products/domain/interfaces/IProduct';
-  import GetProductListService from '@app/backoffice/products/application/find/GetProductsListService';
+  import GetProductsListService from '@app/backoffice/products/application/find/GetProductsListService';
+  import type { IApiGetProductsResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductsResponse';
 
   const errorHandling = new ErrorHandlingService();
 
-  let products = ref<IProduct[]>([]);
+  const products = ref();
 
   onMounted(async () => {
     try {
@@ -61,48 +62,41 @@
   const router = useRouter()
 
   const getProductData = async (): Promise<void> => {
-        try {
-            const getProductsListService = new GetProductListService();
-            const response = await getProductsListService.getApiResponse(); 
-            products.value = response;
-        } catch(error) {
-            console.log(error);
-        }
-    }
+      try {
+          const getProductsListService = new GetProductsListService();
+          const response: IApiGetProductsResponse = await getProductsListService.getApiResponse(); 
+          products.value = response.productList;
+      } catch(error) {
+          console.log(error);
+      }
+  }
 
-    const headers = [
-      {title: 'Product', key: 'name' },
-      {title: 'Price', key: 'price' },
-      {title: 'Category', key: 'category.name' },
-      {title: 'Minimun Quantity', key: 'minimum_quantity'},
-      {title: 'Low stock threshold', key: 'low_stock_threshold'},
-      {title: 'Low stock alert', key: 'low_stock_alert'},
-      {title: 'Enabled', key: 'enabled'},
-      {title: 'Actions', key: 'actions', align: 'center' }
-    ];
+  const headers = [
+    {title: 'Product', key: 'name' },
+    {title: 'Price', key: 'price' },
+    {title: 'Category', key: 'category_name' },
+    {title: 'Minimun Quantity', key: 'minimum_quantity'},
+    {title: 'Low stock threshold', key: 'low_stock_threshold'},
+    {title: 'Low stock alert', key: 'low_stock_alert'},
+    {title: 'Enabled', key: 'enabled'},
+    {title: 'Actions', key: 'actions', align: 'center' }
+  ];
 
-    const getColor = (calories: number): string => {
-      if (calories > 100) return 'red';
-      else if (calories > 50) return 'orange';
-      else return 'green';
-    }
+  const createNewProduct = () => {
+    // Lógica para crear un nuevo ítem
+    router.push({ name: 'create-product' });
+    console.log('Crear un nuevo ítem');
+  }
 
-    const createNewProduct = () => {
-      // Lógica para crear un nuevo ítem
-      router.push({ name: 'create-product' });
-      console.log('Crear un nuevo ítem');
-    }
+  const editItem = (item: IProduct) => {
+    // Lógica para editar el ítem
+    router.push({ name: 'edit-product', params: { id: item.id } });
+  }
 
-    const editItem = (item: string) => {
-      // Lógica para editar el ítem
-      router.push({ name: 'edit-product' });
-      console.log('Editar:', item);
-    }
-
-    const deleteItem = (item: string) => {
-      // Lógica para eliminar el ítem
-      router.push({ name: 'delete-product' });
-      console.log('Eliminar:', item);
-    }
+  const deleteItem = (item: string) => {
+    // Lógica para eliminar el ítem
+    router.push({ name: 'delete-product' });
+    console.log('Eliminar:', item);
+  }
 
 </script>

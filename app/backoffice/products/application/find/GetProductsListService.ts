@@ -1,31 +1,41 @@
 
 import axios from 'axios';
-import type { IProduct } from '@app/backoffice/products/domain/interfaces/IProduct';
-import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory';
+
+import type { IApiGetProductsResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductsResponse';
 
 class GetProductListService {
-    private apiResponse: IProduct[] = [];
+
+    private apiProductsResponse: IApiGetProductsResponse = {
+        title: '',
+        productList: {
+                    id: '',
+                    category_id: 0,
+                    category_name: '',
+                    name: '',
+                    description: '',
+                    description_short: '',
+                    price: 0,
+                    minimum_quantity: 0,
+                    low_stock_threshold: 0,
+                    low_stock_alert: 0,
+                    enabled: 0,
+                    created_at: '',
+                    updated_at: '',
+                } 
+    }
 
     constructor() {}
 
-    public async getApiResponse(): Promise<IProduct[]> {
+    public async getApiResponse(): Promise<IApiGetProductsResponse> {
         await this.getProductList();
-        return this.apiResponse;
+        return this.apiProductsResponse;
     }
 
     private async getProductList(): Promise<void> {
         try {
-            const response = await axios.get<IProduct[]>("http://localhost:8000/api/products/");
-
-            this.apiResponse = response.data.map((product: IProduct) => {
-                const category: ICategory = product.category; // Acceso a la categoría dentro del producto
-
-                return {
-                    ...product,
-                    category // Asigna la categoría al producto en la nueva estructura
-                };
-            });
-            
+            const response = await axios.get<IApiGetProductsResponse>("http://localhost:8000/api/products/");
+            this.apiProductsResponse = response.data;
+            //console.log(this.apiProductsResponse);
         } catch (error) {
             console.error("Error fetching product list:", error);
             throw error;

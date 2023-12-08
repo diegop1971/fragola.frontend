@@ -10,7 +10,7 @@
       "@app/*": ["./app/*"],
     },
     "sourceMap": true,
-    "lib": ["es6", "dom"],
+    "lib": ["es6", "es2017", "dom"],
     "types": ["reflect-metadata"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
