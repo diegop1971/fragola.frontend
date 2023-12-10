@@ -41,57 +41,32 @@
 
   import { ref } from 'vue';
   import { watch } from 'vue';
-  import { useRouter, useRoute  } from 'vue-router'
-  import { onMounted } from 'vue'
+  import { useRouter } from 'vue-router'
 
-  import GetProductService from '@app/backoffice/products/application/find/GetProductService'
-  import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
-
-  import AppetizersComponent from '@/components/backoffice/products/AppetizersComponent.vue';
-  import EntreesComponent from '@/components/backoffice/products/EntreesComponent.vue';
-
-  const errorHandling = new ErrorHandlingService();
+  import GeneralComponent from '@/components/backoffice/products/edit/PartialGeneralProductComponent.vue';
+  import DataComponent from '@/components/backoffice/products/edit/PartialDataProductComponent.vue';
+  import ImageComponent from '@/components/backoffice/products/edit/PartialImageProductComponent.vue';
 
   const router = useRouter();
-  const route = useRoute();
 
   const tab = ref('General');
-  const items = ['General', 'Data'];
-  let selectedTabComponent = AppetizersComponent; // Componente inicial para la pestaña 'Appetizers'
+  const items = ['General', 'Data', 'Image'];
+  let selectedTabComponent = GeneralComponent;
   let tabProps = {};
   
   watch(tab, (newTab) => {
-    // Cambia dinámicamente el componente basado en la pestaña seleccionada
     switch (newTab) {
       case 'General':
-        selectedTabComponent = AppetizersComponent;
+        selectedTabComponent = GeneralComponent;
         break;
       case 'Data':
-        selectedTabComponent = EntreesComponent;
+        selectedTabComponent = DataComponent;
         break;
-      // Agrega casos para otras pestañas si es necesario
+      case 'Image':
+        selectedTabComponent = ImageComponent;
+        break;
     }
   });
-
-  onMounted(async () => {
-    try {
-        await getProductData();
-    } catch (error: any) {
-      errorHandling.handleApiError(error);
-    }
-  });
-
-  const getProductData = async (): Promise<void> => {
-    try {
-        const productId: string[] | string  = route.params.productId;
-        const getProductsListService = new GetProductService();
-        const response = await getProductsListService.getApiResponse(productId); 
-        console.log(response.productList.name);
-    } catch(error) {
-        console.log(error);
-    }
-  }
-
   const goBack = () => {
     router.go(-1);
   }

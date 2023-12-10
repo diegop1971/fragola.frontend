@@ -41,7 +41,6 @@ class GetProductService {
     private async getProductList(id: string[] | string): Promise<void> {
         try {
             const response = await axios.get<IApiGetProductResponse>(`http://localhost:8000/api/products/${id}/edit`);
-            console.log(response);
             this.apiProductResponse = await response.data;            
         } catch (error) {
             console.error("Error fetching product list:", error);

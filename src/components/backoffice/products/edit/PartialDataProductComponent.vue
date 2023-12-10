@@ -3,7 +3,7 @@
       <v-container>
         <v-row justify="center">
           <v-col cols="12">
-            <p>Appetizers Component</p>
+            <p>Data</p>
           </v-col>
         </v-row>
       </v-container>

@@ -11,5 +11,5 @@ export interface IProduct {
     low_stock_alert: number;
     enabled: number;
     created_at: string;
-    updated_at:string;
+    updated_at: string;
 }
