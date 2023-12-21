@@ -1,135 +1,119 @@
 <template>
-    <v-main class="d-flex justify-center">
-      <v-container>
-        <v-row justify="center">
-          <v-col cols="12">
-            <p>General</p>
-            <form>
-              <v-text-field
-                v-model="state.name"
-                :error-messages="v$.name.$errors.map(e => e.$message)"
-                :counter="10"
-                label="Name"
-                required
-                @input="v$.name.$touch"
-                @blur="v$.name.$touch"
-              ></v-text-field>
+  <v-main class="d-flex justify-center">
+    <v-container>
+      <v-row justify="center">
+        <v-col cols="12">
 
-              <v-text-field
-                v-model="state.email"
-                :error-messages="v$.email.$errors.map(e => e.$message)"
-                label="E-mail"
-                required
-                @input="v$.email.$touch"
-                @blur="v$.email.$touch"
-              ></v-text-field>
+          <v-form ref="form" :model-value="valid" lazy-validation>
+            <v-text-field
+              v-model="reactiveProductData.name" 
+              :rules="nameRules"
+              label="Name">
+            </v-text-field>
+            
+            <v-text-field 
+              v-model="reactiveProductData.price" 
+              label="Price">
+            </v-text-field>
+            
+            <v-select
+              :label="reactiveProductData.category_name"
+              :items="categoryNamesWithIds"
+              item-value="id"
+              item-title="name"
+              @update:modelValue="onCategoryChange"
+            ></v-select>
 
-              <v-select
-                v-model="state.select"
-                :items="items"
-                :error-messages="v$.select.$errors.map(e => e.$message)"
-                label="Item"
-                required
-                @change="v$.select.$touch"
-                @blur="v$.select.$touch"
-              ></v-select>
-
-              <v-checkbox
-                v-model="state.checkbox"
-                :error-messages="v$.checkbox.$errors.map(e => e.$message)"
-                label="Do you agree?"
-                required
-                @change="v$.checkbox.$touch"
-                @blur="v$.checkbox.$touch"
-              ></v-checkbox>
-
-              <v-btn
-                class="me-4"
-                @click="v$.$validate"
-              >
-                submit
-              </v-btn>
-              <v-btn @click="clear">
-                clear
-              </v-btn>
-            </form>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
+            <v-btn :disabled="!valid" @click="validate">Enviar</v-btn>
+          </v-form>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-main>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 
-  import { onMounted } from 'vue'
-  import { useRoute  } from 'vue-router'
-  import { reactive } from 'vue'
-  import { useVuelidate } from '@vuelidate/core'
-  import { email, required } from '@vuelidate/validators'
+import GetProductService from '@app/backoffice/products/application/find/GetProductService'
+import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
+import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory'
 
-  import GetProductService from '@app/backoffice/products/application/find/GetProductService'
-  import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
+interface IProductData {
+  id: string
+  name: string
+  price: number
+  category_id: number
+  category_name: string
+}
 
-  interface InitialState {
-    name: string;
-    email: string;
-    select: null | string;
-    items: string[];
-    checkbox: null | string;
+const route = useRoute()
+
+const errorHandling = new ErrorHandlingService()
+
+const reactiveProductData = ref<IProductData>({
+  id: '',
+  name: '',
+  price: 0,
+  category_id: 0,
+  category_name: '',
+})
+
+const categoryNamesWithIds = ref<ICategory[]>([])
+const selectedCategory = ref<number>(0)
+
+const form = ref(null)
+
+let valid: boolean = true
+
+const nameRules = [
+  (v) => !!v || "El nombre es requerido",
+  (v) => (v && v.length <= 50) || "El nombre debe ser menor a 50 caracteres",
+];
+
+const priceRules = [
+  (v: number) => !!v || 'El precio es requerido',
+  (v: number) => (!isNaN(v) && v >= 0) || 'El precio debe ser un número mayor o igual a 0'
+];
+
+onMounted(async () => {
+  try {
+    await getData()
+  } catch (error: any) {
+    errorHandling.handleApiError(error)
   }
+})
 
-  const route = useRoute();
-  const errorHandling = new ErrorHandlingService()
-  
-  const initialState: InitialState = {
-    name: '',
-    email: '',
-    select: null,
-    items: [],
-    checkbox: null,
+const getData = async (): Promise<void> => {
+  try {
+    const productId: string[] | string = route.params.productId
+    const getProductsListService = new GetProductService()
+    const response = await getProductsListService.getApiResponse(productId)
+    const { productList, categories } = response
+    const { id, name, price, category_name, category_id } = productList
+
+    reactiveProductData.value = { id, name, price, category_name, category_id }
+    selectedCategory.value = category_id
+    categoryNamesWithIds.value = categories.map((category: ICategory) => ({
+      id: category.id,
+      name: category.name,
+    }))
+  } catch (error) {
+    errorHandling.handleApiError(error)
   }
+}
 
-  const state: InitialState = reactive({
-    ...initialState,
-  })
+const onCategoryChange = (newSelectedCategory: number) => {
+  selectedCategory.value = newSelectedCategory
+}
 
-  const items = ['Item 1', 'Item 2', 'Item 3', 'Item 4']
-
-  const rules = {
-    name: { required },
-    email: { required, email },
-    select: { required },
-    items: { required },
-    checkbox: { required },
+const validate = () => {
+  if (form.value.validate()) {
+    alert("Formulario enviado!");
+    const { id, name, price } = reactiveProductData.value
+    console.log(id, name, price, selectedCategory.value)
+    // Aquí podrías realizar validaciones o enviar los datos a través de una función de guardado
   }
-
-  const v$ = useVuelidate(rules, state)
-
-  function clear() {
-    v$.value.$reset()
-
-    for (const [key, value] of Object.entries(initialState)) {
-      state[key] = value
-    }
-  }
-
-  onMounted(async () => {
-    try {
-        await getProductData();
-    } catch (error: any) {
-      errorHandling.handleApiError(error);
-    }
-  });
-
-  const getProductData = async (): Promise<void> => {
-    try {
-        const productId: string[] | string  = route.params.productId;
-        const getProductsListService = new GetProductService();
-        const response = await getProductsListService.getApiResponse(productId); 
-        console.log(response.productList.name);
-    } catch(error) {
-        console.log(error);
-    }
-  }
-
+}
 </script>

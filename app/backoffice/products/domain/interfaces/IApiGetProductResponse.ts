@@ -3,7 +3,7 @@ import type { ICategory } from './ICategory';
 
 export interface IApiGetProductResponse {
     title: string;
-    categories: ICategory;
+    categories: ICategory[];
     productList: IProductList;
 }
 

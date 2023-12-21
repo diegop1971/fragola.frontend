@@ -6,13 +6,7 @@ class GetProductService {
 
     private apiProductResponse: IApiGetProductResponse = {
         title: '',
-        categories: {
-                    id: 0,
-                    name: '',
-                    enabled: 0,
-                    created_at: '',
-                    updated_at: '',
-                    },
+        categories: [],
         productList: {
                     id: '',
                     category_id: 0,
@@ -34,7 +28,6 @@ class GetProductService {
 
     public async getApiResponse(id: string[] | string): Promise<IApiGetProductResponse> {
         await this.getProductList(id);
-
         return this.apiProductResponse;
     }
 
