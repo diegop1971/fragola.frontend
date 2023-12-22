@@ -83,18 +83,15 @@
   ];
 
   const createNewProduct = () => {
-    // Lógica para crear un nuevo ítem
     router.push({ name: 'create-product' });
     console.log('Crear un nuevo ítem');
   }
 
   const editItem = (item: IProduct) => {
-    // Lógica para editar el ítem
     router.push({ name: 'edit-product', params: { productId: item.id } });
   }
 
   const deleteItem = (item: string) => {
-    // Lógica para eliminar el ítem
     router.push({ name: 'delete-product' });
     console.log('Eliminar:', item);
   }

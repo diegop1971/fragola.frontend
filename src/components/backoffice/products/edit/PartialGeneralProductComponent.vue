@@ -27,7 +27,7 @@
               @update:modelValue="onCategoryChange"
             ></v-select>
 
-            <v-btn color="success" class="mt-4" block @click="validate"> Validate </v-btn>
+            <v-btn color="success" class="mt-4" block @click="validate"> Save </v-btn>
           </v-form>
         </v-col>
       </v-row>
@@ -42,26 +42,28 @@ import { useRoute } from 'vue-router'
 import GetProductService from '@app/backoffice/products/application/find/GetProductService'
 import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
 import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory'
-
-interface IProductData {
-  id: string
-  name: string
-  price: number
-  category_id: number
-  category_name: string
-}
+import UpdateProductService from '@app/backoffice/products/application/update/UpdateProductService'
+import type { IProductEdit } from '@app/backoffice/products/domain/interfaces/IProductEdit'
 
 const route = useRoute()
 
 const errorHandling = new ErrorHandlingService()
 
-const reactiveProductData = ref<IProductData>({
+const reactiveProductData = ref<IProductEdit>({
   id: '',
   name: '',
   price: 0,
   category_id: 0,
-  category_name: ''
+  category_name: '',
+  description: '',
+  description_short: '',
+  minimum_quantity: 0,
+  low_stock_threshold: 0,
+  low_stock_alert: 0,
+  enabled: 0
 })
+
+const form = ref<HTMLFormElement | null>(null)
 
 const categoryNamesWithIds = ref<ICategory[]>([])
 const selectedCategory = ref<number>(0)
@@ -90,9 +92,32 @@ const getData = async (): Promise<void> => {
     const getProductsListService = new GetProductService()
     const response = await getProductsListService.getApiResponse(productId)
     const { productList, categories } = response
-    const { id, name, price, category_name, category_id } = productList
-
-    reactiveProductData.value = { id, name, price, category_name, category_id }
+    const {
+      id,
+      name,
+      price,
+      category_id,
+      category_name,
+      description,
+      description_short,
+      minimum_quantity,
+      low_stock_threshold,
+      low_stock_alert,
+      enabled
+    } = productList
+    reactiveProductData.value = {
+      id,
+      name,
+      price,
+      category_id,
+      category_name,
+      description,
+      description_short,
+      minimum_quantity,
+      low_stock_threshold,
+      low_stock_alert,
+      enabled
+    }
     selectedCategory.value = category_id
     categoryNamesWithIds.value = categories.map((category: ICategory) => ({
       id: category.id,
@@ -107,10 +132,36 @@ const onCategoryChange = (newSelectedCategory: number) => {
   selectedCategory.value = newSelectedCategory
 }
 
-const form = ref<any>(null)
-
 async function validate() {
-  const { valid } = await form.value.validate()
-  if (valid) alert('Form is valid')
+  if (form.value !== null) {
+    const { valid } = await form.value.validate()
+    if (valid) {
+      const {
+        id,
+        name,
+        price,
+        description,
+        description_short,
+        minimum_quantity,
+        low_stock_threshold,
+        low_stock_alert,
+        enabled
+      } = reactiveProductData.value
+
+      const updateProductService = new UpdateProductService(
+        id,
+        name,
+        price,
+        description,
+        description_short,
+        selectedCategory.value,
+        minimum_quantity,
+        low_stock_threshold,
+        low_stock_alert,
+        enabled
+      )
+      updateProductService.update()
+    }
+  }
 }
 </script>
