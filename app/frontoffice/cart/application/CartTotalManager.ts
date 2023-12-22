@@ -1,4 +1,4 @@
-import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem';
+import type { ISessionCartItem}  from '@app/frontoffice/cart/domain/interfaces/ISessionCartItem';
 
 class TotalGeneralService
 {
@@ -10,7 +10,7 @@ class TotalGeneralService
     }
 
     public total = async () => {
-        const total = this.sessionCartItems.value.reduce((total, item) => total + item.subtotal, 0);
+        const total = this.sessionCartItems.reduce((total, item) => total + item.subtotal, 0);
         console.log(total);
     return total;
     }

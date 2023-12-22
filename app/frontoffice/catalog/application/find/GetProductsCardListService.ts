@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { IApiResponse}  from '@/interfaces/IApiResponse';
+import type { IApiResponse}  from '@app/frontoffice/catalog/domain/interfaces/IApiResponse';
 
 class GetProductCardListService 
 {

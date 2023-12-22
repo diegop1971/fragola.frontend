@@ -4,7 +4,7 @@ import container from '@app/shared/infrastructure/inversifyServiceProvider/inver
 import TYPES from '@app/shared/infrastructure/inversifyServiceProvider/types';
 import type { ICartRepository } from '@app/frontoffice/cart/domain/interfaces/ICartRepository';
 
-import type { ISessionCartItemResponse}  from '@/interfaces/ISessionCartItemResponse';
+import type { ISessionCartItemResponse}  from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse';
 
 
 @injectable()

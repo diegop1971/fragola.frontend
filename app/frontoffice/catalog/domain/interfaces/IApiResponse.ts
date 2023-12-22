@@ -1,4 +1,4 @@
-import type { IProduct } from './IProduct';
+import type { IViewProduct } from '@app/frontoffice/catalog/domain/interfaces/IViewProduct';
 
 export interface IApiResponse {
     title: string;
@@ -6,6 +6,6 @@ export interface IApiResponse {
     homeProducts: ProductData[];
 }
 
-export interface ProductData extends IProduct {
+export interface ProductData extends IViewProduct {
   // agregar propiedades específicas de ProductData, si las hay.
 }

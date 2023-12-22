@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { Ref } from 'vue'
-import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem'; 
+import type { ISessionCartItem}  from '@app/frontoffice/cart/domain/interfaces/ISessionCartItem'; 
 
 export const useCartStore = defineStore('cartStore', () => {
 

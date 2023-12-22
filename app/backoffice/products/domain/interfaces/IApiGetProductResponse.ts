@@ -1,4 +1,4 @@
-import type { IProduct } from './IProduct';
+import type { IViewProduct } from './IViewProduct';
 import type { ICategory } from './ICategory';
 
 export interface IApiGetProductResponse {
@@ -7,6 +7,6 @@ export interface IApiGetProductResponse {
     productList: IProductList;
 }
 
-export interface IProductList extends IProduct {
+export interface IProductList extends IViewProduct {
   // agregar propiedades específicas de ProductData, si las hay.
 }

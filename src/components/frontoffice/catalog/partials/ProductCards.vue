@@ -72,12 +72,12 @@
     import axios from 'axios';
     import { useCartStore } from '@/stores/cartStore';
 
-    import type { IApiResponse}  from '@/interfaces/IApiResponse';
+    import type { IApiResponse}  from '@app/frontoffice/catalog/domain/interfaces/IApiResponse';
     import GetProductCardListService from '@app/frontoffice/catalog/application/find/GetProductsCardListService';
     import CartProductCreatorService from '@app/frontoffice/cart/application/create/CartProductCreatorService';
     import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
     import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService';
-    import type { ISessionCartItemResponse } from '@/interfaces/ISessionCartItemResponse';
+    import type { ISessionCartItemResponse } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse';
 
     const cartStore = useCartStore();
     const cartTotalItemCount: Ref<ISessionCartItemResponse['cartTotalItemCount']> = ref(0);

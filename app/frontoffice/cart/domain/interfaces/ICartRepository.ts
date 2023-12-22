@@ -1,4 +1,4 @@
-import type { ISessionCartItemResponse}  from '@/interfaces/ISessionCartItemResponse';
+import type { ISessionCartItemResponse}  from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse';
 
 export interface ICartRepository {
 

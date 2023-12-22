@@ -43,13 +43,13 @@ import GetProductService from '@app/backoffice/products/application/find/GetProd
 import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
 import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory'
 import UpdateProductService from '@app/backoffice/products/application/update/UpdateProductService'
-import type { IProductEdit } from '@app/backoffice/products/domain/interfaces/IProductEdit'
+import type { IEditProduct } from '@app/backoffice/products/domain/interfaces/IEditProduct'
 
 const route = useRoute()
 
 const errorHandling = new ErrorHandlingService()
 
-const reactiveProductData = ref<IProductEdit>({
+const reactiveProductData = ref<IEditProduct>({
   id: '',
   name: '',
   price: 0,

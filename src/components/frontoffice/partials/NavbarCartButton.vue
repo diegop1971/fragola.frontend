@@ -65,8 +65,8 @@
     import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService';
     import NumberFormatterService from '@app/shared/application/NumberFormatterService';
     import CartProductRemoverService from '@app/frontoffice/cart/application/delete/CartProductRemoverService';
-    import type { ISessionCartItem}  from '@/interfaces/ISessionCartItem';
-    import type { ISessionCartItemResponse } from '@/interfaces/ISessionCartItemResponse';
+    import type { ISessionCartItem}  from '@app/frontoffice/cart/domain/interfaces/ISessionCartItem';
+    import type { ISessionCartItemResponse } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse';
 
     const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([]);
     const cartStore = useCartStore();
