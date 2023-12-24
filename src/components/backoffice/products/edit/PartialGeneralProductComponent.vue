@@ -1,8 +1,8 @@
 <template>
-  <v-main class="d-flex justify-center">
-    <v-container>
-      <v-row justify="center">
-        <v-col cols="12">
+  <v-main class="d-flex justify-center align-center">
+    <v-container fluid>
+      <v-row align="center">
+        <v-col cols="12" sm="8" md="6">
           <v-form ref="form">
             <v-text-field
               v-model="reactiveProductData.name"
@@ -10,9 +10,6 @@
               :rules="nameRules"
               label="Name"
             >
-            </v-text-field>
-
-            <v-text-field v-model="reactiveProductData.price" :rules="priceRules" label="Price">
             </v-text-field>
 
             <v-select
@@ -26,6 +23,18 @@
               required
               @update:modelValue="onCategoryChange"
             ></v-select>
+
+            <v-textarea counter label="Description" :rules="descriptionRules" v-model="reactiveProductData.description"></v-textarea>
+
+            <v-textarea counter label="Short description" :rules="descriptionShortRules" v-model="reactiveProductData.description_short"></v-textarea>
+
+            <v-text-field v-model="reactiveProductData.price" :rules="priceRules" label="Price"></v-text-field>
+
+            <v-checkbox
+              v-model="checkedEnabledProduct"
+              :label="`Product ${checkedEnabledProduct === true ? 'enabled' : 'disabled'}`"
+              @update:model-value="onCheckedEnabledProduct"
+            ></v-checkbox>
 
             <v-btn color="success" class="mt-4" block @click="validate"> Save </v-btn>
           </v-form>
@@ -60,17 +69,28 @@ const reactiveProductData = ref<IEditProduct>({
   minimum_quantity: 0,
   low_stock_threshold: 0,
   low_stock_alert: 0,
-  enabled: 0
+  enabled: 1
 })
 
 const form = ref<HTMLFormElement | null>(null)
-
 const categoryNamesWithIds = ref<ICategory[]>([])
 const selectedCategory = ref<number>(0)
+const checkedEnabledProduct = ref<boolean>(true)
+let productEnableValue: number = 0
 
 const nameRules = [
   (v: string) => !!v || 'El nombre es requerido',
   (v: string) => (v && v.length <= 50) || 'El nombre debe ser menor a 50 caracteres'
+]
+
+const descriptionShortRules = [
+  (v: string) => !!v || 'La descripcion corta del producto es requerida',
+  (v: string) => (v && v.length <= 150) || 'La descripcion debe ser menor a 250 caracteres'
+]
+
+const descriptionRules = [
+  (v: string) => !!v || 'La descripcion del producto es requerida',
+  (v: string) => (v && v.length <= 250) || 'La descripcion debe ser menor a 250 caracteres'
 ]
 
 const priceRules = [
@@ -92,6 +112,7 @@ const getData = async (): Promise<void> => {
     const getProductsListService = new GetProductService()
     const response = await getProductsListService.getApiResponse(productId)
     const { productList, categories } = response
+
     const {
       id,
       name,
@@ -105,6 +126,7 @@ const getData = async (): Promise<void> => {
       low_stock_alert,
       enabled
     } = productList
+
     reactiveProductData.value = {
       id,
       name,
@@ -118,7 +140,11 @@ const getData = async (): Promise<void> => {
       low_stock_alert,
       enabled
     }
+
     selectedCategory.value = category_id
+
+    checkedEnabledProduct.value = enabled === 1 ? true : false
+
     categoryNamesWithIds.value = categories.map((category: ICategory) => ({
       id: category.id,
       name: category.name
@@ -132,9 +158,16 @@ const onCategoryChange = (newSelectedCategory: number) => {
   selectedCategory.value = newSelectedCategory
 }
 
+const onCheckedEnabledProduct = (newProductEnableValue: boolean) => {
+  productEnableValue = newProductEnableValue === true ? 1 : 0
+  console.log((reactiveProductData.value.enabled = productEnableValue))
+  //return Boolean(reactiveProductData.value.enabled)
+}
+
 async function validate() {
   if (form.value !== null) {
     const { valid } = await form.value.validate()
+
     if (valid) {
       const {
         id,
@@ -144,8 +177,7 @@ async function validate() {
         description_short,
         minimum_quantity,
         low_stock_threshold,
-        low_stock_alert,
-        enabled
+        low_stock_alert
       } = reactiveProductData.value
 
       const updateProductService = new UpdateProductService(
@@ -158,10 +190,32 @@ async function validate() {
         minimum_quantity,
         low_stock_threshold,
         low_stock_alert,
-        enabled
+        productEnableValue
       )
       updateProductService.update()
     }
   }
 }
 </script>
+
+<style>
+/* Estilos específicos del formulario */
+.form {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dividir en dos columnas */
+  grid-gap: 10px; /* Espacio entre columnas */
+  max-width: 600px; /* Ancho máximo del formulario */
+  margin: 0 auto; /* Centrar el formulario */
+}
+.form label {
+  display: block;
+  margin-bottom: 5px;
+}
+.form input,
+.form select,
+.form textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+</style>
