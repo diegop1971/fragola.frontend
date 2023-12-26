@@ -19,6 +19,9 @@
             </v-toolbar>
             <v-container fluid>
               <v-data-table :headers="headers" :items="products">
+                <template v-slot:item.low_stock_alert="{ item }">
+                  <td>{{ item.low_stock_alert ? 'yes' : 'no' }}</td>
+                </template>
                 <template v-slot:item.enabled="{ item }">
                   <td>{{ item.enabled ? 'yes' : 'no' }}</td>
                 </template>
@@ -76,10 +79,10 @@ const headers = [
   { title: 'Product', key: 'name' },
   { title: 'Price', key: 'price' },
   { title: 'Category', key: 'category_name' },
+  { title: 'Enabled', key: 'enabled' },
+  { title: 'Low stock alert', key: 'low_stock_alert' },
   { title: 'Minimun Quantity', key: 'minimum_quantity' },
   { title: 'Low stock threshold', key: 'low_stock_threshold' },
-  { title: 'Low stock alert', key: 'low_stock_alert' },
-  { title: 'Enabled', key: 'enabled' },
   { title: 'Actions', key: 'actions', align: 'center' }
 ]
 

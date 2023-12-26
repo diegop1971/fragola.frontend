@@ -1,42 +1,110 @@
 <template>
-  <v-main class="d-flex justify-center align-center">
-    <v-container fluid>
-      <v-row align="center">
-        <v-col cols="12" sm="8" md="6">
+  <v-main class="d-flex align-center">
+    <v-container fluid text-left>
+      <v-row align-start>
+        <v-col cols="12" sm="8" md="6" xl="9">
           <v-form ref="form">
-            <v-text-field
-              v-model="reactiveProductData.name"
-              :counter="10"
-              :rules="nameRules"
-              label="Name"
-            >
-            </v-text-field>
+            <v-card class="mx-auto">
+              <template v-slot:title> Datos generales </template>
 
-            <v-select
-              v-model="selectedCategory"
-              label="Categoria"
-              :items="categoryNamesWithIds"
-              item-value="id"
-              item-title="name"
-              :rules="[(v) => !!v || 'Item is required']"
-              :model="reactiveProductData.category_name"
-              required
-              @update:modelValue="onCategoryChange"
-            ></v-select>
+              <v-card-text>
+                <v-text-field
+                  v-model="reactiveProductData.name"
+                  :counter="10"
+                  :rules="nameRules"
+                  label="Name"
+                  variant="outlined"
+                >
+                </v-text-field>
 
-            <v-textarea counter label="Description" :rules="descriptionRules" v-model="reactiveProductData.description"></v-textarea>
+                <v-select
+                  v-model="selectedCategory"
+                  label="Categoria"
+                  :items="categoryNamesWithIds"
+                  item-value="id"
+                  item-title="name"
+                  :rules="[(v) => !!v || 'Item is required']"
+                  :model="reactiveProductData.category_name"
+                  required
+                  @update:modelValue="onCategoryChange"
+                  variant="outlined"
+                ></v-select>
 
-            <v-textarea counter label="Short description" :rules="descriptionShortRules" v-model="reactiveProductData.description_short"></v-textarea>
+                <v-textarea
+                  counter
+                  label="Description"
+                  :rules="descriptionRules"
+                  v-model="reactiveProductData.description"
+                  variant="outlined"
+                ></v-textarea>
 
-            <v-text-field v-model="reactiveProductData.price" :rules="priceRules" label="Price"></v-text-field>
+                <v-textarea
+                  counter
+                  label="Short description"
+                  :rules="descriptionShortRules"
+                  v-model="reactiveProductData.description_short"
+                  variant="outlined"
+                ></v-textarea>
+              </v-card-text>
+            </v-card>
 
-            <v-checkbox
-              v-model="checkedEnabledProduct"
-              :label="`Product ${checkedEnabledProduct === true ? 'enabled' : 'disabled'}`"
-              @update:model-value="onCheckedEnabledProduct"
-            ></v-checkbox>
+            <v-card class="mx-auto">
+              <template v-slot:title> Estado del producto </template>
+              <v-card-text>
+                <v-checkbox
+                  v-model="checkedEnabledProduct"
+                  :label="`Product enabled: ${checkedEnabledProduct === true ? 'yes' : 'no'}`"
+                  @update:model-value="onCheckedEnabledProduct"
+                ></v-checkbox>
+              </v-card-text>
+            </v-card>
 
-            <v-btn color="success" class="mt-4" block @click="validate"> Save </v-btn>
+            <v-card class="mx-auto">
+              <template v-slot:title> Precio </template>
+              <v-card-text>
+                <v-text-field
+                  v-model="reactiveProductData.price"
+                  :rules="priceRules"
+                  label="Price"
+                  variant="outlined"
+                ></v-text-field>
+              </v-card-text>
+            </v-card>
+
+            <v-card class="mx-auto">
+              <template v-slot:title> Control de stock </template>
+
+              <v-card-text>
+                <v-switch
+                  v-model="lowStockAlertSwitchValue"
+                  hide-details
+                  :label="`Low Stock Alert: ${lowStockAlertSwitchValue == true ? 'enabled' : 'disabled'}`"
+                  @update:model-value="onSwitchedLowStockAlert"
+                ></v-switch>
+
+                <v-text-field
+                  v-model="reactiveProductData.minimum_quantity"
+                  :rules="minimumQuantityRules"
+                  label="Minimum Quantity"
+                  variant="outlined"
+                ></v-text-field>
+
+                <v-text-field
+                  v-model="reactiveProductData.low_stock_threshold"
+                  :rules="lowStockThresholdRules"
+                  label="Low stock threshold"
+                  variant="outlined"
+                ></v-text-field>
+              </v-card-text>
+            </v-card>
+
+            <v-card class="mx-auto">
+              <template v-slot:title> Otros </template>
+
+              <v-card-text> This is content </v-card-text>
+            </v-card>
+
+            <v-btn color="success" class="mt-4" block @click="save"> Save </v-btn>
           </v-form>
         </v-col>
       </v-row>
@@ -77,6 +145,7 @@ const categoryNamesWithIds = ref<ICategory[]>([])
 const selectedCategory = ref<number>(0)
 const checkedEnabledProduct = ref<boolean>(true)
 let productEnableValue: number = 0
+let lowStockAlertSwitchValue = ref<boolean>(false)
 
 const nameRules = [
   (v: string) => !!v || 'El nombre es requerido',
@@ -96,6 +165,16 @@ const descriptionRules = [
 const priceRules = [
   (v: number) => !!v || 'El precio es requerido',
   (v: number) => (!isNaN(v) && v >= 0) || 'El precio debe ser un número mayor o igual a 0'
+]
+
+const minimumQuantityRules = [
+  (v: number) => !!v || 'Cantidad mínima es requerida',
+  (v: number) => (!isNaN(v) && v >= 1) || 'La cantidad mínima debe ser un número mayor o igual a 1'
+]
+
+const lowStockThresholdRules = [
+  (v: number) => !!v || 'Este campo es obligatorio',
+  (v: number) => (!isNaN(v) && v >= reactiveProductData.value.minimum_quantity) || 'Debe ser un número mayor o igual a cantidad minima'
 ]
 
 onMounted(async () => {
@@ -145,6 +224,7 @@ const getData = async (): Promise<void> => {
 
     checkedEnabledProduct.value = enabled === 1 ? true : false
 
+    lowStockAlertSwitchValue.value = low_stock_alert === 1 ? true : false
     categoryNamesWithIds.value = categories.map((category: ICategory) => ({
       id: category.id,
       name: category.name
@@ -160,11 +240,15 @@ const onCategoryChange = (newSelectedCategory: number) => {
 
 const onCheckedEnabledProduct = (newProductEnableValue: boolean) => {
   productEnableValue = newProductEnableValue === true ? 1 : 0
-  console.log((reactiveProductData.value.enabled = productEnableValue))
-  //return Boolean(reactiveProductData.value.enabled)
+  reactiveProductData.value.enabled = productEnableValue
 }
 
-async function validate() {
+const onSwitchedLowStockAlert = (newValue: any) => {
+  lowStockAlertSwitchValue.value = newValue
+  reactiveProductData.value.low_stock_alert = newValue == true ? 1 : 0
+}
+
+async function save() {
   if (form.value !== null) {
     const { valid } = await form.value.validate()
 
@@ -177,7 +261,6 @@ async function validate() {
         description_short,
         minimum_quantity,
         low_stock_threshold,
-        low_stock_alert
       } = reactiveProductData.value
 
       const updateProductService = new UpdateProductService(
@@ -189,7 +272,7 @@ async function validate() {
         selectedCategory.value,
         minimum_quantity,
         low_stock_threshold,
-        low_stock_alert,
+        reactiveProductData.value.low_stock_alert,
         productEnableValue
       )
       updateProductService.update()
@@ -197,25 +280,3 @@ async function validate() {
   }
 }
 </script>
-
-<style>
-/* Estilos específicos del formulario */
-.form {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Dividir en dos columnas */
-  grid-gap: 10px; /* Espacio entre columnas */
-  max-width: 600px; /* Ancho máximo del formulario */
-  margin: 0 auto; /* Centrar el formulario */
-}
-.form label {
-  display: block;
-  margin-bottom: 5px;
-}
-.form input,
-.form select,
-.form textarea {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-}
-</style>

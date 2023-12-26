@@ -3,7 +3,7 @@
     <v-container>
       <v-row justify="center">
         <v-col cols="12">
-          <v-card color="grey-lighten-4" flat height="1000px" rounded="0">
+          <v-card color="grey-lighten-4" flat height="auto" rounded="0">
             <v-toolbar border density="compact">
               <v-app-bar-nav-icon></v-app-bar-nav-icon>
               <v-toolbar-title>Edit Product</v-toolbar-title>
