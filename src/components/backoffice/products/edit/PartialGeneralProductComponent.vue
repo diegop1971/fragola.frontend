@@ -97,13 +97,6 @@
                 ></v-text-field>
               </v-card-text>
             </v-card>
-
-            <v-card class="mx-auto">
-              <template v-slot:title> Otros </template>
-
-              <v-card-text> This is content </v-card-text>
-            </v-card>
-
             <v-btn color="success" class="mt-4" block @click="save"> Save </v-btn>
           </v-form>
         </v-col>
@@ -173,8 +166,8 @@ const minimumQuantityRules = [
 ]
 
 const lowStockThresholdRules = [
-  (v: number) => !!v || 'Este campo es obligatorio',
-  (v: number) => (!isNaN(v) && v >= reactiveProductData.value.minimum_quantity) || 'Debe ser un número mayor o igual a cantidad minima'
+  //(v: number) => !!v || 'Este campo es obligatorio',
+  //(v: number) => (!isNaN(v) && v >= reactiveProductData.value.minimum_quantity) || 'Debe ser un número mayor o igual a cantidad minima'
 ]
 
 onMounted(async () => {
