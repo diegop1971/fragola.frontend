@@ -166,8 +166,8 @@ const minimumQuantityRules = [
 ]
 
 const lowStockThresholdRules = [
-  //(v: number) => !!v || 'Este campo es obligatorio',
-  //(v: number) => (!isNaN(v) && v >= reactiveProductData.value.minimum_quantity) || 'Debe ser un número mayor o igual a cantidad minima'
+  (v: number) => !!v || 'Este campo es obligatorio',
+  (v: number) => (!isNaN(v) && v >= reactiveProductData.value.minimum_quantity) || 'Debe ser un número mayor o igual a cantidad minima'
 ]
 
 onMounted(async () => {
