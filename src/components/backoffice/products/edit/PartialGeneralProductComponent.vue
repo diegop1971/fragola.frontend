@@ -78,7 +78,9 @@
                 <v-switch
                   v-model="lowStockAlertSwitchValue"
                   hide-details
-                  :label="`Low Stock Alert: ${lowStockAlertSwitchValue == true ? 'enabled' : 'disabled'}`"
+                  :label="`Low Stock Alert: ${
+                    lowStockAlertSwitchValue == true ? 'enabled' : 'disabled'
+                  }`"
                   @update:model-value="onSwitchedLowStockAlert"
                 ></v-switch>
 
@@ -99,6 +101,12 @@
             </v-card>
             <v-btn color="success" class="mt-4" block @click="save"> Save </v-btn>
           </v-form>
+          <v-snackbar v-model="snackbar" multi-line>
+            {{ updateResponse.data.message }}
+            <template v-slot:actions>
+              <v-btn color="red" variant="text" @click="snackbar = false"> Close </v-btn>
+            </template>
+          </v-snackbar>
         </v-col>
       </v-row>
     </v-container>
@@ -107,6 +115,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import GetProductService from '@app/backoffice/products/application/find/GetProductService'
@@ -114,6 +123,7 @@ import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
 import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory'
 import UpdateProductService from '@app/backoffice/products/application/update/UpdateProductService'
 import type { IEditProduct } from '@app/backoffice/products/domain/interfaces/IEditProduct'
+import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
 
 const route = useRoute()
 
@@ -139,6 +149,14 @@ const selectedCategory = ref<number>(0)
 const checkedEnabledProduct = ref<boolean>(true)
 let productEnableValue: number = 0
 let lowStockAlertSwitchValue = ref<boolean>(false)
+
+let updateResponse: IUpdateProductResponse = {
+  data: {
+    success: false,
+    message: ''
+  },
+  status: 0
+}
 
 const nameRules = [
   (v: string) => !!v || 'El nombre es requerido',
@@ -167,8 +185,12 @@ const minimumQuantityRules = [
 
 const lowStockThresholdRules = [
   (v: number) => !!v || 'Este campo es obligatorio',
-  (v: number) => (!isNaN(v) && v >= reactiveProductData.value.minimum_quantity) || 'Debe ser un número mayor o igual a cantidad minima'
+  (v: number) =>
+    (!isNaN(v) && v >= reactiveProductData.value.minimum_quantity) ||
+    'Debe ser un número mayor o igual a cantidad minima'
 ]
+
+let snackbar: Ref<boolean> = ref(false)
 
 onMounted(async () => {
   try {
@@ -253,7 +275,7 @@ async function save() {
         description,
         description_short,
         minimum_quantity,
-        low_stock_threshold,
+        low_stock_threshold
       } = reactiveProductData.value
 
       const updateProductService = new UpdateProductService(
@@ -268,8 +290,10 @@ async function save() {
         reactiveProductData.value.low_stock_alert,
         productEnableValue
       )
-      updateProductService.update()
+      updateResponse = await updateProductService.update()
     }
+    snackbar.value = true
+    //snackbar.value = updateResponse.data.success
   }
 }
 </script>

@@ -88,7 +88,6 @@ const headers = [
 
 const createNewProduct = () => {
   router.push({ name: 'create-product' })
-  console.log('Crear un nuevo ítem')
 }
 
 const editItem = (item: IViewProduct) => {

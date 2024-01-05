@@ -35,7 +35,6 @@ class GetProductListService {
         try {
             const response = await axios.get<IApiGetProductsResponse>("http://localhost:8000/api/products/");
             this.apiProductsResponse = response.data;
-            //console.log(this.apiProductsResponse);
         } catch (error) {
             console.error("Error fetching product list:", error);
             throw error;
