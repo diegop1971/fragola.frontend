@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
+import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 
 axios.defaults.withCredentials = true
 
@@ -60,19 +61,9 @@ class UpdateProductService {
       )
       return response
     } catch (error: any) {
-      if (error.response && error.response.data) {
-        const jsonData: IUpdateProductResponse = error.response.data
-        return jsonData
-      } else {
-        const errorResponse: IUpdateProductResponse = {
-          data: {
-            success: false,
-            message: 'No se pudo acceder al servidor'
-          },
-          status: 503
-        }
-        return errorResponse
-      }
+      const apiErrorHandler = new ApiErrorHandler()
+      const errorResponse = apiErrorHandler.handleError(error)
+      return errorResponse
     }
   }
 }

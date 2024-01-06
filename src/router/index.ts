@@ -15,6 +15,7 @@ import dashboardComponent from '@/components/backoffice/dashboard/dashboardCompo
 import CreateProductComponent from '@/components/backoffice/products/CreateProductComponent.vue'
 import EditProductComponent from '@/components/backoffice/products/edit/EditProductComponent.vue'
 import StockComponent from '@/components/backoffice/stock/StockComponent.vue'
+import Error500ComponentVue from '@/components/shared/errors/Error500Component.vue';
 import TestComponent from '@/components/backoffice/products/test/TestComponent.vue';
 
 const router = createRouter({
@@ -85,6 +86,12 @@ const router = createRouter({
           component: StockComponent,
         },
       ]
+    },
+    /* shared */
+    {
+      path: '/error500',
+      name: 'error500',
+      component: Error500ComponentVue
     },
   ]
 })

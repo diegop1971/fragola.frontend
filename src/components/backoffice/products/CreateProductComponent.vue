@@ -232,7 +232,8 @@ const onSwitchedLowStockAlert = (newValue: any) => {
 
 async function save() {
   if (form.value !== null) {
-    const { valid } = await form.value.validate()
+    //const { valid } = await form.value.validate()
+    const valid = true
 
     if (valid) {
       const {
@@ -257,7 +258,7 @@ async function save() {
         reactiveProductData.value.low_stock_alert,
         productEnableValue
       )
-      updateProductService.update()
+      updateProductService.store()
     }
   }
 }

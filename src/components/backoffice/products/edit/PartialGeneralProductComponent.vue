@@ -64,7 +64,6 @@
               <v-card-text>
                 <v-text-field
                   v-model="reactiveProductData.price"
-                  :rules="priceRules"
                   label="Price"
                   variant="outlined"
                 ></v-text-field>
@@ -119,7 +118,7 @@ import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import GetProductService from '@app/backoffice/products/application/find/GetProductService'
-import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
+import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory'
 import UpdateProductService from '@app/backoffice/products/application/update/UpdateProductService'
 import type { IEditProduct } from '@app/backoffice/products/domain/interfaces/IEditProduct'
@@ -127,7 +126,7 @@ import type { IUpdateProductResponse } from '@app/backoffice/products/domain/int
 
 const route = useRoute()
 
-const errorHandling = new ErrorHandlingService()
+const errorRedirectService = new ErrorRedirectService()
 
 const reactiveProductData = ref<IEditProduct>({
   id: '',
@@ -153,9 +152,10 @@ let lowStockAlertSwitchValue = ref<boolean>(false)
 let updateResponse: IUpdateProductResponse = {
   data: {
     success: false,
-    message: ''
-  },
-  status: 0
+    message: '',
+    errors: {},
+    status: 0
+  }
 }
 
 const nameRules = [
@@ -196,7 +196,7 @@ onMounted(async () => {
   try {
     await getData()
   } catch (error: any) {
-    errorHandling.handleApiError(error)
+   // errorHandling.handleApiError(error)
   }
 })
 
@@ -205,6 +205,7 @@ const getData = async (): Promise<void> => {
     const productId: string[] | string = route.params.productId
     const getProductsListService = new GetProductService()
     const response = await getProductsListService.getApiResponse(productId)
+    
     const { productList, categories } = response
 
     const {
@@ -244,8 +245,9 @@ const getData = async (): Promise<void> => {
       id: category.id,
       name: category.name
     }))
-  } catch (error) {
-    errorHandling.handleApiError(error)
+  } catch (error: any) {
+    console.log('errorStatus', error.response.status)
+    errorRedirectService.handleApiError(error.response.status)
   }
 }
 
@@ -266,7 +268,6 @@ const onSwitchedLowStockAlert = (newValue: any) => {
 async function save() {
   if (form.value !== null) {
     const { valid } = await form.value.validate()
-
     if (valid) {
       const {
         id,
@@ -292,8 +293,9 @@ async function save() {
       )
       updateResponse = await updateProductService.update()
     }
+    await errorRedirectService.handleApiError(updateResponse.data.status)
+
     snackbar.value = true
-    //snackbar.value = updateResponse.data.success
   }
 }
 </script>

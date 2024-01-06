@@ -1,4 +1,4 @@
-export interface IUpdateProductResponse {
+export interface IApiErrorResponse {
   data: {
     success: boolean
     message: string
