@@ -65,6 +65,7 @@
                 <v-text-field
                   v-model="reactiveProductData.price"
                   label="Price"
+                  :rules="priceRules"
                   variant="outlined"
                 ></v-text-field>
               </v-card-text>
@@ -123,6 +124,8 @@ import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICate
 import UpdateProductService from '@app/backoffice/products/application/update/UpdateProductService'
 import type { IEditProduct } from '@app/backoffice/products/domain/interfaces/IEditProduct'
 import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
+import type { IApiErrorResponse } from '@app/shared/domain/interfaces/IApiErrorResponse'
+import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 
 const route = useRoute()
 
@@ -193,11 +196,7 @@ const lowStockThresholdRules = [
 let snackbar: Ref<boolean> = ref(false)
 
 onMounted(async () => {
-  try {
-    await getData()
-  } catch (error: any) {
-   // errorHandling.handleApiError(error)
-  }
+  await getData()
 })
 
 const getData = async (): Promise<void> => {
@@ -205,9 +204,7 @@ const getData = async (): Promise<void> => {
     const productId: string[] | string = route.params.productId
     const getProductsListService = new GetProductService()
     const response = await getProductsListService.getApiResponse(productId)
-    
     const { productList, categories } = response
-
     const {
       id,
       name,
@@ -237,17 +234,17 @@ const getData = async (): Promise<void> => {
     }
 
     selectedCategory.value = category_id
-
     checkedEnabledProduct.value = enabled === 1 ? true : false
-
     lowStockAlertSwitchValue.value = low_stock_alert === 1 ? true : false
     categoryNamesWithIds.value = categories.map((category: ICategory) => ({
       id: category.id,
       name: category.name
     }))
   } catch (error: any) {
-    console.log('errorStatus', error.response.status)
-    errorRedirectService.handleApiError(error.response.status)
+    console.log(error)
+    const apiErrorHandler = new ApiErrorHandler()
+    const errorResponse: IApiErrorResponse = apiErrorHandler.handleError(error)
+    errorRedirectService.handleApiError(errorResponse.data.status)
   }
 }
 

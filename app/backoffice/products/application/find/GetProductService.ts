@@ -1,8 +1,6 @@
 import axios from 'axios'
 
 import type { IApiGetProductResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductResponse'
-import type { IApiErrorResponse } from '@app/shared/domain/interfaces/IApiErrorResponse'
-import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 
 class GetProductService {
   private apiProductResponse: IApiGetProductResponse = {
@@ -27,15 +25,12 @@ class GetProductService {
 
   constructor() {}
 
-  public async getApiResponse(id: string[] | string): Promise<IApiGetProductResponse | IApiErrorResponse> {
+  public async getApiResponse(id: string[] | string): Promise<IApiGetProductResponse> {
     try {
       await this.getProductList(id)
       return this.apiProductResponse
     } catch (error: any) {
-      console.error('peperoni:', error.status)
-      const apiErrorHandler = new ApiErrorHandler()
-      const errorResponse: IApiErrorResponse = apiErrorHandler.handleError(error)
-      return errorResponse
+      return error.response.status
     }
   }
 
