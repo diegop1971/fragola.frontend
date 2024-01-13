@@ -6,7 +6,6 @@ class ErrorHandlingService
     constructor(){}
 
     public async handleApiError(error:any) {
-        console.log('eepsss', error)
         if (axios.isAxiosError(error)) {
             if (error.response) {
                 if (error.response.status === 401) {

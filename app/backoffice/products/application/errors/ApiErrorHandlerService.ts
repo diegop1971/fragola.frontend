@@ -16,9 +16,10 @@ class ApiErrorHandlerService {
         data: {
           success: false,
           message: 'No se pudo establecer comunicacion con el servidor',
-          status: 500
+          status: 404
         }
       }
+      console.log('dfadsfadsfdasfasfsdfa');
       return errorResponse
     }
   }

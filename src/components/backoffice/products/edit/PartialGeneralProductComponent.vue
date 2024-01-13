@@ -54,6 +54,7 @@
                 <v-checkbox
                   v-model="checkedEnabledProduct"
                   :label="`Product enabled: ${checkedEnabledProduct === true ? 'yes' : 'no'}`"
+                  :rules="productEnabledRules"
                   @update:model-value="onCheckedEnabledProduct"
                 ></v-checkbox>
               </v-card-text>
@@ -81,19 +82,20 @@
                   :label="`Low Stock Alert: ${
                     lowStockAlertSwitchValue == true ? 'enabled' : 'disabled'
                   }`"
+                  :rules="priceLowAlertEnabled"
                   @update:model-value="onSwitchedLowStockAlert"
                 ></v-switch>
 
                 <v-text-field
                   v-model="reactiveProductData.minimum_quantity"
-                  :rules="minimumQuantityRules"
+
                   label="Minimum Quantity"
                   variant="outlined"
                 ></v-text-field>
 
                 <v-text-field
                   v-model="reactiveProductData.low_stock_threshold"
-                  :rules="lowStockThresholdRules"
+
                   label="Low stock threshold"
                   variant="outlined"
                 ></v-text-field>
@@ -126,6 +128,7 @@ import type { IEditProduct } from '@app/backoffice/products/domain/interfaces/IE
 import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
 import type { IApiErrorResponse } from '@app/shared/domain/interfaces/IApiErrorResponse'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
+import VuetifyValidationProductFormService from '@app/backoffice/products/application/rules/VuetifyValidationProductFormService'
 
 const route = useRoute()
 
@@ -161,37 +164,54 @@ let updateResponse: IUpdateProductResponse = {
   }
 }
 
-const nameRules = [
-  (v: string) => !!v || 'El nombre es requerido',
-  (v: string) => (v && v.length <= 50) || 'El nombre debe ser menor a 50 caracteres'
-]
+const nameRules = [(v: string) => validateProductRuleName(v)]
+const descriptionRules = [(v: string) => validateProductRuleDescription(v)]
+const descriptionShortRules = [(v: string) => validateProductRuleDescriptionShort(v)]
+const productEnabledRules = [(v: boolean) => validateProductRuleProductEnabled(v)]
+const priceRules = [(v: number) => validateNumberGreaterThanOne(v)]
+const priceLowAlertEnabled = [(v: boolean) => validateProductRuleProductLowAlertEnabled(v)]
+const minimumQuantityRules = [(v: number) => validateMinimumQuantityRules(v)]
+const lowStockThresholdRules = [(v: number) => validateLowStockThresholdRules(v)]
 
-const descriptionShortRules = [
-  (v: string) => !!v || 'La descripcion corta del producto es requerida',
-  (v: string) => (v && v.length <= 150) || 'La descripcion debe ser menor a 250 caracteres'
-]
+const validateProductRuleName = async (value: string): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateProductRuleName(value)
+  return validationResult
+}
 
-const descriptionRules = [
-  (v: string) => !!v || 'La descripcion del producto es requerida',
-  (v: string) => (v && v.length <= 250) || 'La descripcion debe ser menor a 250 caracteres'
-]
+const validateProductRuleDescription = async (value: string): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateProductRuleDescription(value)
+  return validationResult
+}
 
-const priceRules = [
-  (v: number) => !!v || 'El precio es requerido',
-  (v: number) => (!isNaN(v) && v >= 0) || 'El precio debe ser un número mayor o igual a 0'
-]
+const validateProductRuleDescriptionShort = async (value: string): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateProductRuleDescriptionShort(value)
+  return validationResult
+}
 
-const minimumQuantityRules = [
-  (v: number) => !!v || 'Cantidad mínima es requerida',
-  (v: number) => (!isNaN(v) && v >= 1) || 'La cantidad mínima debe ser un número mayor o igual a 1'
-]
+const validateProductRuleProductEnabled = async (value: boolean): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateProductRuleProductEnabled(value)
+  return validationResult
+}
 
-const lowStockThresholdRules = [
-  (v: number) => !!v || 'Este campo es obligatorio',
-  (v: number) =>
-    (!isNaN(v) && v >= reactiveProductData.value.minimum_quantity) ||
-    'Debe ser un número mayor o igual a cantidad minima'
-]
+const validateNumberGreaterThanOne = async (value: number): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateNumberGreaterThanOne(value)
+  return validationResult
+}
+
+const validateMinimumQuantityRules = async (minimumQuantity: number): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateMinimumQuantityRules(minimumQuantity, reactiveProductData.value.low_stock_threshold)
+  return validationResult
+}
+
+const validateProductRuleProductLowAlertEnabled = async (value: boolean): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateProductRuleProductLowAlertEnabled(value)
+  return validationResult
+}
+
+const validateLowStockThresholdRules = async (lowStockThreshold: number): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateLowStockThresholdRules(lowStockThreshold, reactiveProductData.value.minimum_quantity)
+  return validationResult
+}
 
 let snackbar: Ref<boolean> = ref(false)
 
@@ -241,7 +261,6 @@ const getData = async (): Promise<void> => {
       name: category.name
     }))
   } catch (error: any) {
-    console.log(error)
     const apiErrorHandler = new ApiErrorHandler()
     const errorResponse: IApiErrorResponse = apiErrorHandler.handleError(error)
     errorRedirectService.handleApiError(errorResponse.data.status)
