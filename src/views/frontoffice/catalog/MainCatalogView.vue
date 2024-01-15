@@ -6,13 +6,11 @@
           <ProductCards />
         </section>
       </v-container>
-      <Footer />
     </template>
-  </MainLayout>  
+  </MainLayout>
 </template>
 
 <script setup lang="ts">
-  import MainLayout from '@/components/frontoffice/layouts/MainLayout.vue'
-  import Footer from '@/components/frontoffice/partials/Footer.vue';
-  import ProductCards from '@/components/frontoffice/catalog/partials/ProductCards.vue';
+import MainLayout from '@/components/frontoffice/layouts/MainLayout.vue'
+import ProductCards from '@/components/frontoffice/catalog/partials/ProductCards.vue'
 </script>
