@@ -23,7 +23,7 @@ import Error500AdminComponent from '@/components/backoffice/errors/Error500Admin
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    /********** routes frontoffice **********/
+    /* frontoffice */
     {
       path: '/',
       name: 'home',
@@ -40,13 +40,47 @@ const router = createRouter({
       component: Login
     },
     {
-      path: '/register',
-      name: 'register',
-      component: Register
+    path: '/:pathMatch(.*)*',
+      beforeEnter: (to, from, next) => {
+        next({ name: 'error404Ecommerce' }) // Redirige a la ruta error404 y cambia la URL
+      },
+      redirect: { name: 'error404Ecommerce' } // Agrega una propiedad redirect a la ruta
     },
-    /********** fin routes frontoffice **********/
 
-    /********** routes backoffice **********/
+    /*{
+      path: '/:pathMatch(.*)*',
+      beforeEnter: (to, from, next) => {
+        if (to.path.startsWith('/admin')) {
+          next({ name: 'error404Admin' }) // Redirige a la ruta error404Admin y cambia la URL
+        } else {
+          next({ name: 'error404Ecommerce' }) // Redirige a la ruta error404Ecommerce y cambia la URL
+        }
+      },
+      redirect: { name: 'error404Ecommerce' } // Agrega una propiedad redirect a la ruta
+    },*/
+
+    {
+      path: '/error404',
+      name: 'error404Ecommerce',
+      component: Error404EcommerceComponent
+    },
+    {
+      path: '/error500',
+      name: 'error500',
+      component: Error500EcommerceComponent
+    },
+    {
+      path: '/errors/error404',
+      name: 'error404Admin',
+      component: Error404AdminComponent
+    },
+    {
+      path: '/errors/error500',
+      name: 'error500Admin',
+      component: Error500AdminComponent
+    },
+
+    /********** backoffice ******************/
     {
       path: '/admin',
       component: AdminPanel,
@@ -83,55 +117,8 @@ const router = createRouter({
           name: 'stock',
           component: StockComponent
         }
-
-        /********** fin routes backoffice **********/
       ]
-    },
-    /********** frontoffice errors **********/
-    {
-      path: '/error500',
-      name: 'error500',
-      component: Error500EcommerceComponent
-    },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'not-found',
-      component: Error404EcommerceComponent
-    },
-    /********** fin frontoffice errors **********/
-
-    /********** backoffice errors **********/
-    {
-      path: '/admin/products/edit-product/:productId',
-      name: 'edit-product',
-      component: EditProductComponent,
-      beforeEnter: (to, from, next) => {
-        const isValidUUID = (uuid: string | string[]) => {
-          const s = '' + uuid
-          const matchLetter: RegExpMatchArray | null = s.match(
-            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
-          )
-          console.log('matchLetterValue:', matchLetter)
-          return matchLetter !== null
-        }
-        if (isValidUUID(to.params.productId)) {
-          next()
-        } else {
-          next({ name: 'not-found-admin', replace: true }) // Muestra la página de error 404Admin sin cambiar la URL
-        }
-      }
-    },
-    {
-      path: '/admin/:pathMatch(.*)*',
-      name: 'not-found-admin',
-      component: Error404AdminComponent
-    },
-    {
-      path: '/admin/errors/error500',
-      name: 'error500Admin',
-      component: Error500AdminComponent
     }
-    /********** backoffice errors **********/
   ]
 })
 
