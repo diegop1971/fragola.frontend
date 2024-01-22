@@ -277,10 +277,14 @@ const getData = async (): Promise<void> => {
       }))
     }
   } catch (error: any) {
-    console.log('catch: ', error.response.data.status)
-    const apiErrorHandler = new ApiErrorHandler()
+    if (error.code ==="ERR_NETWORK") {
+      errorRedirectService.handleApiError(500)
+    } else {
+      const apiErrorHandler = new ApiErrorHandler()
     const errorResponse: IApiErrorResponse = apiErrorHandler.handleError(error.response.data.status)
     errorRedirectService.handleApiError(error.response.data.status)
+    }
+
   }
 }
 

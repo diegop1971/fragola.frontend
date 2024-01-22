@@ -1,8 +1,6 @@
 import axios from 'axios'
 
 import type { IApiGetProductResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductResponse'
-import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
-import { Exception } from 'sass'
 
 class GetProductService {
   private apiProductResponse: IApiGetProductResponse = {
