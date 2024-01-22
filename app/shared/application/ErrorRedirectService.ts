@@ -8,13 +8,15 @@ class ErrorRedirectService {
   }
 
   public async handleApiError(status: number): Promise<void> {
-    console.log(status)
     switch (status) {
       case 404:
-        this.router.push({ name: 'error404' })
+        this.router.push({ name: 'error404Admin' })
         break
-      case 500:
-        this.router.push({ name: 'error500' })
+        case 500:
+          this.router.push({ name: 'error500Admin' })
+          break
+      case 503:
+        this.router.push({ name: 'error503Admin' })
         break
     }
   }

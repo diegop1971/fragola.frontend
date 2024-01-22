@@ -7,7 +7,7 @@
         <v-container fill-height fluid d-flex flex-column align-center>
           <img :src="logoUrl" alt="Logo" style="margin: 0px;" />
           <div class="content-wrapper">
-            <p>No se encontró el recurso solicitado.</p>
+            <p>No se pudo establecer conexión con el servidor.</p>
             <v-btn color="primary" @click="onRedirectToHome">Volver a la página principal</v-btn>
           </div>
         </v-container>

@@ -88,14 +88,12 @@
 
                 <v-text-field
                   v-model="reactiveProductData.minimum_quantity"
-
                   label="Minimum Quantity"
                   variant="outlined"
                 ></v-text-field>
 
                 <v-text-field
                   v-model="reactiveProductData.low_stock_threshold"
-
                   label="Low stock threshold"
                   variant="outlined"
                 ></v-text-field>
@@ -127,6 +125,7 @@ import UpdateProductService from '@app/backoffice/products/application/update/Up
 import type { IEditProduct } from '@app/backoffice/products/domain/interfaces/IEditProduct'
 import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
 import type { IApiErrorResponse } from '@app/shared/domain/interfaces/IApiErrorResponse'
+import type { IApiGetProductResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductResponse'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 import VuetifyValidationProductFormService from '@app/backoffice/products/application/rules/VuetifyValidationProductFormService'
 
@@ -184,12 +183,14 @@ const validateProductRuleDescription = async (value: string): Promise<string | b
 }
 
 const validateProductRuleDescriptionShort = async (value: string): Promise<string | boolean> => {
-  const validationResult = VuetifyValidationProductFormService.validateProductRuleDescriptionShort(value)
+  const validationResult =
+    VuetifyValidationProductFormService.validateProductRuleDescriptionShort(value)
   return validationResult
 }
 
 const validateProductRuleProductEnabled = async (value: boolean): Promise<string | boolean> => {
-  const validationResult = VuetifyValidationProductFormService.validateProductRuleProductEnabled(value)
+  const validationResult =
+    VuetifyValidationProductFormService.validateProductRuleProductEnabled(value)
   return validationResult
 }
 
@@ -199,17 +200,28 @@ const validateNumberGreaterThanOne = async (value: number): Promise<string | boo
 }
 
 const validateMinimumQuantityRules = async (minimumQuantity: number): Promise<string | boolean> => {
-  const validationResult = VuetifyValidationProductFormService.validateMinimumQuantityRules(minimumQuantity, reactiveProductData.value.low_stock_threshold)
+  const validationResult = VuetifyValidationProductFormService.validateMinimumQuantityRules(
+    minimumQuantity,
+    reactiveProductData.value.low_stock_threshold
+  )
   return validationResult
 }
 
-const validateProductRuleProductLowAlertEnabled = async (value: boolean): Promise<string | boolean> => {
-  const validationResult = VuetifyValidationProductFormService.validateProductRuleProductLowAlertEnabled(value)
+const validateProductRuleProductLowAlertEnabled = async (
+  value: boolean
+): Promise<string | boolean> => {
+  const validationResult =
+    VuetifyValidationProductFormService.validateProductRuleProductLowAlertEnabled(value)
   return validationResult
 }
 
-const validateLowStockThresholdRules = async (lowStockThreshold: number): Promise<string | boolean> => {
-  const validationResult = VuetifyValidationProductFormService.validateLowStockThresholdRules(lowStockThreshold, reactiveProductData.value.minimum_quantity)
+const validateLowStockThresholdRules = async (
+  lowStockThreshold: number
+): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateLowStockThresholdRules(
+    lowStockThreshold,
+    reactiveProductData.value.minimum_quantity
+  )
   return validationResult
 }
 
@@ -224,46 +236,51 @@ const getData = async (): Promise<void> => {
     const productId: string[] | string = route.params.productId
     const getProductsListService = new GetProductService()
     const response = await getProductsListService.getApiResponse(productId)
-    const { productList, categories } = response
-    const {
-      id,
-      name,
-      price,
-      category_id,
-      category_name,
-      description,
-      description_short,
-      minimum_quantity,
-      low_stock_threshold,
-      low_stock_alert,
-      enabled
-    } = productList
 
-    reactiveProductData.value = {
-      id,
-      name,
-      price,
-      category_id,
-      category_name,
-      description,
-      description_short,
-      minimum_quantity,
-      low_stock_threshold,
-      low_stock_alert,
-      enabled
+    if ('productList' in response && 'categories' in response) {
+      const { productList, categories } = response
+
+      const {
+        id,
+        name,
+        price,
+        category_id,
+        category_name,
+        description,
+        description_short,
+        minimum_quantity,
+        low_stock_threshold,
+        low_stock_alert,
+        enabled
+      } = productList
+
+      reactiveProductData.value = {
+        id,
+        name,
+        price,
+        category_id,
+        category_name,
+        description,
+        description_short,
+        minimum_quantity,
+        low_stock_threshold,
+        low_stock_alert,
+        enabled
+      }
+
+      selectedCategory.value = category_id
+      checkedEnabledProduct.value = enabled === 1 ? true : false
+      lowStockAlertSwitchValue.value = low_stock_alert === 1 ? true : false
+      categoryNamesWithIds.value = categories.map((category: ICategory) => ({
+        id: category.id,
+        name: category.name
+      }))
     }
-
-    selectedCategory.value = category_id
-    checkedEnabledProduct.value = enabled === 1 ? true : false
-    lowStockAlertSwitchValue.value = low_stock_alert === 1 ? true : false
-    categoryNamesWithIds.value = categories.map((category: ICategory) => ({
-      id: category.id,
-      name: category.name
-    }))
   } catch (error: any) {
+    console.log('catch: ', error.response.data.status)
     const apiErrorHandler = new ApiErrorHandler()
-    const errorResponse: IApiErrorResponse = apiErrorHandler.handleError(error)
-    errorRedirectService.handleApiError(errorResponse.data.status)
+    const errorResponse: IApiErrorResponse = apiErrorHandler.handleError(error.response.data.status)
+    errorRedirectService.handleApiError(error.response.data.status)
   }
 }
 
@@ -309,7 +326,9 @@ async function save() {
       )
       updateResponse = await updateProductService.update()
     }
-    await errorRedirectService.handleApiError(updateResponse.data.status)
+    /*if(updateResponse.data.status === 503) {
+      await errorRedirectService.handleApiError(updateResponse.data.status)
+    }*/
 
     snackbar.value = true
   }

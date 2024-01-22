@@ -28,9 +28,20 @@ class GetProductService {
   constructor() {}
 
   public async getApiResponse(id: string[] | string): Promise<IApiGetProductResponse> {
-    await this.getProductList(id)
-
-    return this.apiProductResponse
+    try {
+      await this.getProductList(id)
+      console.log(this.apiProductResponse)
+      return this.apiProductResponse
+    } catch (error: any) {
+      console.log(error.response.data.message)
+      const errorsResponse: IApiProductErrorResponse = {
+        success: error.response.data.success,
+        message: error.response.data.message,
+        status: error.response.data.status
+      }
+      console.log(errorsResponse)
+      return errorsResponse
+    }
   }
 
   private async getProductList(id: string[] | string): Promise<void> {

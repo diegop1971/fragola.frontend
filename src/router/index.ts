@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 /* frontoffice */
+import Register from '../components/Register.vue'
 import Home from '../views/frontoffice/catalog/MainCatalogView.vue'
 import Cart from '../views/frontoffice/cart/CartView.vue'
 import Login from '../views/frontoffice/auth/UsersLogin.vue'
-import Register from '../components/Register.vue'
 import Error404EcommerceComponent from '@/components/frontoffice/errors/Error404EcommerceComponent.vue'
 import Error500EcommerceComponent from '@/components/frontoffice/errors/Error500EcommerceComponent.vue'
 
@@ -18,7 +18,9 @@ import EditProductComponent from '@/components/backoffice/products/edit/EditProd
 import StockComponent from '@/components/backoffice/stock/StockComponent.vue'
 import TestComponent from '@/components/backoffice/products/test/TestComponent.vue'
 import Error404AdminComponent from '@/components/backoffice/errors/Error404AdminComponent.vue'
+import Error422AdminComponent from '@/components/backoffice/errors/Error422AdminComponent.vue'
 import Error500AdminComponent from '@/components/backoffice/errors/Error500AdminComponent.vue'
+import Error503AdminComponent from '@/components/backoffice/errors/Error503AdminComponent.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -111,7 +113,6 @@ const router = createRouter({
           const matchLetter: RegExpMatchArray | null = s.match(
             '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
           )
-          console.log('matchLetterValue:', matchLetter)
           return matchLetter !== null
         }
         if (isValidUUID(to.params.productId)) {
@@ -127,9 +128,24 @@ const router = createRouter({
       component: Error404AdminComponent
     },
     {
+      path: '/admin/errors/error404',
+      name: 'error404Admin',
+      component: Error404AdminComponent
+    },
+    {
+      path: '/admin/errors/error422',
+      name: 'error500Admin',
+      component: Error422AdminComponent
+    },
+    {
       path: '/admin/errors/error500',
       name: 'error500Admin',
       component: Error500AdminComponent
+    },
+    {
+      path: '/admin/errors/error503',
+      name: 'error503Admin',
+      component: Error503AdminComponent
     }
     /********** backoffice errors **********/
   ]

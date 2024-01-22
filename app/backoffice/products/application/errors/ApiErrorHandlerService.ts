@@ -2,6 +2,7 @@ import type { IUpdateProductResponse } from '@app/backoffice/products/domain/int
 
 class ApiErrorHandlerService {
   handleError(error: any): IUpdateProductResponse {
+    
     if (error.response && error.response.data) {
       const errorResponse: IUpdateProductResponse = {
         data: {
@@ -16,10 +17,9 @@ class ApiErrorHandlerService {
         data: {
           success: false,
           message: 'No se pudo establecer comunicacion con el servidor',
-          status: 404
+          status: 503
         }
       }
-      console.log('dfadsfadsfdasfasfsdfa');
       return errorResponse
     }
   }
