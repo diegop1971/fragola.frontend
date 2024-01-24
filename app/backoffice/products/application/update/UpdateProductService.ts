@@ -42,7 +42,7 @@ class UpdateProductService {
   }
 
   public update = async (): Promise<IUpdateProductResponse> => {
-    try {
+    //try {
       await axios.get('http://localhost:8000/sanctum/csrf-cookie')
       const response: IUpdateProductResponse = await axios.put(
         'http://localhost:8000/api/products/update',
@@ -60,11 +60,11 @@ class UpdateProductService {
         }
       )
       return response
-    } catch (error: any) {
+    /*} catch (error: any) {
       const apiErrorHandler = new ApiErrorHandler()
       const errorResponse = apiErrorHandler.handleError(error)
       return errorResponse
-    }
+    }*/
   }
 }
 export default UpdateProductService

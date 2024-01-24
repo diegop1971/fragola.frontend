@@ -1,23 +1,14 @@
-import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
+import type { IApiProductErrorResponse } from '@app/backoffice/products/domain/interfaces/IApiProductErrorResponse'
 
 class ApiErrorHandlerService {
-  handleError(error: any): IUpdateProductResponse {
-    
+  handleError(error: any): IApiProductErrorResponse | void {
     if (error.response && error.response.data) {
-      const errorResponse: IUpdateProductResponse = {
-        data: {
+      const errorResponse: IApiProductErrorResponse = {
+        errors: {
           success: false,
+          code: error.response.data.status,
           message: error.response.data.message,
-          status: error.response.data.status
-        }
-      }
-      return errorResponse
-    } else {
-      const errorResponse: IUpdateProductResponse = {
-        data: {
-          success: false,
-          message: 'No se pudo establecer comunicacion con el servidor',
-          status: 503
+          detail: {}
         }
       }
       return errorResponse

@@ -102,7 +102,7 @@
             <v-btn color="success" class="mt-4" block @click="save"> Save </v-btn>
           </v-form>
           <v-snackbar v-model="snackbar" multi-line>
-            {{ updateResponse.data.message }}
+            {{ snackbarMessage }}
             <template v-slot:actions>
               <v-btn color="red" variant="text" @click="snackbar = false"> Close </v-btn>
             </template>
@@ -124,8 +124,6 @@ import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICate
 import UpdateProductService from '@app/backoffice/products/application/update/UpdateProductService'
 import type { IEditProduct } from '@app/backoffice/products/domain/interfaces/IEditProduct'
 import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
-import type { IApiErrorResponse } from '@app/shared/domain/interfaces/IApiErrorResponse'
-import type { IApiGetProductResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductResponse'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 import VuetifyValidationProductFormService from '@app/backoffice/products/application/rules/VuetifyValidationProductFormService'
 
@@ -227,8 +225,11 @@ const validateLowStockThresholdRules = async (
 
 let snackbar: Ref<boolean> = ref(false)
 
+let snackbarMessage: Ref<string> = ref('')
+
 onMounted(async () => {
   await getData()
+  snackbar.value = false
 })
 
 const getData = async (): Promise<void> => {
@@ -277,14 +278,16 @@ const getData = async (): Promise<void> => {
       }))
     }
   } catch (error: any) {
-    if (error.code ==="ERR_NETWORK") {
+    console.log('errorrrr: ', error.code)
+    if (error.code === 'ERR_NETWORK') {
       errorRedirectService.handleApiError(500)
     } else {
       const apiErrorHandler = new ApiErrorHandler()
-    const errorResponse: IApiErrorResponse = apiErrorHandler.handleError(error.response.data.status)
-    errorRedirectService.handleApiError(error.response.data.status)
+      apiErrorHandler.handleError(error.response.data.code)
+      errorRedirectService.handleApiError(error.response.data.code)
+      snackbarMessage.value = error.response.data.message
+      snackbar.value = true
     }
-
   }
 }
 
@@ -328,13 +331,23 @@ async function save() {
         reactiveProductData.value.low_stock_alert,
         productEnableValue
       )
-      updateResponse = await updateProductService.update()
+      try {
+        updateResponse = await updateProductService.update()
+        snackbarMessage.value = updateResponse.data.message
+        snackbar.value = true
+      } catch (error: any) {
+        console.log('errorrrr: ', error.code)
+        if (error.code === 'ERR_NETWORK') {
+          errorRedirectService.handleApiError(500)
+        } else {
+          const apiErrorHandler = new ApiErrorHandler()
+          apiErrorHandler.handleError(error.response.data.code)
+          //errorRedirectService.handleApiError(error.response.data.code)
+          snackbarMessage.value = error.response.data.message
+          snackbar.value = true
+        }
+      }
     }
-    /*if(updateResponse.data.status === 503) {
-      await errorRedirectService.handleApiError(updateResponse.data.status)
-    }*/
-
-    snackbar.value = true
   }
 }
 </script>

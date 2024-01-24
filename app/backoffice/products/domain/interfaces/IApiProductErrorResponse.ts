@@ -1,7 +1,11 @@
 export interface IApiProductErrorResponse {
   errors: {
     success: boolean;
+    code: number;
     message: string;
-    status: number;
+    detail: {
+      [key: string]: string[]
+    }
+    
   };
 }
