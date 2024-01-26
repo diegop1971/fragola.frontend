@@ -26,16 +26,11 @@ class GetProductService {
   constructor() {}
 
   public async getApiResponse(id: string[] | string): Promise<IApiGetProductResponse> {
-    await this.getProductList(id)
-
-    return this.apiProductResponse
-  }
-
-  private async getProductList(id: string[] | string): Promise<void> {
     const response = await axios.get<IApiGetProductResponse>(
       `http://localhost:8000/api/products/${id}/edit`
     )
     this.apiProductResponse = response.data
+    return this.apiProductResponse
   }
 }
 

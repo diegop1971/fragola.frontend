@@ -1,14 +1,14 @@
-import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
+import type { IApiProductErrorResponse } from '@app/backoffice/products/domain/interfaces/IApiProductErrorResponse'
 
 class ApiErrorHandlerService {
-  handleError(error: any): IUpdateProductResponse | void{
+  handleError(error: any): IApiProductErrorResponse | void {
     if (error.response && error.response.data) {
-      console.log(error.response)
-      const errorResponse: IUpdateProductResponse = {
-        data: {
+      const errorResponse: IApiProductErrorResponse = {
+        errors: {
           success: false,
+          code: error.response.data.status,
           message: error.response.data.message,
-          status: error.response.data.status
+          detail: {}
         }
       }
       return errorResponse

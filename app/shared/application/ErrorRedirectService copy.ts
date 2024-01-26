@@ -8,7 +8,6 @@ class ErrorRedirectService {
   }
 
   public async handleApiError(status: number): Promise<void> {
-    console.log('ErrorRedirectService!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     switch (status) {
       case 404:
         this.router.push({ name: 'error404Admin' })
