@@ -42,7 +42,7 @@
     const router = useRouter()
 
     const goBack = () => {
-      router.go(-1);
+      router.push({ name: 'dashboard' });
     }
 
 </script>

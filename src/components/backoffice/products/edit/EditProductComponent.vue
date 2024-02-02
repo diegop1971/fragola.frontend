@@ -67,6 +67,6 @@ watch(tab, (newTab) => {
   }
 })
 const goBack = () => {
-  router.go(-1)
+  router.push({ name: 'products' });
 }
 </script>

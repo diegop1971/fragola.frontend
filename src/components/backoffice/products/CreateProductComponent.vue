@@ -37,12 +37,12 @@
 
                     <v-select
                       v-model="selectedCategory"
-                      label="Seleccione una categoría"
+                      label="Categoria"
                       :items="categoryNamesWithIds"
                       item-value="id"
                       item-title="name"
-                      :model="reactiveCategoriesData.name"
                       :rules="[(v) => !!v || 'Item is required']"
+                      :model="reactiveProductData.category_name"
                       required
                       @update:modelValue="onCategoryChange"
                       variant="outlined"
@@ -51,16 +51,16 @@
                     <v-textarea
                       counter
                       label="Description"
-                      v-model="reactiveProductData.description"
                       :rules="descriptionRules"
+                      v-model="reactiveProductData.description"
                       variant="outlined"
                     ></v-textarea>
 
                     <v-textarea
                       counter
                       label="Short description"
-                      v-model="reactiveProductData.description_short"
                       :rules="descriptionShortRules"
+                      v-model="reactiveProductData.description_short"
                       variant="outlined"
                     ></v-textarea>
                   </v-card-text>
@@ -69,7 +69,12 @@
                 <v-card class="mx-auto">
                   <template v-slot:title> Estado del producto </template>
                   <v-card-text>
-                    <v-checkbox :label="`Product enabled: `"></v-checkbox>
+                    <v-checkbox
+                      v-model="checkedEnabledProduct"
+                      :label="`Product enabled: ${checkedEnabledProduct === true ? 'yes' : 'no'}`"
+                      :rules="productEnabledRules"
+                      @update:model-value="onCheckedEnabledProduct"
+                    ></v-checkbox>
                   </v-card-text>
                 </v-card>
 
@@ -78,8 +83,8 @@
                   <v-card-text>
                     <v-text-field
                       v-model="reactiveProductData.price"
-                      :rules="priceRules"
                       label="Price"
+                      :rules="priceRules"
                       variant="outlined"
                     ></v-text-field>
                   </v-card-text>
@@ -92,19 +97,21 @@
                     <v-switch
                       v-model="lowStockAlertSwitchValue"
                       hide-details
-                      label="Low Stock Alert"
+                      :label="`Low Stock Alert: ${
+                        lowStockAlertSwitchValue == true ? 'enabled' : 'disabled'
+                      }`"
+                      :rules="priceLowAlertEnabled"
+                      @update:model-value="onSwitchedLowStockAlert"
                     ></v-switch>
 
                     <v-text-field
                       v-model="reactiveProductData.minimum_quantity"
-                      :rules="minimumQuantityRules"
                       label="Minimum Quantity"
                       variant="outlined"
                     ></v-text-field>
 
                     <v-text-field
                       v-model="reactiveProductData.low_stock_threshold"
-                      :rules="lowStockThresholdRules"
                       label="Low stock threshold"
                       variant="outlined"
                     ></v-text-field>
@@ -121,19 +128,24 @@
 </template>
 
 <script setup lang="ts">
+import type { ICreateProduct } from '@app/backoffice/products/domain/interfaces/ICreateProduct'
+import CreateProductService from '@app/backoffice/products/application/create/CreateProductService'
+import GetCategoriesService from '@app/backoffice/products/application/find/GetCategoriesService'
+import axios from 'axios'
+
+import { ref, onMounted } from 'vue'
+import type { Ref } from 'vue'
 import { useRouter } from 'vue-router'
+import GetProductService from '@app/backoffice/products/application/find/GetProductService'
+import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
+import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory'
+import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
+import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
+import VuetifyValidationProductFormService from '@app/backoffice/products/application/rules/VuetifyValidationProductFormService'
 
 const router = useRouter()
 
-import { ref, onMounted } from 'vue'
-
-import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
-import type { ICreateProduct } from '@app/backoffice/products/domain/interfaces/ICreateProduct'
-import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory'
-import CreateProductService from '@app/backoffice/products/application/create/CreateProductService'
-import GetCategoriesService from '@app/backoffice/products/application/find/GetCategoriesService'
-
-const errorHandling = new ErrorHandlingService()
+const errorRedirectService = new ErrorRedirectService()
 
 const reactiveProductData = ref<ICreateProduct>({
   id: '',
@@ -149,56 +161,93 @@ const reactiveProductData = ref<ICreateProduct>({
   enabled: 1
 })
 
-const reactiveCategoriesData = ref<ICategory>({
-  id: 0,
-  name: ''
-})
-
 const form = ref<HTMLFormElement | null>(null)
 const categoryNamesWithIds = ref<ICategory[]>([])
-const selectedCategory = ref<number>()
+const selectedCategory = ref<number>(0)
 const checkedEnabledProduct = ref<boolean>(true)
 let productEnableValue: number = 0
 let lowStockAlertSwitchValue = ref<boolean>(false)
 
-const nameRules = [
-  (v: string) => !!v || 'El nombre es requerido',
-  (v: string) => (v && v.length <= 50) || 'El nombre debe ser menor a 50 caracteres'
-]
+let updateResponse: IUpdateProductResponse = {
+  data: {
+    success: false,
+    message: '',
+    errors: {},
+    status: 0
+  }
+}
 
-const descriptionShortRules = [
-  (v: string) => !!v || 'La descripcion corta del producto es requerida',
-  (v: string) => (v && v.length <= 150) || 'La descripcion debe ser menor a 250 caracteres'
-]
+const nameRules = [(v: string) => validateProductRuleName(v)]
+const descriptionRules = [(v: string) => validateProductRuleDescription(v)]
+const descriptionShortRules = [(v: string) => validateProductRuleDescriptionShort(v)]
+const productEnabledRules = [(v: boolean) => validateProductRuleProductEnabled(v)]
+const priceRules = [(v: number) => validateNumberGreaterThanOne(v)]
+const priceLowAlertEnabled = [(v: boolean) => validateProductRuleProductLowAlertEnabled(v)]
+const minimumQuantityRules = [(v: number) => validateMinimumQuantityRules(v)]
+const lowStockThresholdRules = [(v: number) => validateLowStockThresholdRules(v)]
 
-const descriptionRules = [
-  (v: string) => !!v || 'La descripcion del producto es requerida',
-  (v: string) => (v && v.length <= 250) || 'La descripcion debe ser menor a 250 caracteres'
-]
+const validateProductRuleName = async (value: string): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateProductRuleName(value)
+  return validationResult
+}
 
-const priceRules = [
-  (v: number) => !!v || 'El precio es requerido',
-  (v: number) => (!isNaN(v) && v >= 0) || 'El precio debe ser un número mayor o igual a 0'
-]
+const validateProductRuleDescription = async (value: string): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateProductRuleDescription(value)
+  return validationResult
+}
 
-const minimumQuantityRules = [
-  (v: number) => !!v || 'Cantidad mínima es requerida',
-  (v: number) => (!isNaN(v) && v >= 1) || 'La cantidad mínima debe ser un número mayor o igual a 1'
-]
+const validateProductRuleDescriptionShort = async (value: string): Promise<string | boolean> => {
+  const validationResult =
+    VuetifyValidationProductFormService.validateProductRuleDescriptionShort(value)
+  return validationResult
+}
 
-const lowStockThresholdRules = [
-  (v: number) => !!v || 'Este campo es obligatorio',
-  (v: number) =>
-    (!isNaN(v) && v >= reactiveProductData.value.minimum_quantity) ||
-    'Debe ser un número mayor o igual a cantidad minima'
-]
+const validateProductRuleProductEnabled = async (value: boolean): Promise<string | boolean> => {
+  const validationResult =
+    VuetifyValidationProductFormService.validateProductRuleProductEnabled(value)
+  return validationResult
+}
+
+const validateNumberGreaterThanOne = async (value: number): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateNumberGreaterThanOne(value)
+  return validationResult
+}
+
+const validateMinimumQuantityRules = async (minimumQuantity: number): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateMinimumQuantityRules(
+    minimumQuantity,
+    reactiveProductData.value.low_stock_threshold
+  )
+  return validationResult
+}
+
+const validateProductRuleProductLowAlertEnabled = async (
+  value: boolean
+): Promise<string | boolean> => {
+  const validationResult =
+    VuetifyValidationProductFormService.validateProductRuleProductLowAlertEnabled(value)
+  return validationResult
+}
+
+const validateLowStockThresholdRules = async (
+  lowStockThreshold: number
+): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationProductFormService.validateLowStockThresholdRules(
+    lowStockThreshold,
+    reactiveProductData.value.minimum_quantity
+  )
+  return validationResult
+}
+
+let snackbar: Ref<boolean> = ref(false)
+
+let snackbarMessage: Ref<string> = ref('')
+
+axios.defaults.withCredentials = true
 
 onMounted(async () => {
-  try {
-    await getData()
-  } catch (error: any) {
-    errorHandling.handleApiError(error)
-  }
+  await getData()
+  snackbar.value = false
 })
 
 const getData = async (): Promise<void> => {
@@ -211,8 +260,16 @@ const getData = async (): Promise<void> => {
       id: category.id,
       name: category.name
     }))
-  } catch (error) {
-    errorHandling.handleApiError(error)
+  } catch (error: any) {
+    if (error.code === 'ERR_NETWORK') {
+      errorRedirectService.handleApiError(500)
+    } else {
+      const apiErrorHandler = new ApiErrorHandler()
+      apiErrorHandler.handleError(error.response.data.code)
+      errorRedirectService.handleApiError(error.response.data.code)
+      snackbarMessage.value = error.response.data.message
+      snackbar.value = true
+    }
   }
 }
 
@@ -222,12 +279,12 @@ const onCategoryChange = (newSelectedCategory: number) => {
 
 const onCheckedEnabledProduct = (newProductEnableValue: boolean) => {
   productEnableValue = newProductEnableValue === true ? 1 : 0
-  //reactiveProductData.value.enabled = productEnableValue
+  reactiveProductData.value.enabled = productEnableValue
 }
 
 const onSwitchedLowStockAlert = (newValue: any) => {
   lowStockAlertSwitchValue.value = newValue
-  //reactiveProductData.value.low_stock_alert = newValue == true ? 1 : 0
+  reactiveProductData.value.low_stock_alert = newValue == true ? 1 : 0
 }
 
 async function save() {
@@ -264,6 +321,6 @@ async function save() {
 }
 
 const goBack = () => {
-  router.go(-1)
+  router.push({ name: 'products' })
 }
 </script>

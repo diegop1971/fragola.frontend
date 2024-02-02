@@ -278,10 +278,6 @@ const getData = async (): Promise<void> => {
       }))
     }
   } catch (error: any) {
-    console.log('errorrrr: ', error.code)
-    //ERR_BAD_RESPONSE
-    // ERR_BAD_REQUEST
-
     if (error.code === 'ERR_NETWORK') {
       errorRedirectService.handleApiError(500)
     } else {
@@ -345,7 +341,6 @@ async function save() {
         } else {
           const apiErrorHandler = new ApiErrorHandler()
           apiErrorHandler.handleError(error.response.data.code)
-          //errorRedirectService.handleApiError(error.response.data.code)
           snackbarMessage.value = error.response.data.message
           snackbar.value = true
         }
