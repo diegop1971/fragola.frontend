@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
+import type { IStoreProductResponse } from '@app/backoffice/products/domain/interfaces/IStoreProductResponse'
 
 axios.defaults.withCredentials = true
 
-class UpdateProductService {
+class StoreProductService {
   private id: string
   private name: string
   private price: number
@@ -40,10 +40,10 @@ class UpdateProductService {
     this.enabled = enabled
   }
 
-  public update = async (): Promise<IUpdateProductResponse> => {
+  public store = async (): Promise<IStoreProductResponse> => {
     await axios.get('http://localhost:8000/sanctum/csrf-cookie')
-    const response: IUpdateProductResponse = await axios.put(
-      'http://localhost:8000/api/products/update',
+    const response: IStoreProductResponse = await axios.post(
+      'http://localhost:8000/api/products/store',
       {
         id: this.id,
         name: this.name,
@@ -60,4 +60,4 @@ class UpdateProductService {
     return response
   }
 }
-export default UpdateProductService
+export default StoreProductService

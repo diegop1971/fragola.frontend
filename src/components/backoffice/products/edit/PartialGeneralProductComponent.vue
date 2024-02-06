@@ -88,12 +88,14 @@
 
                 <v-text-field
                   v-model="reactiveProductData.minimum_quantity"
+                  :rules="minimumQuantityRules"
                   label="Minimum Quantity"
                   variant="outlined"
                 ></v-text-field>
 
                 <v-text-field
                   v-model="reactiveProductData.low_stock_threshold"
+                  :rules="lowStockThresholdRules"
                   label="Low stock threshold"
                   variant="outlined"
                 ></v-text-field>
@@ -135,7 +137,7 @@ const reactiveProductData = ref<IEditProduct>({
   id: '',
   name: '',
   price: 0,
-  category_id: 0,
+  category_id: '',
   category_name: '',
   description: '',
   description_short: '',
@@ -147,7 +149,7 @@ const reactiveProductData = ref<IEditProduct>({
 
 const form = ref<HTMLFormElement | null>(null)
 const categoryNamesWithIds = ref<ICategory[]>([])
-const selectedCategory = ref<number>(0)
+const selectedCategory = ref<string>('')
 const checkedEnabledProduct = ref<boolean>(true)
 let productEnableValue: number = 0
 let lowStockAlertSwitchValue = ref<boolean>(false)
@@ -290,7 +292,7 @@ const getData = async (): Promise<void> => {
   }
 }
 
-const onCategoryChange = (newSelectedCategory: number) => {
+const onCategoryChange = (newSelectedCategory: string) => {
   selectedCategory.value = newSelectedCategory
 }
 
@@ -335,7 +337,6 @@ async function save() {
         snackbarMessage.value = updateResponse.data.message
         snackbar.value = true
       } catch (error: any) {
-        console.log('errorrrr: ', error.code)
         if (error.code === 'ERR_NETWORK') {
           errorRedirectService.handleApiError(500)
         } else {

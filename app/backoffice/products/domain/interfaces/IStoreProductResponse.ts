@@ -1,4 +1,4 @@
-export interface IUpdateProductResponse {
+export interface IStoreProductResponse {
   data: {
     success: boolean
     message: string

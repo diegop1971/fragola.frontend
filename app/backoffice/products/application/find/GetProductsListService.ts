@@ -9,7 +9,7 @@ class GetProductListService {
         title: '',
         productList: {
                     id: '',
-                    category_id: 0,
+                    category_id: '',
                     category_name: '',
                     name: '',
                     description: '',

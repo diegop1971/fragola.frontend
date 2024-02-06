@@ -106,12 +106,14 @@
 
                     <v-text-field
                       v-model="reactiveProductData.minimum_quantity"
+                      :rules="minimumQuantityRules"
                       label="Minimum Quantity"
                       variant="outlined"
                     ></v-text-field>
 
                     <v-text-field
                       v-model="reactiveProductData.low_stock_threshold"
+                      :rules="lowStockThresholdRules"
                       label="Low stock threshold"
                       variant="outlined"
                     ></v-text-field>
@@ -119,6 +121,12 @@
                 </v-card>
                 <v-btn color="success" class="mt-4" block @click="save"> Save </v-btn>
               </v-form>
+              <v-snackbar v-model="snackbar" multi-line>
+                {{ snackbarMessage }}
+                <template v-slot:actions>
+                  <v-btn color="red" variant="text" @click="snackbar = false"> Close </v-btn>
+                </template>
+              </v-snackbar>
             </v-container>
           </v-card>
         </v-col>
@@ -128,22 +136,22 @@
 </template>
 
 <script setup lang="ts">
-import type { ICreateProduct } from '@app/backoffice/products/domain/interfaces/ICreateProduct'
-import CreateProductService from '@app/backoffice/products/application/create/CreateProductService'
-import GetCategoriesService from '@app/backoffice/products/application/find/GetCategoriesService'
-import axios from 'axios'
-
 import { ref, onMounted } from 'vue'
 import type { Ref } from 'vue'
 import { useRouter } from 'vue-router'
-import GetProductService from '@app/backoffice/products/application/find/GetProductService'
-import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
+import axios from 'axios'
+import type { ICreateProduct } from '@app/backoffice/products/domain/interfaces/ICreateProduct'
 import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory'
-import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
+import type { IStoreProductResponse } from '@app/backoffice/products/domain/interfaces/IStoreProductResponse'
+import StoreProductService from '@app/backoffice/products/application/store/StoreProductService'
+import GetCategoriesService from '@app/backoffice/products/application/find/GetCategoriesService'
+import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 import VuetifyValidationProductFormService from '@app/backoffice/products/application/rules/VuetifyValidationProductFormService'
 
 const router = useRouter()
+
+axios.defaults.withCredentials = true
 
 const errorRedirectService = new ErrorRedirectService()
 
@@ -151,7 +159,7 @@ const reactiveProductData = ref<ICreateProduct>({
   id: '',
   name: '',
   price: 0,
-  category_id: 0,
+  category_id: '',
   category_name: '',
   description: '',
   description_short: '',
@@ -163,12 +171,12 @@ const reactiveProductData = ref<ICreateProduct>({
 
 const form = ref<HTMLFormElement | null>(null)
 const categoryNamesWithIds = ref<ICategory[]>([])
-const selectedCategory = ref<number>(0)
+const selectedCategory = ref<string>('')
 const checkedEnabledProduct = ref<boolean>(true)
 let productEnableValue: number = 0
 let lowStockAlertSwitchValue = ref<boolean>(false)
 
-let updateResponse: IUpdateProductResponse = {
+let storeResponse: IStoreProductResponse = {
   data: {
     success: false,
     message: '',
@@ -243,8 +251,6 @@ let snackbar: Ref<boolean> = ref(false)
 
 let snackbarMessage: Ref<string> = ref('')
 
-axios.defaults.withCredentials = true
-
 onMounted(async () => {
   await getData()
   snackbar.value = false
@@ -254,7 +260,7 @@ const getData = async (): Promise<void> => {
   try {
     const getCategoriesService = new GetCategoriesService()
     const response = await getCategoriesService.getApiResponse()
-    const { title, categoriesList } = response
+    const { categoriesList } = response
 
     categoryNamesWithIds.value = categoriesList.map((category: ICategory) => ({
       id: category.id,
@@ -273,7 +279,7 @@ const getData = async (): Promise<void> => {
   }
 }
 
-const onCategoryChange = (newSelectedCategory: number) => {
+const onCategoryChange = (newSelectedCategory: string) => {
   selectedCategory.value = newSelectedCategory
 }
 
@@ -289,8 +295,7 @@ const onSwitchedLowStockAlert = (newValue: any) => {
 
 async function save() {
   if (form.value !== null) {
-    //const { valid } = await form.value.validate()
-    const valid = true
+    const { valid } = await form.value.validate()
 
     if (valid) {
       const {
@@ -303,19 +308,32 @@ async function save() {
         low_stock_threshold
       } = reactiveProductData.value
 
-      const updateProductService = new CreateProductService(
+      const storeProductService = new StoreProductService(
         id,
         name,
         price,
         description,
         description_short,
-        2,
+        selectedCategory.value,
         minimum_quantity,
         low_stock_threshold,
         reactiveProductData.value.low_stock_alert,
         productEnableValue
       )
-      updateProductService.store()
+      try {
+        storeResponse = await storeProductService.store()
+        snackbarMessage.value = storeResponse.data.message
+        snackbar.value = true
+      } catch (error: any) {
+        if (error.code === 'ERR_NETWORK') {
+          errorRedirectService.handleApiError(500)
+        } else {
+          const apiErrorHandler = new ApiErrorHandler()
+          apiErrorHandler.handleError(error.response.data.code)
+          snackbarMessage.value = error.response.data.message
+          snackbar.value = true
+        }
+      }
     }
   }
 }
