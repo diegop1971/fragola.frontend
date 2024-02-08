@@ -57,9 +57,11 @@ import type { IApiGetProductsResponse } from '@app/backoffice/products/domain/in
 import type { IViewProduct } from '@app/backoffice/products/domain/interfaces/IViewProduct'
 import GetProductsListService from '@app/backoffice/products/application/find/GetProductsListService'
 import DeleteProductService from '@app/backoffice/products/application/delete/DeleteProductService'
-import type { IDeleteProductResponse } from '@app/backoffice/products/domain/interfaces/IDeleteProductResponse'
+import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
+import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 
 const errorHandling = new ErrorHandlingService()
+const errorRedirectService = new ErrorRedirectService()
 
 const products = ref()
 
@@ -107,12 +109,45 @@ const editItem = (item: IViewProduct) => {
   router.push({ name: 'edit-product', params: { productId: item.id } })
 }
 
-const deleteItem = (item: IViewProduct) => {
+const deleteItem = async (item: IViewProduct) => {
   try {
     const deleteProduct = new DeleteProductService()
-    const deleteResponse = deleteProduct.delete(item.id)
+    const deleteResponse = await deleteProduct.delete(item.id)
+    snackbarMessage.value = deleteResponse.data.message
+
+    // Eliminar el producto del array products
+    const index = products.value.findIndex((product: IViewProduct) => product.id === item.id)
+    if (index !== -1) {
+      products.value.splice(index, 1)
+    }
+
+    snackbar.value = true
   } catch (error: any) {
-    //console.log('error!!!')
+    if (error.code === 'ERR_NETWORK') {
+      errorRedirectService.handleApiError(500)
+    } else {
+      const apiErrorHandler = new ApiErrorHandler()
+      apiErrorHandler.handleError(error.response.data.code)
+      snackbarMessage.value = error.response.data.message
+      snackbar.value = true
+    }
   }
 }
+/*const deleteItem = async (item: IViewProduct) => {
+  try {
+    const deleteProduct = new DeleteProductService()
+    const deleteResponse = await deleteProduct.delete(item.id)
+    snackbarMessage.value = deleteResponse.data.message
+    snackbar.value = true
+  } catch (error: any) {
+    if (error.code === 'ERR_NETWORK') {
+      errorRedirectService.handleApiError(500)
+    } else {
+      const apiErrorHandler = new ApiErrorHandler()
+      apiErrorHandler.handleError(error.response.data.code)
+      snackbarMessage.value = error.response.data.message
+      snackbar.value = true
+    }
+  }*/
+//}
 </script>
