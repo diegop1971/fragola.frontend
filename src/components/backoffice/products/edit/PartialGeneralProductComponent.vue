@@ -88,14 +88,14 @@
 
                 <v-text-field
                   v-model="reactiveProductData.minimum_quantity"
-                  :rules="minimumQuantityRules"
+                  :rules = "minimumQuantityRules"
                   label="Minimum Quantity"
                   variant="outlined"
                 ></v-text-field>
 
                 <v-text-field
                   v-model="reactiveProductData.low_stock_threshold"
-                  :rules="lowStockThresholdRules"
+                  :rules = "lowStockThresholdRules"
                   label="Low stock threshold"
                   variant="outlined"
                 ></v-text-field>

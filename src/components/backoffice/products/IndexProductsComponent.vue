@@ -32,7 +32,12 @@
                   </td>
                 </template>
               </v-data-table>
-
+              <v-snackbar v-model="snackbar" multi-line>
+                {{ snackbarMessage }}
+                <template v-slot:actions>
+                  <v-btn color="red" variant="text" @click="snackbar = false"> Close </v-btn>
+                </template>
+              </v-snackbar>
             </v-container>
           </v-card>
         </v-col>
@@ -43,6 +48,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import type { Ref } from 'vue'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -50,14 +56,21 @@ import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
 import type { IApiGetProductsResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductsResponse'
 import type { IViewProduct } from '@app/backoffice/products/domain/interfaces/IViewProduct'
 import GetProductsListService from '@app/backoffice/products/application/find/GetProductsListService'
+import DeleteProductService from '@app/backoffice/products/application/delete/DeleteProductService'
+import type { IDeleteProductResponse } from '@app/backoffice/products/domain/interfaces/IDeleteProductResponse'
 
 const errorHandling = new ErrorHandlingService()
 
 const products = ref()
 
+let snackbar: Ref<boolean> = ref(false)
+
+let snackbarMessage: Ref<string> = ref('')
+
 onMounted(async () => {
   try {
     await getProductData()
+    snackbar.value = false
   } catch (error: any) {
     errorHandling.handleApiError(error)
   }
@@ -70,7 +83,7 @@ const getProductData = async (): Promise<void> => {
     const getProductsListService = new GetProductsListService()
     const response: IApiGetProductsResponse = await getProductsListService.getApiResponse()
     products.value = response.productList
-  } catch (error) {
+  } catch (error: any) {
     console.log(error)
   }
 }
@@ -94,8 +107,12 @@ const editItem = (item: IViewProduct) => {
   router.push({ name: 'edit-product', params: { productId: item.id } })
 }
 
-const deleteItem = (item: string) => {
-  router.push({ name: 'delete-product' })
-  console.log('Eliminar:', item)
+const deleteItem = (item: IViewProduct) => {
+  try {
+    const deleteProduct = new DeleteProductService()
+    const deleteResponse = deleteProduct.delete(item.id)
+  } catch (error: any) {
+    //console.log('error!!!')
+  }
 }
 </script>
