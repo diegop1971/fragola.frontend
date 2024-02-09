@@ -115,7 +115,6 @@ const deleteItem = async (item: IViewProduct) => {
     const deleteResponse = await deleteProduct.delete(item.id)
     snackbarMessage.value = deleteResponse.data.message
 
-    // Eliminar el producto del array products
     const index = products.value.findIndex((product: IViewProduct) => product.id === item.id)
     if (index !== -1) {
       products.value.splice(index, 1)
@@ -133,21 +132,4 @@ const deleteItem = async (item: IViewProduct) => {
     }
   }
 }
-/*const deleteItem = async (item: IViewProduct) => {
-  try {
-    const deleteProduct = new DeleteProductService()
-    const deleteResponse = await deleteProduct.delete(item.id)
-    snackbarMessage.value = deleteResponse.data.message
-    snackbar.value = true
-  } catch (error: any) {
-    if (error.code === 'ERR_NETWORK') {
-      errorRedirectService.handleApiError(500)
-    } else {
-      const apiErrorHandler = new ApiErrorHandler()
-      apiErrorHandler.handleError(error.response.data.code)
-      snackbarMessage.value = error.response.data.message
-      snackbar.value = true
-    }
-  }*/
-//}
 </script>

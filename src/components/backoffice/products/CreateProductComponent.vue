@@ -106,20 +106,28 @@
 
                     <v-text-field
                       v-model="reactiveProductData.minimum_quantity"
-                      :rules="minimumQuantityRules"
+                      
                       label="Minimum Quantity"
                       variant="outlined"
                     ></v-text-field>
 
                     <v-text-field
                       v-model="reactiveProductData.low_stock_threshold"
-                      :rules="lowStockThresholdRules"
+                      
                       label="Low stock threshold"
                       variant="outlined"
                     ></v-text-field>
                   </v-card-text>
                 </v-card>
-                <v-btn color="success" class="mt-4" block @click="save"> Save </v-btn>
+                <v-btn
+                  color="success"
+                  class="mt-4"
+                  block
+                  :disabled="isSaveButtonDisabled"
+                  @click="save"
+                >
+                  Guardar
+                </v-btn>
               </v-form>
               <v-snackbar v-model="snackbar" multi-line>
                 {{ snackbarMessage }}
@@ -173,6 +181,7 @@ const form = ref<HTMLFormElement | null>(null)
 const categoryNamesWithIds = ref<ICategory[]>([])
 const selectedCategory = ref<string>('')
 const checkedEnabledProduct = ref<boolean>(true)
+const isSaveButtonDisabled = ref(false)
 let productEnableValue: number = 0
 let lowStockAlertSwitchValue = ref<boolean>(false)
 
@@ -294,6 +303,7 @@ const onSwitchedLowStockAlert = (newValue: any) => {
 }
 
 async function save() {
+  isSaveButtonDisabled.value = true
   if (form.value !== null) {
     const { valid } = await form.value.validate()
 
@@ -307,6 +317,10 @@ async function save() {
         minimum_quantity,
         low_stock_threshold
       } = reactiveProductData.value
+
+      if(!valid) {
+        isSaveButtonDisabled.value = false
+      }
 
       const storeProductService = new StoreProductService(
         id,
@@ -325,6 +339,7 @@ async function save() {
         snackbarMessage.value = storeResponse.data.message
         snackbar.value = true
       } catch (error: any) {
+        isSaveButtonDisabled.value = false
         if (error.code === 'ERR_NETWORK') {
           errorRedirectService.handleApiError(500)
         } else {
