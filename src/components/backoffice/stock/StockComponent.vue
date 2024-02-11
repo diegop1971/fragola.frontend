@@ -17,11 +17,8 @@
 
               <v-btn @click="createNewProduct">New Item</v-btn>
             </v-toolbar>
-            <v-container fluid> 
-              <v-data-table :headers="headers" :items="products">
-                <template v-slot:item.low_stock_alert="{ item }">
-                  <td>{{ item.low_stock_alert ? 'yes' : 'no' }}</td>
-                </template>
+            <v-container fluid>
+              <v-data-table :headers="headers" :items="stockList">
                 <template v-slot:item.enabled="{ item }">
                   <td>{{ item.enabled ? 'yes' : 'no' }}</td>
                 </template>
@@ -52,53 +49,47 @@ import type { Ref } from 'vue'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
-import type { IApiGetProductsResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductsResponse'
 import type { IViewProduct } from '@app/backoffice/products/domain/interfaces/IViewProduct'
-import GetProductsListService from '@app/backoffice/products/application/find/GetProductsListService'
 import GetStockListService from '@app/backoffice/stock/application/find/GetStockListService'
 import DeleteProductService from '@app/backoffice/products/application/delete/DeleteProductService'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 
-const errorHandling = new ErrorHandlingService()
 const errorRedirectService = new ErrorRedirectService()
 
-const products = ref()
+const stockList = ref()
 
 let snackbar: Ref<boolean> = ref(false)
 
 let snackbarMessage: Ref<string> = ref('')
 
 onMounted(async () => {
-  try {
-    await getStockData()
-    snackbar.value = false
-  } catch (error: any) {
-    errorHandling.handleApiError(error)
-  }
+  await getStockData()
 })
 
 const router = useRouter()
 
 const getStockData = async (): Promise<void> => {
   try {
-    const getProductsListService = new GetStockListService()
-    const response: IApiGetProductsResponse = await getProductsListService.getApiResponse()
-    products.value = response.productList
+    const getStockListService = new GetStockListService()
+    const response = await getStockListService.getApiResponse()
+    stockList.value = response.stockList
   } catch (error: any) {
-    console.log(error)
+    if (error.code === 'ERR_NETWORK') {
+      errorRedirectService.handleApiError(500)
+    } else {
+      const apiErrorHandler = new ApiErrorHandler()
+      apiErrorHandler.handleError(error.response.data.code)
+      snackbarMessage.value = error.response.data.message
+      snackbar.value = true
+    }
   }
 }
 
 const headers = [
-  { title: 'Product', key: 'name' },
-  { title: 'Price', key: 'price' },
-  { title: 'Category', key: 'category_name' },
-  { title: 'Enabled', key: 'enabled' },
-  { title: 'Low stock alert', key: 'low_stock_alert' },
-  { title: 'Minimun Quantity', key: 'minimum_quantity' },
-  { title: 'Low stock threshold', key: 'low_stock_threshold' },
+  { title: 'Movement', key: 'movement_type' },
+  { title: 'Product', key: 'product_name' },
+  { title: 'Quantity', key: 'quantity' },
   { title: 'Actions', key: 'actions', align: 'center' }
 ]
 
@@ -116,11 +107,10 @@ const deleteItem = async (item: IViewProduct) => {
     const deleteResponse = await deleteProduct.delete(item.id)
     snackbarMessage.value = deleteResponse.data.message
 
-    const index = products.value.findIndex((product: IViewProduct) => product.id === item.id)
+    const index = stockList.value.findIndex((product: IViewProduct) => product.id === item.id)
     if (index !== -1) {
-      products.value.splice(index, 1)
+      stockList.value.splice(index, 1)
     }
-
     snackbar.value = true
   } catch (error: any) {
     if (error.code === 'ERR_NETWORK') {
@@ -134,4 +124,3 @@ const deleteItem = async (item: IViewProduct) => {
   }
 }
 </script>
-

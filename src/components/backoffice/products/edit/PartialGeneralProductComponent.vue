@@ -88,14 +88,14 @@
 
                 <v-text-field
                   v-model="reactiveProductData.minimum_quantity"
-                  :rules = "minimumQuantityRules"
+                  :rules="minimumQuantityRules"
                   label="Minimum Quantity"
                   variant="outlined"
                 ></v-text-field>
 
                 <v-text-field
                   v-model="reactiveProductData.low_stock_threshold"
-                  :rules = "lowStockThresholdRules"
+                  :rules="lowStockThresholdRules"
                   label="Low stock threshold"
                   variant="outlined"
                 ></v-text-field>
@@ -231,7 +231,6 @@ let snackbarMessage: Ref<string> = ref('')
 
 onMounted(async () => {
   await getData()
-  snackbar.value = false
 })
 
 const getData = async (): Promise<void> => {
@@ -285,7 +284,6 @@ const getData = async (): Promise<void> => {
     } else {
       const apiErrorHandler = new ApiErrorHandler()
       apiErrorHandler.handleError(error.response.data.code)
-      errorRedirectService.handleApiError(error.response.data.code)
       snackbarMessage.value = error.response.data.message
       snackbar.value = true
     }

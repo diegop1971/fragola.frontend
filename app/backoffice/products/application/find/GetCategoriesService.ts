@@ -7,7 +7,7 @@ class GetCategoriesService {
     title: '',
     categoriesList: [
       {
-        id: 0,
+        id: '',
         name: ''
       }
     ]
@@ -21,13 +21,8 @@ class GetCategoriesService {
   }
 
   private async getCategoriesList(): Promise<void> {
-    try {
-      const response = await axios.get<ICategoriesResponse>(`http://localhost:8000/api/categories`)
-      this.apiCategorieResponse = response.data
-    } catch (error) {
-      console.error('Error fetching categories list:', error)
-      throw error
-    }
+    const response = await axios.get<ICategoriesResponse>(`http://localhost:8000/api/categories`)
+    this.apiCategorieResponse = response.data
   }
 }
 

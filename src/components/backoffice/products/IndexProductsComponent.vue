@@ -52,7 +52,6 @@ import type { Ref } from 'vue'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
 import type { IApiGetProductsResponse } from '@app/backoffice/products/domain/interfaces/IApiGetProductsResponse'
 import type { IViewProduct } from '@app/backoffice/products/domain/interfaces/IViewProduct'
 import GetProductsListService from '@app/backoffice/products/application/find/GetProductsListService'
@@ -60,7 +59,6 @@ import DeleteProductService from '@app/backoffice/products/application/delete/De
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 
-const errorHandling = new ErrorHandlingService()
 const errorRedirectService = new ErrorRedirectService()
 
 const products = ref()
@@ -70,12 +68,7 @@ let snackbar: Ref<boolean> = ref(false)
 let snackbarMessage: Ref<string> = ref('')
 
 onMounted(async () => {
-  try {
-    await getProductData()
-    snackbar.value = false
-  } catch (error: any) {
-    errorHandling.handleApiError(error)
-  }
+  await getProductData()
 })
 
 const router = useRouter()
@@ -86,7 +79,14 @@ const getProductData = async (): Promise<void> => {
     const response: IApiGetProductsResponse = await getProductsListService.getApiResponse()
     products.value = response.productList
   } catch (error: any) {
-    console.log(error)
+    if (error.code === 'ERR_NETWORK') {
+      errorRedirectService.handleApiError(500)
+    } else {
+      const apiErrorHandler = new ApiErrorHandler()
+      apiErrorHandler.handleError(error.response.data.code)
+      snackbarMessage.value = error.response.data.message
+      snackbar.value = true
+    }
   }
 }
 
@@ -119,7 +119,6 @@ const deleteItem = async (item: IViewProduct) => {
     if (index !== -1) {
       products.value.splice(index, 1)
     }
-
     snackbar.value = true
   } catch (error: any) {
     if (error.code === 'ERR_NETWORK') {
