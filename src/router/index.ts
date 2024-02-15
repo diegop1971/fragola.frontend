@@ -16,6 +16,8 @@ import dashboardComponent from '@/components/backoffice/dashboard/dashboardCompo
 import CreateProductComponent from '@/components/backoffice/products/CreateProductComponent.vue'
 import EditProductComponent from '@/components/backoffice/products/edit/EditProductComponent.vue'
 import StockComponent from '@/components/backoffice/stock/StockComponent.vue'
+import EditStockComponent from '@/components/backoffice/stock/edit/EditStockComponent.vue'
+import StockByProductIdComponent from '@/components/backoffice/stock/StockByProductIdComponent.vue'
 import TestComponent from '@/components/backoffice/products/test/TestComponent.vue'
 import Error404AdminComponent from '@/components/backoffice/errors/Error404AdminComponent.vue'
 import Error422AdminComponent from '@/components/backoffice/errors/Error422AdminComponent.vue'
@@ -84,6 +86,44 @@ const router = createRouter({
           path: 'stock',
           name: 'stock',
           component: StockComponent
+        },
+        {
+          path: '/admin/stock/edit/:stockId',
+          name: 'edit',
+          component: EditStockComponent,
+          beforeEnter: (to, from, next) => {
+            const isValidUUID = (uuid: string | string[]) => {
+              const s = '' + uuid
+              const matchLetter: RegExpMatchArray | null = s.match(
+                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+              )
+              return matchLetter !== null
+            }
+            if (isValidUUID(to.params.stockId)) {
+              next()
+            } else {
+              next({ name: 'not-found-admin', replace: true }) // Muestra la página de error 404Admin sin cambiar la URL
+            }
+          }
+        },
+        {
+          path: '/admin/stock/by-product-id/:productId',
+          name: 'stock-by-product-id',
+          component: StockByProductIdComponent,
+          beforeEnter: (to, from, next) => {
+            const isValidUUID = (uuid: string | string[]) => {
+              const s = '' + uuid
+              const matchLetter: RegExpMatchArray | null = s.match(
+                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+              )
+              return matchLetter !== null
+            }
+            if (isValidUUID(to.params.productId)) {
+              next()
+            } else {
+              next({ name: 'not-found-admin', replace: true }) // Muestra la página de error 404Admin sin cambiar la URL
+            }
+          }
         }
 
         /********** fin routes backoffice **********/
@@ -111,7 +151,7 @@ const router = createRouter({
         const isValidUUID = (uuid: string | string[]) => {
           const s = '' + uuid
           const matchLetter: RegExpMatchArray | null = s.match(
-            '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
           )
           return matchLetter !== null
         }

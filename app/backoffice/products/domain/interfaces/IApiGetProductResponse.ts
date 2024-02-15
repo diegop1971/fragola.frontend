@@ -11,6 +11,5 @@ interface IApiProductSuccessResponse  {
 export type IApiGetProductResponse = IApiProductSuccessResponse | IApiProductErrorResponse;
 
 export interface IProductList extends IViewProduct {
-  // agregar propiedades específicas de ProductData, si las hay.
-}
 
+}

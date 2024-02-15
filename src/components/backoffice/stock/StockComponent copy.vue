@@ -15,10 +15,7 @@
                 <v-icon>mdi-magnify</v-icon>
               </v-btn>
 
-              <v-btn @click="goBack">
-                <v-icon left>mdi-arrow-left</v-icon>
-                Go back
-              </v-btn>
+              <v-btn @click="createNewProduct">New Item</v-btn>
             </v-toolbar>
             <v-container fluid>
               <v-data-table :headers="headers" :items="stockList">
@@ -53,7 +50,7 @@ import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 import type { IStockItem } from '@app/backoffice/stock/domain/interfaces/IStockItem'
-import GetStockListGroupedByProductIdService from '@app/backoffice/stock/application/find/GetStockListGroupedByProductIdService'
+import GetStockListService from '@app/backoffice/stock/application/find/GetStockListService'
 import DeleteProductService from '@app/backoffice/products/application/delete/DeleteProductService'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
@@ -74,7 +71,7 @@ const router = useRouter()
 
 const getStockData = async (): Promise<void> => {
   try {
-    const getStockListService = new GetStockListGroupedByProductIdService()
+    const getStockListService = new GetStockListService()
     const response = await getStockListService.getApiResponse()
     stockList.value = response.stockItem
   } catch (error: any) {
@@ -90,15 +87,18 @@ const getStockData = async (): Promise<void> => {
 }
 
 const headers = [
-  { title: 'Items', key: 'items' },
+  { title: 'Movement', key: 'movement_type' },
   { title: 'Product', key: 'product_name' },
   { title: 'Quantity', key: 'quantity' },
-  { title: 'Enabled', key: 'enabled' },
   { title: 'Actions', key: 'actions', align: 'center' }
 ]
 
+const createNewProduct = () => {
+  router.push({ name: 'create-product' })
+}
+
 const editItem = (item: IStockItem) => {
-  router.push({ name: 'stock-by-product-id', params: { productId: item.id } })
+  router.push({ name: 'edit', params: { stockId: item.id } })
 }
 
 const deleteItem = async (item: IStockItem) => {
@@ -122,9 +122,5 @@ const deleteItem = async (item: IStockItem) => {
       snackbar.value = true
     }
   }
-}
-
-const goBack = () => {
-  router.push({ name: 'dashboard' });
 }
 </script>

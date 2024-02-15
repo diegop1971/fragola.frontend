@@ -7,7 +7,7 @@
             <v-toolbar border density="compact">
               <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
-              <v-toolbar-title>Stock</v-toolbar-title>
+              <v-toolbar-title>{{ pageTitle }} </v-toolbar-title>
 
               <v-spacer></v-spacer>
 
@@ -28,10 +28,10 @@
                 <template v-slot:item.actions="{ item }">
                   <td>
                     <v-icon small @click="editItem(item)">mdi-pencil</v-icon>
-                    <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
                   </td>
                 </template>
               </v-data-table>
+              <v-btn @click="createNewProduct">New Item</v-btn>
               <v-snackbar v-model="snackbar" multi-line>
                 {{ snackbarMessage }}
                 <template v-slot:actions>
@@ -51,67 +51,39 @@ import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { useRoute } from 'vue-router'
 import type { IStockItem } from '@app/backoffice/stock/domain/interfaces/IStockItem'
-import GetStockListGroupedByProductIdService from '@app/backoffice/stock/application/find/GetStockListGroupedByProductIdService'
-import DeleteProductService from '@app/backoffice/products/application/delete/DeleteProductService'
+import GetStockListByProductIdService from '@app/backoffice/stock/application/find/GetStockListByProductIdService'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
-
+const router = useRouter()
+const route = useRoute()
 const errorRedirectService = new ErrorRedirectService()
-
 const stockList = ref()
-
+const pageTitle = ref()
 let snackbar: Ref<boolean> = ref(false)
-
 let snackbarMessage: Ref<string> = ref('')
 
-onMounted(async () => {
-  await getStockData()
-})
-
-const router = useRouter()
-
-const getStockData = async (): Promise<void> => {
-  try {
-    const getStockListService = new GetStockListGroupedByProductIdService()
-    const response = await getStockListService.getApiResponse()
-    stockList.value = response.stockItem
-  } catch (error: any) {
-    if (error.code === 'ERR_NETWORK') {
-      errorRedirectService.handleApiError(500)
-    } else {
-      const apiErrorHandler = new ApiErrorHandler()
-      apiErrorHandler.handleError(error.response.data.code)
-      snackbarMessage.value = error.response.data.message
-      snackbar.value = true
-    }
-  }
-}
+const productId: string[] | string = route.params.productId
 
 const headers = [
-  { title: 'Items', key: 'items' },
+  { title: 'Created at', key: 'created_at' },
   { title: 'Product', key: 'product_name' },
   { title: 'Quantity', key: 'quantity' },
   { title: 'Enabled', key: 'enabled' },
   { title: 'Actions', key: 'actions', align: 'center' }
 ]
 
-const editItem = (item: IStockItem) => {
-  router.push({ name: 'stock-by-product-id', params: { productId: item.id } })
-}
+onMounted(async () => {
+  await getStockData(productId)
+})
 
-const deleteItem = async (item: IStockItem) => {
+const getStockData = async (productId: string[] | string): Promise<void> => {
   try {
-    const deleteProduct = new DeleteProductService()
-    const deleteResponse = await deleteProduct.delete(item.id)
-    snackbarMessage.value = deleteResponse.data.message
-
-    const index = stockList.value.findIndex((product: IStockItem) => product.id === item.id)
-    if (index !== -1) {
-      stockList.value.splice(index, 1)
-    }
-    snackbar.value = true
+    const getStockListService = new GetStockListByProductIdService()
+    const response = await getStockListService.getApiResponse(productId)
+    stockList.value = response.stockItem
+    pageTitle.value = `${response.pageTitle}: ${stockList.value[0].product_name}`; 
   } catch (error: any) {
     if (error.code === 'ERR_NETWORK') {
       errorRedirectService.handleApiError(500)
@@ -124,7 +96,16 @@ const deleteItem = async (item: IStockItem) => {
   }
 }
 
+const createNewProduct = () => {
+  router.push({ name: 'create-product' })
+}
+
+const editItem = (item: IStockItem) => {
+  //router.push({ name: 'edit', params: { stockId: item.id } })
+  //router.push({ name: 'stock-by-product-id', params: { productId: item.id } })
+}
+
 const goBack = () => {
-  router.push({ name: 'dashboard' });
+  router.push({ name: 'stock' })
 }
 </script>

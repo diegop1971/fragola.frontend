@@ -1,0 +1,31 @@
+import axios from 'axios'
+
+import type { IApiGetStockListGroupedByProductIdSuccessResponse } from '@app/backoffice/stock/domain/interfaces/IApiGetStockListGroupedByProductIdSuccessResponse'
+
+class GetStockListGroupedByProductIdService {
+  private apiGetStockListResponse: IApiGetStockListGroupedByProductIdSuccessResponse = {
+    title: '',
+    stockItem: [
+      {
+        items: 0,
+        id: '',
+        name: '',
+        quantity: 0,
+      }
+    ]
+  }
+
+  constructor() {}
+
+  public async getApiResponse(): Promise<IApiGetStockListGroupedByProductIdSuccessResponse> {
+    await this.getProductList()
+    return this.apiGetStockListResponse
+  }
+
+  private async getProductList(): Promise<void> {
+    const response = await axios.get<IApiGetStockListGroupedByProductIdSuccessResponse>('http://localhost:8000/api/stock/')
+    this.apiGetStockListResponse = response.data
+  }
+}
+
+export default GetStockListGroupedByProductIdService
