@@ -1,5 +1,5 @@
 export interface IApiGetStockListGroupedByProductIdSuccessResponse {
-    title: string;
+    pageTitle: string;
     stockItem: [{
         items: number
         id: string,

@@ -1,9 +1,8 @@
-import type { IApiStockErrorResponse } from '@app/backoffice/stock/domain/interfaces/IApiStockErrorResponse'
 import type { IStockItem } from '@app/backoffice/stock/domain/interfaces/IStockItem'
+import type { ICategory } from '@app/backoffice/stock/domain/interfaces/ICategory'
 
-interface IApiStockItemSuccessResponse {
-  title: string
-  stockItem: IStockItem
+export interface IApiGetStockItemResponse {
+  pageTitle: string
+  categories: ICategory[]
+  stockItem: IStockItem[]
 }
-
-export type IApiGetStockItemResponse = IApiStockItemSuccessResponse | IApiStockErrorResponse

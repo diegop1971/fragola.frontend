@@ -16,7 +16,7 @@ import dashboardComponent from '@/components/backoffice/dashboard/dashboardCompo
 import CreateProductComponent from '@/components/backoffice/products/CreateProductComponent.vue'
 import EditProductComponent from '@/components/backoffice/products/edit/EditProductComponent.vue'
 import StockComponent from '@/components/backoffice/stock/StockComponent.vue'
-import EditStockComponent from '@/components/backoffice/stock/edit/EditStockComponent.vue'
+import CreateStockComponent from '@/components/backoffice/stock/CreateStockComponent.vue'
 import StockByProductIdComponent from '@/components/backoffice/stock/StockByProductIdComponent.vue'
 import TestComponent from '@/components/backoffice/products/test/TestComponent.vue'
 import Error404AdminComponent from '@/components/backoffice/errors/Error404AdminComponent.vue'
@@ -77,34 +77,11 @@ const router = createRouter({
           name: 'create-product',
           component: CreateProductComponent
         },
-        {
-          path: 'products/test',
-          name: 'test',
-          component: TestComponent
-        },
+        /* Stock */
         {
           path: 'stock',
           name: 'stock',
           component: StockComponent
-        },
-        {
-          path: '/admin/stock/edit/:stockId',
-          name: 'edit',
-          component: EditStockComponent,
-          beforeEnter: (to, from, next) => {
-            const isValidUUID = (uuid: string | string[]) => {
-              const s = '' + uuid
-              const matchLetter: RegExpMatchArray | null = s.match(
-                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-              )
-              return matchLetter !== null
-            }
-            if (isValidUUID(to.params.stockId)) {
-              next()
-            } else {
-              next({ name: 'not-found-admin', replace: true }) // Muestra la página de error 404Admin sin cambiar la URL
-            }
-          }
         },
         {
           path: '/admin/stock/by-product-id/:productId',
@@ -124,7 +101,37 @@ const router = createRouter({
               next({ name: 'not-found-admin', replace: true }) // Muestra la página de error 404Admin sin cambiar la URL
             }
           }
-        }
+        },
+        {
+          path: 'products/create-stock-item',
+          name: 'create-stock-item',
+          component: CreateStockComponent
+        },
+        /*{
+          path: '/admin/stock/edit/:stockId',
+          name: 'edit',
+          component: EditStockComponent,
+          beforeEnter: (to, from, next) => {
+            const isValidUUID = (uuid: string | string[]) => {
+              const s = '' + uuid
+              const matchLetter: RegExpMatchArray | null = s.match(
+                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
+              )
+              return matchLetter !== null
+            }
+            if (isValidUUID(to.params.stockId)) {
+              next()
+            } else {
+              next({ name: 'not-found-admin', replace: true }) // Muestra la página de error 404Admin sin cambiar la URL
+            }
+          }
+        },*/
+        
+        {
+          path: 'products/test',
+          name: 'test',
+          component: TestComponent
+        },
 
         /********** fin routes backoffice **********/
       ]
