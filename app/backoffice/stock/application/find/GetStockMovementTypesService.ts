@@ -3,12 +3,13 @@ import axios from 'axios'
 import type { IStockMovementTypesResponse } from '@app/backoffice/stock/domain/interfaces/IStockMovementTypesResponse'
 
 class GetStockMovementTypesService {
-  private apiCategorieResponse: IStockMovementTypesResponse = {
+  
+  private apiStockMovementTypesResponse: IStockMovementTypesResponse = {
     title: '',
-    stockMovementTypesList: [
+    stockMovementTypes: [
       {
         id: '',
-        name: ''
+        movement_type: ''
       }
     ]
   }
@@ -16,13 +17,13 @@ class GetStockMovementTypesService {
   constructor() {}
 
   public async getApiResponse(): Promise<IStockMovementTypesResponse> {
-    await this.getCategoriesList()
-    return this.apiCategorieResponse
+    await this.getStockMovementTypes()
+    return this.apiStockMovementTypesResponse
   }
 
-  private async getCategoriesList(): Promise<void> {
-    const response = await axios.get<IStockMovementTypesResponse>(`http://localhost:8000/api/stock-movement-types`)
-    this.apiCategorieResponse = response.data
+  private async getStockMovementTypes(): Promise<void> {
+    const response = await axios.get<IStockMovementTypesResponse>(`http://localhost:8000/api/stock-movement-types/limited-fields-list`)
+    this.apiStockMovementTypesResponse = response.data
   }
 }
 

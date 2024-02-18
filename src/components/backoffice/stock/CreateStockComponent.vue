@@ -19,15 +19,15 @@
                   <template v-slot:title> Datos generales </template>
                   <v-card-text>
                     <v-select
-                      v-model="selectedCategory"
-                      label="Categoria"
-                      :items="categoryNamesWithIds"
+                      v-model="selectedProduct"
+                      label="Product"
+                      :items="productNamesWithIds"
                       item-value="id"
                       item-title="name"
                       :rules="[(v) => !!v || 'Item is required']"
-                      :model="reactiveStockItem.category_name"
+                      :model="reactiveStockItem.product_name"
                       required
-                      @update:modelValue="onCategoryChange"
+                      @update:modelValue="onProductChange"
                       variant="outlined"
                     ></v-select>
                     <v-select
@@ -35,7 +35,7 @@
                       label="Movement type"
                       :items="stockMovementTypesNamesWithIds"
                       item-value="id"
-                      item-title="name"
+                      item-title="movement_type"
                       :rules="[(v) => !!v || 'Item is required']"
                       :model="reactiveStockItem.stock_movemente_type_name"
                       required
@@ -65,22 +65,23 @@ import type { Ref } from 'vue'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICategory'
-import GetCategoriesService from '@app/backoffice/products/application/find/GetCategoriesService'
+import type { IProduct } from '@app/backoffice/stock/domain/interfaces/IProduct'
 import type { IStockMovementType } from '@app/backoffice/stock/domain/interfaces/IStockMovementType'
+import type { ICreateStockItem } from '@app/backoffice/stock/domain/interfaces/ICreateStockItem'
+
+import GetProductsService from '@app/backoffice/stock/application/find/GetProductsService'
 import GetStockMovementTypesService from '@app/backoffice/stock/application/find/GetStockMovementTypesService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
-import type { ICreateStockItem } from '@app/backoffice/stock/domain/interfaces/ICreateStockItem'
 
 const router = useRouter()
 const errorRedirectService = new ErrorRedirectService()
 
 const form = ref<HTMLFormElement | null>(null)
 const pageTitle = ref()
-const categoryNamesWithIds = ref<ICategory[]>([])
-const stockMovementTypesNamesWithIds = ref<ICategory[]>([])
-const selectedCategory = ref<string>('')
+const productNamesWithIds = ref<IProduct[]>([])
+const stockMovementTypesNamesWithIds = ref<IStockMovementType[]>([])
+const selectedProduct = ref<string>('')
 const selectedMovementType = ref<string>('')
 
 const reactiveStockItem = ref<ICreateStockItem>({
@@ -94,6 +95,7 @@ const reactiveStockItem = ref<ICreateStockItem>({
   created_at: '',
   updated_at: '',
   category_name: '',
+  product_name: '',
   stock_movemente_type_name: ''
 })
 
@@ -101,30 +103,21 @@ let snackbar: Ref<boolean> = ref(false)
 let snackbarMessage: Ref<string> = ref('')
 
 onMounted(async () => {
-  await getStockData()
+  await getData()
 })
 
-const getStockData = async (): Promise<void> => {
+const getData = async (): Promise<void> => {
   try {
-    const getCategoriesService = new GetCategoriesService()
-    const getCategoriesResponse = await getCategoriesService.getApiResponse()
-    const { categoriesList } = getCategoriesResponse
-
-    categoryNamesWithIds.value = categoriesList.map((category: ICategory) => ({
-      id: category.id,
-      name: category.name
-    }))
+    const getProductsService = new GetProductsService()
+    const getProductsResponse = await getProductsService.getApiResponse()
+    const { products } = getProductsResponse
+    productNamesWithIds.value = products
 
     const getStockMovementTypesService = new GetStockMovementTypesService()
     const getStockMovementTypesResponse = await getStockMovementTypesService.getApiResponse()
     const { stockMovementTypes } = getStockMovementTypesResponse
+    stockMovementTypesNamesWithIds.value = stockMovementTypes
 
-    stockMovementTypesNamesWithIds.value = stockMovementTypes.map((stockMovementType: IStockMovementType) => ({
-      id: stockMovementType.id,
-      name: stockMovementType.movement_type
-    }))
-
-    //pageTitle.value = `${response.pageTitle}`
     pageTitle.value = 'Create stock item'
   } catch (error: any) {
     if (error.code === 'ERR_NETWORK') {
@@ -138,8 +131,8 @@ const getStockData = async (): Promise<void> => {
   }
 }
 
-const onCategoryChange = (newSelectedCategory: string) => {
-  selectedCategory.value = newSelectedCategory
+const onProductChange = (newSelectedProduct: string) => {
+  selectedProduct.value = newSelectedProduct
 }
 
 const onStockMovementTypeChange = (newSelectedStockMovementType: string) => {
