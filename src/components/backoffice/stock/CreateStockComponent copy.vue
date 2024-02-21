@@ -49,7 +49,7 @@
                     ></v-text-field>
 
                     <v-text-field
-                      @click="onShowDatePicker"
+                      @click="showDatePicker"
                       v-model="formattedDate"
                       label="Fecha"
                       readonly
@@ -59,15 +59,16 @@
                       v-show="showPicker"
                       v-model="selectedDate"
                       defaultDate="selectedDate.value"
-                      @update:modelValue="onUpdateDate"
+                      @update:modelValue="updateDate"
                     ></v-date-picker>
 
-                    <v-checkbox
-                      v-model="checkedEnabledItem"
-                      :label="`Enabled: ${checkedEnabledItem === true ? 'yes' : 'no'}`"
-                      @update:model-value="onCheckedEnabledItem"
-                    ></v-checkbox>
-
+                    <v-card-text>
+                      <v-checkbox
+                        v-model="checkedEnabledProduct"
+                        :label="`Product enabled: ${checkedEnabledProduct === true ? 'yes' : 'no'}`"
+                        @update:model-value="onCheckedEnabledProduct"
+                      ></v-checkbox>
+                    </v-card-text>
                   </v-card-text>
                 </v-card>
                 <v-btn color="success" class="mt-4" block @click="save"> Save </v-btn>
@@ -117,7 +118,8 @@ const stock_movemente_type_name = ref<string>('')
 const selectedProduct = ref<string>('')
 const selectedMovementType = ref<string>('')
 let showPicker = ref(false)
-let checkedEnabledItem = ref<boolean>(false)
+const checkedEnabledProduct = ref<boolean>(true)
+let productEnableValue: number = 0
 
 const reactiveStockItem = ref<IStoreStockItem>({
   id: '',
@@ -144,8 +146,23 @@ let formattedDate = ''
 onMounted(async () => {
   await getData()
   formattedDateComputed.value
-  reactiveStockItem.value.enabled
 })
+
+const formattedDateComputed = computed(() => {
+  if (selectedDate.value) {
+    formattedDate = selectedDate.value.toISOString().slice(0, 19)
+    return formattedDate
+  }
+  return ''
+})
+
+const updateDate = (date: Date | string) => {
+  showPicker.value = false
+  selectedDate.value = new Date(date)
+  console.log('date:', date)
+  formattedDate = ''
+  formattedDateComputed.value
+}
 
 const getData = async (): Promise<void> => {
   try {
@@ -173,18 +190,24 @@ const getData = async (): Promise<void> => {
 }
 
 const save = async () => {
+  console.log('save: ', formattedDate)
   const storeStockItemService = new StoreStockItemService(
     selectedProduct.value,
     selectedMovementType.value,
     reactiveStockItem.value.quantity,
     formattedDate,
+    'ñljklj',
+    1
+
+    /*reactiveStockItem.value.date,
     reactiveStockItem.value.notes,
-    reactiveStockItem.value.enabled
+    reactiveStockItem.value.enabled*/
   )
+
   try {
-    storeResponse = await storeStockItemService.store()
+    /*storeResponse = await storeStockItemService.store()
     snackbarMessage.value = storeResponse.message
-    snackbar.value = true
+    snackbar.value = true*/
   } catch (error: any) {
     //isSaveButtonDisabled.value = false
     if (error.code === 'ERR_NETWORK') {
@@ -206,28 +229,12 @@ const onStockMovementTypeChange = (newSelectedStockMovementType: string) => {
   selectedMovementType.value = newSelectedStockMovementType
 }
 
-const formattedDateComputed = computed(() => {
-  if (selectedDate.value) {
-    formattedDate = selectedDate.value.toISOString().slice(0, 10)
-    return formattedDate
-  }
-  return ''
-})
-
-const onUpdateDate = (date: Date | string) => {
-  showPicker.value = false
-  selectedDate.value = new Date(date)
-  formattedDate = ''
-  formattedDateComputed.value
+const onCheckedEnabledProduct = (newProductEnableValue: boolean) => {
+  productEnableValue = newProductEnableValue === true ? 1 : 0
+  reactiveStockItem.value.enabled = productEnableValue
 }
 
-const onCheckedEnabledItem = (newItemEnableValue: boolean) => {
-  reactiveStockItem.value.enabled = newItemEnableValue === true ? 1 : 0
-  checkedEnabledItem.value = newItemEnableValue
-  console.log(reactiveStockItem.value.enabled)
-}
-
-const onShowDatePicker = () => {
+const showDatePicker = () => {
   if (showPicker.value) {
     showPicker.value = false
   } else {

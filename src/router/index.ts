@@ -103,7 +103,7 @@ const router = createRouter({
           }
         },
         {
-          path: 'products/create-stock-item',
+          path: 'stock/create-stock-item',
           name: 'create-stock-item',
           component: CreateStockComponent
         },
