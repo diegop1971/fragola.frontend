@@ -14,11 +14,11 @@
               <v-spacer></v-spacer>
               <v-btn small @click="goBack()" class="align-self-center">
                 <v-icon>mdi-arrow-left</v-icon>
-                Go Back
+                Stock list
               </v-btn>
             </v-toolbar>
             <v-container>
-              <v-data-table :headers="headers" :items="stockList">
+              <v-data-table :headers="headers" :items="customStockList">
                 <template v-slot:item.enabled="{ item }">
                   <td>{{ item.enabled ? 'yes' : 'no' }}</td>
                 </template>
@@ -49,18 +49,18 @@ import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 const router = useRouter()
 const route = useRoute()
 const errorRedirectService = new ErrorRedirectService()
-const stockList = ref()
 const pageTitle = ref()
 let snackbar: Ref<boolean> = ref(false)
 let snackbarMessage: Ref<string> = ref('')
+let customStockList = ref() 
 
 const productId: string[] | string = route.params.productId
 
 const headers = [
-  { title: 'Created at', key: 'created_at' },
-  { title: 'Product', key: 'product_name' },
+  { title: 'Entry date', key: 'date' },
+  { title: 'Movement tipe', key: 'movement_type'},
   { title: 'Quantity', key: 'quantity' },
-  { title: 'Enabled', key: 'enabled' },
+  { title: 'Notes', key: 'notes' },
 ]
 
 onMounted(async () => {
@@ -71,8 +71,17 @@ const getStockData = async (productId: string[] | string): Promise<void> => {
   try {
     const getStockListService = new GetStockListByProductIdService()
     const response = await getStockListService.getApiResponse(productId)
-    stockList.value = response.stockItem
-    pageTitle.value = `${response.pageTitle} - ${stockList.value[0].product_name}`
+
+    customStockList.value = response.stockItem.map((element: any) => ({
+      date: element.date.slice(0,10),
+      movement_type: element.movement_type,
+      product_name: element.product_name,
+      quantity: element.quantity,
+      notes: element.notes,
+    }))
+
+    pageTitle.value = `${response.pageTitle} - ${customStockList.value[0].product_name}`
+
   } catch (error: any) {
     if (error.code === 'ERR_NETWORK') {
       errorRedirectService.handleApiError(500)

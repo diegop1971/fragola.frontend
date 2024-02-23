@@ -10,7 +10,7 @@
               <v-spacer></v-spacer>
               <v-btn small @click="goBack()" class="align-self-center">
                 <v-icon>mdi-arrow-left</v-icon>
-                Go Back
+                Product list
               </v-btn>
             </v-toolbar>
             <v-container fluid>
@@ -18,7 +18,21 @@
                 <v-card class="mx-auto">
                   <template v-slot:title> Datos generales </template>
                   <v-card-text>
-                    <v-select
+                    <v-text-field
+                      @click="onShowDatePicker"
+                      v-model="formattedDate"
+                      label="Fecha"
+                      readonly
+                    ></v-text-field>
+
+                    <v-date-picker
+                      v-show="showPicker"
+                      v-model="selectedDate"
+                      defaultDate="selectedDate.value"
+                      @update:modelValue="onUpdateDate"
+                    ></v-date-picker>
+
+                    <v-select v-if="productId === null || productId === ''"
                       v-model="selectedProduct"
                       label="Product"
                       :items="productNamesWithIds"
@@ -30,6 +44,7 @@
                       @update:modelValue="onProductChange"
                       variant="outlined"
                     ></v-select>
+
                     <v-select
                       v-model="selectedMovementType"
                       label="Movement type"
@@ -47,33 +62,27 @@
                       label="Quantity"
                       variant="outlined"
                     ></v-text-field>
-
-                    <v-text-field
-                      @click="onShowDatePicker"
-                      v-model="formattedDate"
-                      label="Fecha"
-                      readonly
-                    ></v-text-field>
-
-                    <v-date-picker
-                      v-show="showPicker"
-                      v-model="selectedDate"
-                      defaultDate="selectedDate.value"
-                      @update:modelValue="onUpdateDate"
-                    ></v-date-picker>
-
-                    <v-checkbox
-                      v-model="checkedEnabledItem"
-                      :label="`Enabled: ${checkedEnabledItem === true ? 'yes' : 'no'}`"
-                      @update:model-value="onCheckedEnabledItem"
-                    ></v-checkbox>
-
                   </v-card-text>
+
+                  <v-textarea
+                    counter
+                    label="Notes"
+                    v-model="reactiveStockItem.notes"
+                    variant="outlined"
+                  ></v-textarea>
                 </v-card>
-                <v-btn color="success" class="mt-4" block @click="save"> Save </v-btn>
+                <v-btn
+                  color="success"
+                  class="mt-4"
+                  block
+                  :disabled="isSaveButtonDisabled"
+                  @click="save"
+                >
+                  Save
+                </v-btn>
               </v-form>
 
-              <v-snackbar v-model="snackbar" multi-line>
+              <v-snackbar v-model="snackbar" multi-line timeout="4000">
                 {{ snackbarMessage }}
                 <template v-slot:actions>
                   <v-btn color="red" variant="text" @click="snackbar = false"> Close </v-btn>
@@ -106,8 +115,13 @@ import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 
 const router = useRouter()
-const errorRedirectService = new ErrorRedirectService()
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
+const productId = route.params.productId?.toString() || null;
+console.log(productId)
+
+const errorRedirectService = new ErrorRedirectService()
 const form = ref<HTMLFormElement | null>(null)
 const pageTitle = ref()
 const productNamesWithIds = ref<IProduct[]>([])
@@ -117,7 +131,7 @@ const stock_movemente_type_name = ref<string>('')
 const selectedProduct = ref<string>('')
 const selectedMovementType = ref<string>('')
 let showPicker = ref(false)
-let checkedEnabledItem = ref<boolean>(false)
+const isSaveButtonDisabled = ref(false)
 
 const reactiveStockItem = ref<IStoreStockItem>({
   id: '',
@@ -126,16 +140,18 @@ const reactiveStockItem = ref<IStoreStockItem>({
   quantity: 0,
   date: '',
   notes: '',
-  enabled: 0
+  enabled: 1
 })
 
 let snackbar: Ref<boolean> = ref(false)
 let snackbarMessage: Ref<string> = ref('')
 
 let storeResponse: IStoreStockItemResponse = {
-  success: false,
-  message: '',
-  code: 0
+  data: {
+    success: false,
+    message: '',
+    code: 0
+  }
 }
 
 const selectedDate = ref(new Date())
@@ -173,6 +189,13 @@ const getData = async (): Promise<void> => {
 }
 
 const save = async () => {
+  
+  isSaveButtonDisabled.value = true
+  
+  if(productId) {
+    selectedProduct.value = productId
+  }
+
   const storeStockItemService = new StoreStockItemService(
     selectedProduct.value,
     selectedMovementType.value,
@@ -183,10 +206,18 @@ const save = async () => {
   )
   try {
     storeResponse = await storeStockItemService.store()
-    snackbarMessage.value = storeResponse.message
+    snackbarMessage.value = storeResponse.data.message
     snackbar.value = true
+
+    if (storeResponse.data.success === true) {
+      isSaveButtonDisabled.value = true
+
+      setTimeout(() => {
+        router.replace({ name: 'stock' })
+      }, 4000)
+    }
   } catch (error: any) {
-    //isSaveButtonDisabled.value = false
+    isSaveButtonDisabled.value = false
     if (error.code === 'ERR_NETWORK') {
       errorRedirectService.handleApiError(500)
     } else {
@@ -219,12 +250,6 @@ const onUpdateDate = (date: Date | string) => {
   selectedDate.value = new Date(date)
   formattedDate = ''
   formattedDateComputed.value
-}
-
-const onCheckedEnabledItem = (newItemEnableValue: boolean) => {
-  reactiveStockItem.value.enabled = newItemEnableValue === true ? 1 : 0
-  checkedEnabledItem.value = newItemEnableValue
-  console.log(reactiveStockItem.value.enabled)
 }
 
 const onShowDatePicker = () => {

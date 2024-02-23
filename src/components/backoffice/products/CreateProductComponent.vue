@@ -301,7 +301,7 @@ const onSwitchedLowStockAlert = (newValue: any) => {
 }
 
 async function save() {
-  isSaveButtonDisabled.value = true
+  //isSaveButtonDisabled.value = true
   if (form.value !== null) {
     const { valid } = await form.value.validate()
 
@@ -316,9 +316,9 @@ async function save() {
         low_stock_threshold
       } = reactiveProductData.value
 
-      if(!valid) {
+      /*if (!valid) {
         isSaveButtonDisabled.value = false
-      }
+      }*/
 
       const storeProductService = new StoreProductService(
         id,
@@ -336,6 +336,14 @@ async function save() {
         storeResponse = await storeProductService.store()
         snackbarMessage.value = storeResponse.data.message
         snackbar.value = true
+
+        if (storeResponse.data.success === true) {
+          isSaveButtonDisabled.value = true
+
+          setTimeout(() => {
+            router.replace({ name: 'products' })
+          }, 4000)
+        }
       } catch (error: any) {
         isSaveButtonDisabled.value = false
         if (error.code === 'ERR_NETWORK') {

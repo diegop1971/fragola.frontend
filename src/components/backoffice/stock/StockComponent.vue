@@ -14,7 +14,7 @@
               <v-spacer></v-spacer>
               <v-btn small @click="goBack()" class="align-self-center">
                 <v-icon>mdi-arrow-left</v-icon>
-                Go Back
+                Dashboard
               </v-btn>
             </v-toolbar>
             <v-container fluid>
@@ -24,7 +24,8 @@
                 </template>
                 <template v-slot:item.actions="{ item }">
                   <td>
-                    <v-icon small @click="editItem(item)">mdi-eye-outline</v-icon>
+                    <v-icon small @click="viewItem(item)">mdi-eye-outline</v-icon>
+                    <v-icon small @click="addItem(item)">mdi-plus-circle-outline</v-icon>
                   </td>
                 </template>
               </v-data-table>
@@ -91,12 +92,16 @@ const headers = [
   { title: 'Actions', key: 'actions', align: 'center' }
 ]
 
-const editItem = (item: IStockItem) => {
+const viewItem = (item: IStockItem) => {
   router.push({ name: 'stock-by-product-id', params: { productId: item.id } })
 }
 
-const addItem = () => {
-  router.push({ name: 'create-stock-item' })
+const addItem = (item?: IStockItem) => {
+  if (item) {
+    router.push({ name: 'create-stock-item', params: { productId: item.id } });
+  } else {
+    router.push({ name: 'create-stock-item' });
+  }
 }
 
 const goBack = () => {
