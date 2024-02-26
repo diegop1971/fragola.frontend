@@ -4,7 +4,7 @@ import type { IApiGetStockListGroupedByProductIdSuccessResponse } from '@app/bac
 
 class GetStockListGroupedByProductIdService {
   private apiGetStockListResponse: IApiGetStockListGroupedByProductIdSuccessResponse = {
-    title: '',
+    pageTitle: '',
     stockItem: [
       {
         items: 0,

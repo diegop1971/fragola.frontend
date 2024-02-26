@@ -10,7 +10,7 @@
               <v-spacer></v-spacer>
               <v-btn small @click="goBack()" class="align-self-center">
                 <v-icon>mdi-arrow-left</v-icon>
-                Product list
+                Stock list
               </v-btn>
             </v-toolbar>
             <v-container fluid>

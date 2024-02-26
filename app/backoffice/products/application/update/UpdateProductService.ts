@@ -11,9 +11,9 @@ class UpdateProductService {
   private description: string
   private description_short: string
   private selected_category: string
-  private minimum_quantity: number
   private low_stock_threshold: number
   private low_stock_alert: number
+  private out_of_stock: number
   private enabled: number
 
   constructor(
@@ -23,9 +23,9 @@ class UpdateProductService {
     description: string,
     description_short: string,
     selected_category: string,
-    minimum_quantity: number,
     low_stock_threshold: number,
     low_stock_alert: number,
+    out_of_stock: number,
     enabled: number
   ) {
     this.id = id
@@ -34,9 +34,9 @@ class UpdateProductService {
     this.description = description
     this.description_short = description_short
     this.selected_category = selected_category
-    this.minimum_quantity = minimum_quantity
     this.low_stock_threshold = low_stock_threshold
     this.low_stock_alert = low_stock_alert
+    this.out_of_stock = out_of_stock
     this.enabled = enabled
   }
 
@@ -51,9 +51,9 @@ class UpdateProductService {
         description: this.description,
         description_short: this.description_short,
         category_id: this.selected_category,
-        minimum_quantity: this.minimum_quantity,
         low_stock_threshold: this.low_stock_threshold,
         low_stock_alert: this.low_stock_alert,
+        out_of_stock: this.out_of_stock,
         enabled: this.enabled
       }
     )

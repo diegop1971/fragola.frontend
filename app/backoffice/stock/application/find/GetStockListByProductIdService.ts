@@ -11,7 +11,6 @@ class GetStockListByProductIdService {
     const response = await axios.get<IApiGetStockListByProductIdSuccessResponse>(
       `http://localhost:8000/api/stock/stocklistByProductId/${id}`
     )
-
     return response.data
   }
 }

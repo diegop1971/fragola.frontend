@@ -96,8 +96,8 @@ const headers = [
   { title: 'Category', key: 'category_name' },
   { title: 'Enabled', key: 'enabled' },
   { title: 'Low stock alert', key: 'low_stock_alert' },
-  { title: 'Minimun Quantity', key: 'minimum_quantity' },
   { title: 'Low stock threshold', key: 'low_stock_threshold' },
+  { title: 'Out of stock', key: 'out_of_stock' },
   { title: 'Actions', key: 'actions', align: 'center' }
 ]
 

@@ -13,9 +13,9 @@ class GetProductListService {
       description: '',
       description_short: '',
       price: 0,
-      minimum_quantity: 0,
       low_stock_threshold: 0,
       low_stock_alert: 0,
+      out_of_stock: 0,
       enabled: 0,
       created_at: '',
       updated_at: ''

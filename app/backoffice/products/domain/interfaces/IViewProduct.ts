@@ -5,9 +5,9 @@ export interface IViewProduct extends IBaseProduct {
     category_name: string;
     description: string;
     description_short: string;
-    minimum_quantity: number;
     low_stock_threshold: number;
     low_stock_alert: number;
+    out_of_stock: number
     enabled: number;
     created_at: string;
     updated_at: string;

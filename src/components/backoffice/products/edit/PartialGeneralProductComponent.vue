@@ -52,6 +52,12 @@
               <template v-slot:title> Estado del producto </template>
               <v-card-text>
                 <v-checkbox
+                  v-model="checkedOutOfStockProduct"
+                  :label="`Out of stock: ${checkedOutOfStockProduct === true ? 'yes' : 'no'}`"
+                  :rules="productEnabledRules"
+                  @update:model-value="onOutOfStockProduct"
+                ></v-checkbox>
+                <v-checkbox
                   v-model="checkedEnabledProduct"
                   :label="`Product enabled: ${checkedEnabledProduct === true ? 'yes' : 'no'}`"
                   :rules="productEnabledRules"
@@ -87,15 +93,7 @@
                 ></v-switch>
 
                 <v-text-field
-                  v-model="reactiveProductData.minimum_quantity"
-                  :rules="minimumQuantityRules"
-                  label="Minimum Quantity"
-                  variant="outlined"
-                ></v-text-field>
-
-                <v-text-field
                   v-model="reactiveProductData.low_stock_threshold"
-                  :rules="lowStockThresholdRules"
                   label="Low stock threshold"
                   variant="outlined"
                 ></v-text-field>
@@ -141,18 +139,20 @@ const reactiveProductData = ref<IEditProduct>({
   category_name: '',
   description: '',
   description_short: '',
-  minimum_quantity: 0,
   low_stock_threshold: 0,
   low_stock_alert: 0,
-  enabled: 1
+  out_of_stock: 0,
+  enabled: 0
 })
 
 const form = ref<HTMLFormElement | null>(null)
 const categoryNamesWithIds = ref<ICategory[]>([])
 const selectedCategory = ref<string>('')
+const checkedOutOfStockProduct = ref<boolean>(false)
 const checkedEnabledProduct = ref<boolean>(true)
 let productEnableValue: number = 0
 let lowStockAlertSwitchValue = ref<boolean>(false)
+let productOutOfStockValue: number = 0
 
 let updateResponse: IUpdateProductResponse = {
   data: {
@@ -169,8 +169,6 @@ const descriptionShortRules = [(v: string) => validateProductRuleDescriptionShor
 const productEnabledRules = [(v: boolean) => validateProductRuleProductEnabled(v)]
 const priceRules = [(v: number) => validateNumberGreaterThanOne(v)]
 const priceLowAlertEnabled = [(v: boolean) => validateProductRuleProductLowAlertEnabled(v)]
-const minimumQuantityRules = [(v: number) => validateMinimumQuantityRules(v)]
-const lowStockThresholdRules = [(v: number) => validateLowStockThresholdRules(v)]
 
 const validateProductRuleName = async (value: string): Promise<string | boolean> => {
   const validationResult = VuetifyValidationProductFormService.validateProductRuleName(value)
@@ -199,29 +197,11 @@ const validateNumberGreaterThanOne = async (value: number): Promise<string | boo
   return validationResult
 }
 
-const validateMinimumQuantityRules = async (minimumQuantity: number): Promise<string | boolean> => {
-  const validationResult = VuetifyValidationProductFormService.validateMinimumQuantityRules(
-    minimumQuantity,
-    reactiveProductData.value.low_stock_threshold
-  )
-  return validationResult
-}
-
 const validateProductRuleProductLowAlertEnabled = async (
   value: boolean
 ): Promise<string | boolean> => {
   const validationResult =
     VuetifyValidationProductFormService.validateProductRuleProductLowAlertEnabled(value)
-  return validationResult
-}
-
-const validateLowStockThresholdRules = async (
-  lowStockThreshold: number
-): Promise<string | boolean> => {
-  const validationResult = VuetifyValidationProductFormService.validateLowStockThresholdRules(
-    lowStockThreshold,
-    reactiveProductData.value.minimum_quantity
-  )
   return validationResult
 }
 
@@ -250,9 +230,9 @@ const getData = async (): Promise<void> => {
         category_name,
         description,
         description_short,
-        minimum_quantity,
         low_stock_threshold,
         low_stock_alert,
+        out_of_stock,
         enabled
       } = productList
 
@@ -264,13 +244,14 @@ const getData = async (): Promise<void> => {
         category_name,
         description,
         description_short,
-        minimum_quantity,
         low_stock_threshold,
         low_stock_alert,
+        out_of_stock,
         enabled
       }
 
       selectedCategory.value = category_id
+      checkedOutOfStockProduct.value = out_of_stock === 1 ? true : false
       checkedEnabledProduct.value = enabled === 1 ? true : false
       lowStockAlertSwitchValue.value = low_stock_alert === 1 ? true : false
       categoryNamesWithIds.value = categories.map((category: ICategory) => ({
@@ -294,6 +275,11 @@ const onCategoryChange = (newSelectedCategory: string) => {
   selectedCategory.value = newSelectedCategory
 }
 
+const onOutOfStockProduct = (newProductOutOfStockValue: boolean) => {
+  productOutOfStockValue = newProductOutOfStockValue === true ? 1 : 0
+  reactiveProductData.value.out_of_stock = productOutOfStockValue
+}
+
 const onCheckedEnabledProduct = (newProductEnableValue: boolean) => {
   productEnableValue = newProductEnableValue === true ? 1 : 0
   reactiveProductData.value.enabled = productEnableValue
@@ -308,15 +294,8 @@ async function save() {
   if (form.value !== null) {
     const { valid } = await form.value.validate()
     if (valid) {
-      const {
-        id,
-        name,
-        price,
-        description,
-        description_short,
-        minimum_quantity,
-        low_stock_threshold
-      } = reactiveProductData.value
+      const { id, name, price, description, description_short, low_stock_threshold, out_of_stock } =
+        reactiveProductData.value
 
       const updateProductService = new UpdateProductService(
         id,
@@ -325,9 +304,9 @@ async function save() {
         description,
         description_short,
         selectedCategory.value,
-        minimum_quantity,
         low_stock_threshold,
         reactiveProductData.value.low_stock_alert,
+        out_of_stock,
         productEnableValue
       )
       try {

@@ -17,12 +17,22 @@
                 Stock list
               </v-btn>
             </v-toolbar>
+            <v-card>
+              <v-card-title class="primary darken-2 white--text">
+                <v-icon>mdi-information-outline</v-icon>
+                <span class="ml-2">Stock Summary</span>
+              </v-card-title>
+              <v-card-text>
+                <p class="mb-2">
+                  Product name: <strong>{{ productName }}</strong>
+                </p>
+                <p class="mb-2">Stock available: <strong> {{ stockAvailable }} </strong></p>
+                <p v-if="stockAvailable > minimumQuantity" class="green--text">Product available!</p>
+                <p v-else class="red--text">Out of stock</p>
+              </v-card-text>
+            </v-card>
             <v-container>
-              <v-data-table :headers="headers" :items="customStockList">
-                <template v-slot:item.enabled="{ item }">
-                  <td>{{ item.enabled ? 'yes' : 'no' }}</td>
-                </template>
-              </v-data-table>
+              <v-data-table :headers="headers" :items="customStockList"> </v-data-table>
               <v-snackbar v-model="snackbar" multi-line>
                 {{ snackbarMessage }}
                 <template v-slot:actions>
@@ -50,17 +60,20 @@ const router = useRouter()
 const route = useRoute()
 const errorRedirectService = new ErrorRedirectService()
 const pageTitle = ref()
+const productName = ref()
+const stockAvailable = ref()
+const minimumQuantity = ref()
 let snackbar: Ref<boolean> = ref(false)
 let snackbarMessage: Ref<string> = ref('')
-let customStockList = ref() 
+let customStockList = ref()
 
 const productId: string[] | string = route.params.productId
 
 const headers = [
   { title: 'Entry date', key: 'date' },
-  { title: 'Movement tipe', key: 'movement_type'},
+  { title: 'Movement tipe', key: 'movement_type' },
   { title: 'Quantity', key: 'quantity' },
-  { title: 'Notes', key: 'notes' },
+  { title: 'Notes', key: 'notes' }
 ]
 
 onMounted(async () => {
@@ -71,21 +84,27 @@ const getStockData = async (productId: string[] | string): Promise<void> => {
   try {
     const getStockListService = new GetStockListByProductIdService()
     const response = await getStockListService.getApiResponse(productId)
+    
+    pageTitle.value = response.pageTitle
+    productName.value = response.product.name
+    
+    stockAvailable.value = response.stockItem.reduce((total: number, item) => {
+      return total + item.quantity
+    }, 0)
 
     customStockList.value = response.stockItem.map((element: any) => ({
-      date: element.date.slice(0,10),
+      date: element.date.slice(0, 10),
       movement_type: element.movement_type,
       product_name: element.product_name,
       quantity: element.quantity,
-      notes: element.notes,
+      notes: element.notes
     }))
-
-    pageTitle.value = `${response.pageTitle} - ${customStockList.value[0].product_name}`
 
   } catch (error: any) {
     if (error.code === 'ERR_NETWORK') {
       errorRedirectService.handleApiError(500)
     } else {
+      console.log(error)
       const apiErrorHandler = new ApiErrorHandler()
       apiErrorHandler.handleError(error.response.data.code)
       snackbarMessage.value = error.response.data.message
@@ -95,7 +114,7 @@ const getStockData = async (productId: string[] | string): Promise<void> => {
 }
 
 const addItem = () => {
-  router.push({ name: 'create-product' })
+  //router.push({ name: 'create-stock-item', params: { productId: item.id } });
 }
 
 const goBack = () => {

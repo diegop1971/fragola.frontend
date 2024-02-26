@@ -5,8 +5,8 @@ export interface IEditProduct extends IBaseProduct {
     category_name: string;
     description: string;
     description_short: string;
-    minimum_quantity: number;
     low_stock_threshold: number;
     low_stock_alert: number;
+    out_of_stock: number;
     enabled: number;
 }
