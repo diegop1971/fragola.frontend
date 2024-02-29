@@ -85,9 +85,9 @@ const getStockData = async (): Promise<void> => {
 }
 
 const headers = [
-  { title: 'Items', key: 'items' },
   { title: 'Product', key: 'product_name' },
-  { title: 'Quantity', key: 'quantity' },
+  { title: 'Physical Quantity', key: 'physical_quantity' },
+  { title: 'Usable Quantity', key: 'usable_quantity' },
   { title: 'Low stock threshold', key: 'low_stock_threshold' },
   { title: 'Low stock alert', key: 'low_stock_alert' },
   { title: 'Actions', key: 'actions', align: 'center' }
