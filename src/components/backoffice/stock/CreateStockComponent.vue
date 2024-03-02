@@ -32,7 +32,8 @@
                       @update:modelValue="onUpdateDate"
                     ></v-date-picker>
 
-                    <v-select v-if="productId === null || productId === ''"
+                    <v-select
+                      v-if="productId === null || productId === ''"
                       v-model="selectedProduct"
                       label="Product"
                       :items="productNamesWithIds"
@@ -60,6 +61,7 @@
                     <v-text-field
                       v-model="reactiveStockItem.quantity"
                       label="Quantity"
+                      :rules="quantityRules"
                       variant="outlined"
                     ></v-text-field>
                   </v-card-text>
@@ -113,12 +115,13 @@ import GetStockMovementTypesService from '@app/backoffice/stock/application/find
 import StoreStockItemService from '@app/backoffice/stock/application/store/StoreStockItemService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
+import VuetifyFormCommonValidationService from '@app/backoffice/shared/application/rules/VuetifyFormCommonValidationService'
 
 const router = useRouter()
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const productId = route.params.productId?.toString() || null;
+const productId = route.params.productId?.toString() || null
 console.log(productId)
 
 const errorRedirectService = new ErrorRedirectService()
@@ -157,6 +160,13 @@ let storeResponse: IStoreStockItemResponse = {
 const selectedDate = ref(new Date())
 let formattedDate = ''
 
+const quantityRules = [(v: number) => validateNumberGreaterThanOne(v)]
+
+const validateNumberGreaterThanOne = async (value: number): Promise<string | boolean> => {
+  const validationResult = VuetifyFormCommonValidationService.validateNumberGreaterThanOne(value)
+  return validationResult
+}
+
 onMounted(async () => {
   await getData()
   formattedDateComputed.value
@@ -189,42 +199,47 @@ const getData = async (): Promise<void> => {
 }
 
 const save = async () => {
-  
-  isSaveButtonDisabled.value = true
-  
-  if(productId) {
-    selectedProduct.value = productId
-  }
+  if (form.value !== null) {
+    const { valid } = await form.value.validate()
 
-  const storeStockItemService = new StoreStockItemService(
-    selectedProduct.value,
-    selectedMovementType.value,
-    reactiveStockItem.value.quantity,
-    formattedDate,
-    reactiveStockItem.value.notes,
-    reactiveStockItem.value.enabled
-  )
-  try {
-    storeResponse = await storeStockItemService.store()
-    snackbarMessage.value = storeResponse.data.message
-    snackbar.value = true
-
-    if (storeResponse.data.success === true) {
+    if (valid) {
       isSaveButtonDisabled.value = true
 
-      setTimeout(() => {
-        router.replace({ name: 'stock' })
-      }, 4000)
-    }
-  } catch (error: any) {
-    isSaveButtonDisabled.value = false
-    if (error.code === 'ERR_NETWORK') {
-      errorRedirectService.handleApiError(500)
-    } else {
-      const apiErrorHandler = new ApiErrorHandler()
-      apiErrorHandler.handleError(error.response.data.code)
-      snackbarMessage.value = error.response.data.message
-      snackbar.value = true
+      if (productId) {
+        selectedProduct.value = productId
+      }
+
+      const storeStockItemService = new StoreStockItemService(
+        selectedProduct.value,
+        selectedMovementType.value,
+        reactiveStockItem.value.quantity,
+        formattedDate,
+        reactiveStockItem.value.notes,
+        reactiveStockItem.value.enabled
+      )
+      try {
+        storeResponse = await storeStockItemService.store()
+        snackbarMessage.value = storeResponse.data.message
+        snackbar.value = true
+
+        if (storeResponse.data.success === true) {
+          isSaveButtonDisabled.value = true
+
+          setTimeout(() => {
+            router.replace({ name: 'stock' })
+          }, 4000)
+        }
+      } catch (error: any) {
+        isSaveButtonDisabled.value = false
+        if (error.code === 'ERR_NETWORK') {
+          errorRedirectService.handleApiError(500)
+        } else {
+          const apiErrorHandler = new ApiErrorHandler()
+          apiErrorHandler.handleError(error.response.data.code)
+          snackbarMessage.value = error.response.data.message
+          snackbar.value = true
+        }
+      }
     }
   }
 }

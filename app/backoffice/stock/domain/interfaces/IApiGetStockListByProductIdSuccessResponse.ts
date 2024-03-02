@@ -11,7 +11,7 @@ export interface IApiGetStockListByProductIdSuccessResponse {
     name: string
     price: number
   }
-  stockItem: [
+  stockMovements: [
     {
       id: string
       product_id: string

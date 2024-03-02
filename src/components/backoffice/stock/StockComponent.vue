@@ -90,6 +90,8 @@ const headers = [
   { title: 'Usable Quantity', key: 'usable_quantity' },
   { title: 'Low stock threshold', key: 'low_stock_threshold' },
   { title: 'Low stock alert', key: 'low_stock_alert' },
+  { title: 'Out of stock', key: 'out_of_stock' },
+  { title: 'Product enabled', key: 'enabled' },
   { title: 'Actions', key: 'actions', align: 'center' }
 ]
 

@@ -155,6 +155,7 @@ import GetCategoriesService from '@app/backoffice/products/application/find/GetC
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 import VuetifyValidationProductFormService from '@app/backoffice/products/application/rules/VuetifyValidationProductFormService'
+import VuetifyFormCommonValidationService from '@app/backoffice/shared/application/rules/VuetifyFormCommonValidationService'
 
 const router = useRouter()
 
@@ -225,7 +226,7 @@ const validateProductRuleProductEnabled = async (value: boolean): Promise<string
 }
 
 const validateNumberGreaterThanOne = async (value: number): Promise<string | boolean> => {
-  const validationResult = VuetifyValidationProductFormService.validateNumberGreaterThanOne(value)
+  const validationResult = VuetifyFormCommonValidationService.validateNumberGreaterThanOne(value)
   return validationResult
 }
 

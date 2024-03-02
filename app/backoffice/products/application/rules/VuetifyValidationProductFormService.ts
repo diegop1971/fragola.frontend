@@ -3,43 +3,35 @@ class VuetifyValidationProductFormService {
     if (typeof value === 'string' && (value.length > 1 && value.length < 50)) {
       return true
     }
-    return 'El nombre es requerido'
+    return 'The name field is required.'
   }
 
   public static async validateProductRuleDescription(value: string): Promise<boolean | string> {
     if (typeof value === 'string' && (value.length > 1 && value.length < 500)) {
       return true
     }
-    return 'La descripcion corta es requerida, debe ser mayor a un caracter y menor a 500 caracteres'
+    return 'The short description is required, it must be greater than one character and less than 500 characters.'
   }
 
   public static async validateProductRuleDescriptionShort(value: string): Promise<boolean | string> {
     if (typeof value === 'string' && (value.length > 1 && value.length < 250)) {
       return true
     }
-    return 'La descripcion corta es requerida, debe ser mayor a un caracter y menor a 250 caracteres'
-  }
-
-  public static async validateNumberGreaterThanOne(value: number): Promise<boolean | string> {
-    const numericValue = Number(value)
-    if (!isNaN(numericValue) && numericValue > 0) {
-      return true 
-    }
-    return 'El campo es requerido y debe ser un número mayor a 0'
+    return 'The short description is required, it must be greater than one character and less than 250 characters.'
   }
 
   public static async validateProductRuleProductEnabled(value: boolean): Promise<boolean | string> {
     if (typeof value === 'boolean') {
       return true
     }
-    return 'El campo enabled es requerido y debe ser true o false'
+    return 'The enabled field is required and must be true or false.'
   }
 
   public static async validateProductRuleProductLowAlertEnabled(value: boolean): Promise<boolean | string> {
     if (typeof value === 'boolean') {
       return true
     }
-    return 'El campo enabled es requerido y debe ser true o false'
+    return 'The Low stock alert field is required and must be true or false.'
   }
 }
 
