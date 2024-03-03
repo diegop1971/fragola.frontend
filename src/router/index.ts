@@ -127,26 +127,6 @@ const router = createRouter({
             }
           }
         },
-        /*{
-          path: '/admin/stock/edit/:stockId',
-          name: 'edit',
-          component: EditStockComponent,
-          beforeEnter: (to, from, next) => {
-            const isValidUUID = (uuid: string | string[]) => {
-              const s = '' + uuid
-              const matchLetter: RegExpMatchArray | null = s.match(
-                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-              )
-              return matchLetter !== null
-            }
-            if (isValidUUID(to.params.stockId)) {
-              next()
-            } else {
-              next({ name: 'not-found-admin', replace: true }) // Muestra la página de error 404Admin sin cambiar la URL
-            }
-          }
-        },*/
-
         {
           path: 'products/test',
           name: 'test',

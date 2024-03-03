@@ -13,7 +13,7 @@ class GetStockListService {
         quantity: 0,
         date: '',
         notes: '',
-        enabled: false,
+        enabled: 0,
         created_at: '',
         updated_at: '',
         movement_type: '',

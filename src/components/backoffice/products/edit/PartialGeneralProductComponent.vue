@@ -126,7 +126,7 @@ import type { IEditProduct } from '@app/backoffice/products/domain/interfaces/IE
 import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
 import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
 import VuetifyValidationProductFormService from '@app/backoffice/products/application/rules/VuetifyValidationProductFormService'
-
+import VuetifyFormCommonValidationService from '@app/backoffice/shared/application/rules/VuetifyFormCommonValidationService'
 const route = useRoute()
 
 const errorRedirectService = new ErrorRedirectService()
@@ -193,7 +193,7 @@ const validateProductRuleProductEnabled = async (value: boolean): Promise<string
 }
 
 const validateNumberGreaterThanOne = async (value: number): Promise<string | boolean> => {
-  const validationResult = VuetifyValidationProductFormService.validateNumberGreaterThanOne(value)
+  const validationResult = VuetifyFormCommonValidationService.validateNumberGreaterThanOne(value)
   return validationResult
 }
 
