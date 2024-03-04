@@ -3,54 +3,49 @@
     <v-row align="start" no-gutters>
       <v-col cols="4" v-for="product in products.homeProducts" :key="product.id">
         <v-container fluid class="text-center">
-          <a :href="`https://vuetifyjs.com/product/${1}`" class="text-decoration-none">
-            <div>
-              <v-img
-                :src="`http://localhost:8000/images/catalog/320x320.png`"
-                :lazy-src="`http://localhost:8000/images/catalog/320x320.png`"
-                aspect-ratio="1"
-                cover
-                class="bg-grey-lighten-2 rounded-image"
-                height="auto"
-                max-height="320"
-                width="auto"
-                max-width="320"
-              >
-                <template v-slot:placeholder>
-                  </template>
-              </v-img>
+          <div>
+            <v-img
+              :src="`http://localhost:8000/images/catalog/320x320.png`"
+              :lazy-src="`http://localhost:8000/images/catalog/320x320.png`"
+              aspect-ratio="1"
+              cover
+              class="bg-grey-lighten-2 rounded-image"
+              height="auto"
+              max-height="320"
+              width="auto"
+              max-width="320"
+            >
+              <template v-slot:placeholder> </template>
+            </v-img>
 
-              <p class="mt-2 text-description" style="font-size: 14px">
-                {{ product.name }} {{ 1 }}
-              </p>
-              <div class="d-flex justify-center align-center flex-wrap" style="font-size: 12px">
-                <div class="d-flex align-center mr-1 text-review">
-                  {{ Math.floor(Math.random() * 50) }} reseñas
-                  <v-icon class="star-icon" style="font-size: 14px">mdi-star</v-icon>
-                </div>
-                <div style="font-family: 'Arial', sans-serif; color: #666">
-                  Tienda: Nombre de la tienda
-                </div>
+            <p class="mt-2 text-description" style="font-size: 14px">{{ product.name }} {{ 1 }}</p>
+            <div class="d-flex justify-center align-center flex-wrap" style="font-size: 12px">
+              <div class="d-flex align-center mr-1 text-review">
+                {{ Math.floor(Math.random() * 50) }} reseñas
+                <v-icon class="star-icon" style="font-size: 14px">mdi-star</v-icon>
               </div>
-              <div class="mt-1">
-                <p class="text-center">
-                  <span class="price-bold" style="font-size: 18px">USD 1,99</span>
-                  <span class="price-discount" style="font-size: 14px">
-                    - >$ {{ product.price }} (30% de descuento)</span
-                  >
-                </p>
+              <div style="font-family: 'Arial', sans-serif; color: #666">
+                Tienda: Nombre de la tienda
               </div>
-              <v-btn color="primary" class="mt-1" font-size="16px" block>
-                <a
-                  href="#"
-                  v-on:click.prevent="onAddToCart(product.id)"
-                  class="btn btn-primary"
-                  style="color: white; text-decoration: none"
-                  >Agregar Producto</a
-                >
-              </v-btn>
             </div>
-          </a>
+            <div class="mt-1">
+              <p class="text-center">
+                <span class="price-bold" style="font-size: 18px">USD 1,99</span>
+                <span class="price-discount" style="font-size: 14px">
+                  - >$ {{ product.price }} (30% de descuento)</span
+                >
+              </p>
+            </div>
+            <v-btn color="primary" class="mt-1" font-size="16px" block>
+              <a
+                v-on:click.prevent="onAddToCart(product.id)"
+                class="btn btn-primary"
+                style="color: white; text-decoration: none"
+              >
+                Agregar Producto
+              </a>
+            </v-btn>
+          </div>
         </v-container>
       </v-col>
     </v-row>
@@ -68,7 +63,6 @@
     </v-row>
   </v-container>
 </template>
-
 
 <script setup lang="ts">
 import { ref } from 'vue'
