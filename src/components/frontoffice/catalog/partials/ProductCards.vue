@@ -46,6 +46,12 @@
               </a>
             </v-btn>
           </div>
+          <v-snackbar v-model="snackbar" multi-line>
+            {{ snackbarMessage }}
+            <template v-slot:actions>
+              <v-btn color="red" variant="text" @click="snackbar = false"> Close </v-btn>
+            </template>
+          </v-snackbar>
         </v-container>
       </v-col>
     </v-row>
@@ -72,40 +78,62 @@ import axios from 'axios'
 import { useCartStore } from '@/stores/cartStore'
 
 import Footer from '@/components/frontoffice/partials/EcommerceFooter.vue'
-import type { IApiResponse } from '@app/frontoffice/catalog/domain/interfaces/IApiResponse'
+import type { IApiProductCardsResponse } from '@app/frontoffice/catalog/domain/interfaces/IApiProductCardsResponse'
 import GetProductCardListService from '@app/frontoffice/catalog/application/find/GetProductsCardListService'
 import CartProductCreatorService from '@app/frontoffice/cart/application/create/CartProductCreatorService'
 import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
 import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService'
 import type { ISessionCartItemResponse } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse'
+import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
+import ApiErrorHandler from '@app/frontoffice/shared/application/errors/ApiErrorHandlerService'
 
 const cartStore = useCartStore()
+const errorRedirectService = new ErrorRedirectService()
 const cartTotalItemCount: Ref<ISessionCartItemResponse['cartTotalItemCount']> = ref(0)
 const cartTotalAmount: Ref<ISessionCartItemResponse['cartTotalAmount']> = ref(0)
 
-const products = ref<IApiResponse>({
+const products = ref<IApiProductCardsResponse>({
   title: '',
   metaDescription: '',
   homeProducts: []
 })
 
 const errorHandling = new ErrorHandlingService()
-const productService = new GetProductCardListService()
+
+let snackbar: Ref<boolean> = ref(false)
+let snackbarMessage: Ref<string> = ref('')
 
 axios.defaults.withCredentials = true
 
 onMounted(async () => {
   try {
     await getCartData()
+    await getProductCardsList()
+
     cartStore.refreshQty(cartTotalItemCount.value)
     cartStore.refreshTotalAmountCart(cartTotalAmount.value)
-    const response = await productService.getApiResponse()
-    products.value = response
     cartStore.showCollapsed(true)
   } catch (error: any) {
     errorHandling.handleApiError(error)
   }
 })
+
+const getProductCardsList = async (): Promise<void> => {
+  try {
+    const getProductCardList = new GetProductCardListService()
+    const productCardList: IApiProductCardsResponse = await getProductCardList.getApiResponse()
+    products.value = productCardList
+  } catch (error: any) {
+    if (error.code === 'ERR_NETWORK') {
+      errorRedirectService.handleApiError(500)
+    } else {
+      const apiErrorHandler = new ApiErrorHandler()
+      apiErrorHandler.handleError(error.response.data.code)
+      snackbarMessage.value = error.response.data.message
+      snackbar.value = true
+    }
+  }
+}
 
 const productQty: number = 1
 

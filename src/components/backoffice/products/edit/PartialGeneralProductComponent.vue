@@ -124,7 +124,7 @@ import type { ICategory } from '@app/backoffice/products/domain/interfaces/ICate
 import UpdateProductService from '@app/backoffice/products/application/update/UpdateProductService'
 import type { IEditProduct } from '@app/backoffice/products/domain/interfaces/IEditProduct'
 import type { IUpdateProductResponse } from '@app/backoffice/products/domain/interfaces/IUpdateProductResponse'
-import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
+import ApiErrorHandler from '@app/backoffice/shared/application/errors/ApiErrorHandlerService'
 import VuetifyValidationProductFormService from '@app/backoffice/products/application/rules/VuetifyValidationProductFormService'
 import VuetifyFormCommonValidationService from '@app/backoffice/shared/application/rules/VuetifyFormCommonValidationService'
 const route = useRoute()

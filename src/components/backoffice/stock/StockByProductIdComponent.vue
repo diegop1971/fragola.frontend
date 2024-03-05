@@ -55,7 +55,7 @@ import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRoute } from 'vue-router'
 import GetStockListByProductIdService from '@app/backoffice/stock/application/find/GetStockListByProductIdService'
-import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
+import ApiErrorHandler from '@app/backoffice/shared/application/errors/ApiErrorHandlerService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 const router = useRouter()
 const route = useRoute()

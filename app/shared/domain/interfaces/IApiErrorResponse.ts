@@ -1,10 +1,10 @@
 export interface IApiErrorResponse {
-  data: {
+  errors: {
     success: boolean
+    code: number
     message: string
-    errors?: {
+    detail: {
       [key: string]: string[]
     }
-    status: number
   }
 }

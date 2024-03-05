@@ -56,7 +56,7 @@ import type { IApiGetProductsResponse } from '@app/backoffice/products/domain/in
 import type { IViewProduct } from '@app/backoffice/products/domain/interfaces/IViewProduct'
 import GetProductsListService from '@app/backoffice/products/application/find/GetProductsListService'
 import DeleteProductService from '@app/backoffice/products/application/delete/DeleteProductService'
-import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
+import ApiErrorHandler from '@app/backoffice/shared/application/errors/ApiErrorHandlerService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 
 const errorRedirectService = new ErrorRedirectService()

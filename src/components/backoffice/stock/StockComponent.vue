@@ -51,7 +51,7 @@ import { useRouter } from 'vue-router'
 
 import type { IStockItem } from '@app/backoffice/stock/domain/interfaces/IStockItem'
 import GetStockListGroupedByProductIdService from '@app/backoffice/stock/application/find/GetStockListGroupedByProductIdService'
-import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
+import ApiErrorHandler from '@app/backoffice/shared/application/errors/ApiErrorHandlerService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 
 const errorRedirectService = new ErrorRedirectService()

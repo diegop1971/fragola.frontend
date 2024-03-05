@@ -153,7 +153,7 @@ import type { IStoreProductResponse } from '@app/backoffice/products/domain/inte
 import StoreProductService from '@app/backoffice/products/application/store/StoreProductService'
 import GetCategoriesService from '@app/backoffice/products/application/find/GetCategoriesService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
-import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
+import ApiErrorHandler from '@app/backoffice/shared/application/errors/ApiErrorHandlerService'
 import VuetifyValidationProductFormService from '@app/backoffice/products/application/rules/VuetifyValidationProductFormService'
 import VuetifyFormCommonValidationService from '@app/backoffice/shared/application/rules/VuetifyFormCommonValidationService'
 

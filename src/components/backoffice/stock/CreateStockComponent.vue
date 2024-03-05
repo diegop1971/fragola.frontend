@@ -114,7 +114,7 @@ import GetProductsService from '@app/backoffice/stock/application/find/GetProduc
 import GetStockMovementTypesService from '@app/backoffice/stock/application/find/GetStockMovementTypesService'
 import StoreStockItemService from '@app/backoffice/stock/application/store/StoreStockItemService'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
-import ApiErrorHandler from '@app/backoffice/products/application/errors/ApiErrorHandlerService'
+import ApiErrorHandler from '@app/backoffice/shared/application/errors/ApiErrorHandlerService'
 import VuetifyFormCommonValidationService from '@app/backoffice/shared/application/rules/VuetifyFormCommonValidationService'
 
 const router = useRouter()
