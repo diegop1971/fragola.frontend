@@ -2,7 +2,6 @@ import type { IViewProduct } from '@app/frontoffice/catalog/domain/interfaces/IV
 
 export interface IApiProductCardsResponse {
     title: string;
-    metaDescription: string;
     homeProducts: ProductData[];
 }
 

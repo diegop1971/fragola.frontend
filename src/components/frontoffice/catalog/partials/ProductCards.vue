@@ -19,21 +19,9 @@
             </v-img>
 
             <p class="mt-2 text-description" style="font-size: 14px">{{ product.name }} {{ 1 }}</p>
-            <div class="d-flex justify-center align-center flex-wrap" style="font-size: 12px">
-              <div class="d-flex align-center mr-1 text-review">
-                {{ Math.floor(Math.random() * 50) }} reseñas
-                <v-icon class="star-icon" style="font-size: 14px">mdi-star</v-icon>
-              </div>
-              <div style="font-family: 'Arial', sans-serif; color: #666">
-                Tienda: Nombre de la tienda
-              </div>
-            </div>
             <div class="mt-1">
               <p class="text-center">
-                <span class="price-bold" style="font-size: 18px">USD 1,99</span>
-                <span class="price-discount" style="font-size: 14px">
-                  - >$ {{ product.price }} (30% de descuento)</span
-                >
+                <span class="price-bold" style="font-size: 18px">USD {{ product.price }}</span>
               </p>
             </div>
             <v-btn color="primary" class="mt-1" font-size="16px" block>
@@ -94,7 +82,6 @@ const cartTotalAmount: Ref<ISessionCartItemResponse['cartTotalAmount']> = ref(0)
 
 const products = ref<IApiProductCardsResponse>({
   title: '',
-  metaDescription: '',
   homeProducts: []
 })
 

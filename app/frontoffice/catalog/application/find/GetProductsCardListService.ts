@@ -1,23 +1,22 @@
 import axios from 'axios';
-import type { IApiResponse}  from '@app/frontoffice/catalog/domain/interfaces/IApiResponse';
+import type { IApiProductCardsResponse}  from '@app/frontoffice/catalog/domain/interfaces/IApiProductCardsResponse'
 
 class GetProductCardListService 
 {
-    private apiResponse:IApiResponse = {
+    private apiResponse:IApiProductCardsResponse = {
         title: '',
-        metaDescription: '',
         homeProducts: []
     };
 
     constructor() {}
 
-    public async getApiResponse(): Promise<IApiResponse> {
+    public async getApiResponse(): Promise<IApiProductCardsResponse> {
         await this.getProductList();
         return this.apiResponse;
     }
 
     private async getProductList(): Promise<void> {
-        const response = await axios.get<IApiResponse>("http://localhost:8000/api/productsCardList");
+        const response = await axios.get<IApiProductCardsResponse>("http://localhost:8000/api/productsCardList")
         this.apiResponse = response.data;
     }
 }
