@@ -4,6 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Register from '../components/Register.vue'
 import Home from '../views/frontoffice/catalog/MainCatalogView.vue'
 import Cart from '../views/frontoffice/cart/CartView.vue'
+import CheckoutCart from '@/components/frontoffice/checkout/CheckoutCart.vue'
 import Login from '../views/frontoffice/auth/UsersLogin.vue'
 import Error404EcommerceComponent from '@/components/frontoffice/errors/Error404EcommerceComponent.vue'
 import Error500EcommerceComponent from '@/components/frontoffice/errors/Error500EcommerceComponent.vue'
@@ -37,6 +38,11 @@ const router = createRouter({
       path: '/cart',
       name: 'cart',
       component: Cart
+    },
+    {
+      path: '/checkout-cart',
+      name: 'checkout-cart',
+      component: CheckoutCart
     },
     {
       path: '/login',

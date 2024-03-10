@@ -30,7 +30,7 @@
                 class="btn btn-primary"
                 style="color: white; text-decoration: none"
               >
-                Agregar Producto
+                Add to cart
               </a>
             </v-btn>
           </div>
