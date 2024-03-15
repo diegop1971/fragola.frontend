@@ -2,7 +2,16 @@
   <v-container class="mb-6">
     <v-stepper alt-labels editable :items="['Step 1', 'Step 2', 'Step 3']">
       <template v-slot:item.1>
-        <v-card title="Step One" flat>...</v-card>
+        <v-card title="Step One" flat>
+          <v-btn
+                  color="success"
+                  class="mt-4"
+                  block
+                  @click="checkout"
+                >
+                  Guardar
+                </v-btn>
+        </v-card>
       </template>
 
       <template v-slot:item.2>
@@ -19,7 +28,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 
-const currentStep = ref(1) // Start on Step 1
+import CheckoutCartService from '@app/frontoffice/checkout/application/store/CheckoutCartService'
+
+const currentStep = ref(1)
+
+const idPaymentMethod = ref()
 
 const nextStep = () => {
   if (currentStep.value < 3) {
@@ -32,4 +45,14 @@ const prevStep = () => {
     currentStep.value--
   }
 }
+
+const checkout = async () => {
+  const storeCheckoutCart = new CheckoutCartService('cash_on_delivery')
+  storeCheckoutCart.store();
+}
+/*
+case 'bank_transfer':
+case 'wallet':
+case 'cash_on_delivery':
+*/
 </script>
