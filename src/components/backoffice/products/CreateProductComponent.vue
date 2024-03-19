@@ -308,7 +308,6 @@ async function save() {
         reactiveProductData.value.enabled
       )
       try {
-        console.log(storeProductService)
         storeResponse = await storeProductService.store()
         snackbarMessage.value = storeResponse.data.message
         snackbar.value = true

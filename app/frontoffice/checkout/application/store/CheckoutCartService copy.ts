@@ -5,12 +5,12 @@ import type { ICheckoutCartResponse } from '@app/frontoffice/checkout/domain/int
 axios.defaults.withCredentials = true
 
 class CheckoutCartService {
-  private paymentMethodId: string
+  private paymentMethodName: string
 
   constructor(
-    paymentMethodId: string,
+    idPaymentMethod: string,
   ) {
-    this.paymentMethodId = paymentMethodId
+    this.paymentMethodName = idPaymentMethod
   }
 
   public store = async (): Promise<ICheckoutCartResponse> => {
@@ -19,7 +19,7 @@ class CheckoutCartService {
       'http://localhost:8000/api/checkout-cart/store',
       {
         customerId: '7aa88d43-424c-4d9e-aa75-7923d7ea0821',
-        paymentMethodId: this.paymentMethodId,
+        paymentMethodName: this.paymentMethodName,
       }
     )
     return response
