@@ -32,7 +32,9 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import type { Ref } from 'vue'
+import { onMounted } from 'vue'
 import axios from 'axios'
 
 axios.defaults.withCredentials = true
@@ -43,13 +45,27 @@ import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 import GetPaymentMethodsService from '@app/frontoffice/checkout/application/find/GetPaymentMethodsService'
 import CheckoutCartService from '@app/frontoffice/checkout/application/store/CheckoutCartService'
 import ApiErrorHandler from '@app/backoffice/shared/application/errors/ApiErrorHandlerService'
+import { useCartStore } from '@/stores/cartStore'
+import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService'
+import type { ISessionCartItem } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItem'
+import type { ISessionCartItemResponse } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse'
 
+const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([])
+const cartStore = useCartStore()
+const cartTotalItemCount: Ref<ISessionCartItemResponse['cartTotalItemCount']> = ref(0)
+const cartTotalAmount: Ref<ISessionCartItemResponse['cartTotalAmount']> = ref(0)
 const currentStep = ref(1)
 const form = ref<HTMLFormElement | null>(null)
 const errorRedirectService = new ErrorRedirectService()
 
 const paymentMethodNamesWithIds = ref<IPaymentMethod[]>([])
 const selectedPaymentMethod = ref<string>('')
+
+let cartData: ISessionCartItemResponse = {
+  sessionCartItems: [],
+  cartTotalItemCount: 0,
+  cartTotalAmount: 0
+}
 
 const reactivePaymentMethodsData = ref<ICreateCheckout>({
   customer_id: '',
@@ -62,7 +78,7 @@ const reactivePaymentMethodsData = ref<ICreateCheckout>({
 const idPaymentMethod = ref()
 
 onMounted(async () => {
-  await getData()
+  await getPaymentMethods()
 })
 
 const nextStep = () => {
@@ -76,8 +92,18 @@ const prevStep = () => {
     currentStep.value--
   }
 }
+/**
+ * customer_id => ya está en el backend??
+ * payment_method_id => ok
+ * order_status_id => ok
+ * total_paid = en la variable cartData
+ * order_id = se genera en el backend
+ * product_id => en la variable cartData
+ * quantity en la variable cartData
+ * unit_price en la variable cartData
+ */
 
-const getData = async (): Promise<void> => {
+const getPaymentMethods = async (): Promise<void> => {
   try {
     const getPaymentMethodsService = new GetPaymentMethodsService()
     const response = await getPaymentMethodsService.getApiResponse()
@@ -87,7 +113,6 @@ const getData = async (): Promise<void> => {
       id: paymentMethod.id,
       name: paymentMethod.name
     }))
-
   } catch (error: any) {
     if (error.code === 'ERR_NETWORK') {
       errorRedirectService.handleApiError(500)
@@ -100,11 +125,25 @@ const getData = async (): Promise<void> => {
   }
 }
 
+const getCartData = async (): Promise<ISessionCartItemResponse> => {
+  const getCartData = new CartProductsGetterService()
+  const cartData = await getCartData.getCartProductsList()
+  return cartData
+}
+
 const checkout = async () => {
-  const storeCheckoutCart = new CheckoutCartService(
-    selectedPaymentMethod.value,
-  )
-  storeCheckoutCart.store()
+  try {
+    const cartData = await getCartData()
+    const storeCheckoutCart = new CheckoutCartService(selectedPaymentMethod.value, cartData)
+    await storeCheckoutCart.store()
+  } catch (error: any) {
+    if (error.code === 'ERR_NETWORK') {
+      errorRedirectService.handleApiError(500)
+    } else {
+      const apiErrorHandler = new ApiErrorHandler()
+      apiErrorHandler.handleError(error.response.data.code)
+    }
+  }
 }
 
 /*async function save() {

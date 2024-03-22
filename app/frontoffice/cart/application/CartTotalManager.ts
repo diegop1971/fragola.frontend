@@ -11,7 +11,6 @@ class TotalGeneralService
 
     public total = async () => {
         const total = this.sessionCartItems.reduce((total, item) => total + item.subtotal, 0);
-        console.log(total);
     return total;
     }
 }
