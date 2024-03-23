@@ -22,7 +22,7 @@ class CheckoutCartService {
     const response: ICheckoutCartResponse = await axios.post(
       'http://localhost:8000/api/checkout-cart/store',
       {
-        customerId: '7aa88d43-424c-4d9e-aa75-7923d7ea0821',
+        customerId: '40cdbdb0-c5f5-4d0e-b72f-18c63cdb439e',
         paymentMethodId: this.paymentMethodId,
         cartData: this.cartData,
       }
