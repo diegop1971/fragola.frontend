@@ -2,22 +2,43 @@
   <v-container class="mb-6">
     <v-stepper alt-labels editable :items="['Step 1', 'Step 2', 'Step 3']">
       <template v-slot:item.1>
-        <v-card title="Step One" flat>
-          <v-select
-            v-model="selectedPaymentMethod"
-            label="Payment methods"
-            :items="paymentMethodNamesWithIds"
-            item-value="id"
-            item-title="name"
-            :rules="[(v) => !!v || 'Item is required']"
-            :model="reactivePaymentMethodsData.payment_method_name"
-            required
-            @update:modelValue="onPaymentMethodChange"
-            variant="outlined"
-          ></v-select>
+        <v-form ref="form">
+          <v-card title="Step One" flat>
+            <v-text-field
+              label="Email"
+              type="email"
+              required
+              v-model="customerEmail"
+              :rules="emailRules"
+              outlined
+            ></v-text-field>
+            <v-text-field
+              label="First name" 
+              required
+              v-model="firstName"
+              :rules="nameRules"
+            ></v-text-field>
+            <v-text-field
+              label="Last name"
+              required 
+              v-model="lastName"
+              :rules="nameRules"
+              ></v-text-field>
+            <v-select
+              v-model="selectedPaymentMethod"
+              label="Payment methods"
+              :items="paymentMethodNamesWithIds"
+              item-value="id"
+              item-title="name"
+              :rules="[(v) => !!v || 'Item is required']"
+              required
+              @update:modelValue="onPaymentMethodChange"
+              variant="outlined"
+            ></v-select>
 
-          <v-btn color="success" class="mt-4" block @click="checkout"> Guardar </v-btn>
-        </v-card>
+            <v-btn color="success" class="mt-4" block @click="checkout"> Guardar </v-btn>
+          </v-card>
+        </v-form>
       </template>
 
       <template v-slot:item.2>
@@ -49,33 +70,49 @@ import { useCartStore } from '@/stores/cartStore'
 import CartProductsGetterService from '@app/frontoffice/cart/application/find/CartProductsGetterService'
 import type { ISessionCartItem } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItem'
 import type { ISessionCartItemResponse } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse'
+import VuetifyValidationCheckoutFormService from '@app/frontoffice/checkout/rules/VuetifyValidationCheckoutFormService'
 
 const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([])
 const cartStore = useCartStore()
 const cartTotalItemCount: Ref<ISessionCartItemResponse['cartTotalItemCount']> = ref(0)
 const cartTotalAmount: Ref<ISessionCartItemResponse['cartTotalAmount']> = ref(0)
 const currentStep = ref(1)
-const form = ref<HTMLFormElement | null>(null)
 const errorRedirectService = new ErrorRedirectService()
 
+const form = ref<HTMLFormElement | null>(null)
+const customerEmail = ref<string>('')
+const firstName = ref<string>('')
+const lastName = ref<string>('')
 const paymentMethodNamesWithIds = ref<IPaymentMethod[]>([])
 const selectedPaymentMethod = ref<string>('')
 
-let cartData: ISessionCartItemResponse = {
+/*let cartData: ISessionCartItemResponse = {
   sessionCartItems: [],
   cartTotalItemCount: 0,
   cartTotalAmount: 0
-}
+}*/
 
-const reactivePaymentMethodsData = ref<ICreateCheckout>({
+/*const reactivePaymentMethodsData = ref<ICreateCheckout>({
   customer_id: '',
+  customer_email: '',
   payment_method_id: '',
   order_status_id: '',
   total_paid: 0,
   payment_method_name: ''
-})
+})*/
 
-const idPaymentMethod = ref()
+const emailRules = [(v: string) => validateCheckoutRuleEmail(v)]
+const nameRules  = [(v: string) => validateCheckoutRuleName(v)]
+
+const validateCheckoutRuleEmail = async (value: string): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationCheckoutFormService.validateRuleEmail(value)
+  return validationResult
+}
+
+const validateCheckoutRuleName = async (value: string): Promise<string | boolean> => {
+  const validationResult = VuetifyValidationCheckoutFormService.validateName(value)
+  return validationResult
+}
 
 onMounted(async () => {
   await getPaymentMethods()
@@ -92,16 +129,6 @@ const prevStep = () => {
     currentStep.value--
   }
 }
-/**
- * customer_id => ya está en el backend??
- * payment_method_id => ok
- * order_status_id => ok
- * total_paid = en la variable cartData
- * order_id = se genera en el backend
- * product_id => en la variable cartData
- * quantity en la variable cartData
- * unit_price en la variable cartData
- */
 
 const getPaymentMethods = async (): Promise<void> => {
   try {
@@ -132,16 +159,27 @@ const getCartData = async (): Promise<ISessionCartItemResponse> => {
 }
 
 const checkout = async () => {
-  try {
-    const cartData = await getCartData()
-    const storeCheckoutCart = new CheckoutCartService(selectedPaymentMethod.value, cartData)
-    await storeCheckoutCart.store()
-  } catch (error: any) {
-    if (error.code === 'ERR_NETWORK') {
-      errorRedirectService.handleApiError(500)
-    } else {
-      const apiErrorHandler = new ApiErrorHandler()
-      apiErrorHandler.handleError(error.response.data.code)
+  if (form.value !== null) {
+    const { valid } = await form.value.validate()
+    if (valid) {
+      try {
+        const cartData = await getCartData()
+        const storeCheckoutCart = new CheckoutCartService(
+          customerEmail.value,
+          firstName.value,
+          lastName.value,
+          selectedPaymentMethod.value,
+          cartData
+        )
+        await storeCheckoutCart.store()
+      } catch (error: any) {
+        if (error.code === 'ERR_NETWORK') {
+          errorRedirectService.handleApiError(500)
+        } else {
+          const apiErrorHandler = new ApiErrorHandler()
+          apiErrorHandler.handleError(error.response.data.code)
+        }
+      }
     }
   }
 }
