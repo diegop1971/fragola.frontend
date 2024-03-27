@@ -32,6 +32,7 @@ class CheckoutCartService {
       'http://localhost:8000/api/checkout-cart/store',
       {
         customerId: '40cdbdb0-c5f5-4d0e-b72f-18c63cdb439e',
+        //customerId: '',
         customerEmail: this.customerEmail,
         firstName: this.firstName,
         lastName: this.lastName,

@@ -19,11 +19,12 @@ import EditProductComponent from '@/components/backoffice/products/edit/EditProd
 import StockComponent from '@/components/backoffice/stock/StockComponent.vue'
 import CreateStockComponent from '@/components/backoffice/stock/CreateStockComponent.vue'
 import StockByProductIdComponent from '@/components/backoffice/stock/StockByProductIdComponent.vue'
-import TestComponent from '@/components/backoffice/products/test/TestComponent.vue'
 import Error404AdminComponent from '@/components/backoffice/errors/Error404AdminComponent.vue'
 import Error422AdminComponent from '@/components/backoffice/errors/Error422AdminComponent.vue'
 import Error500AdminComponent from '@/components/backoffice/errors/Error500AdminComponent.vue'
 import Error503AdminComponent from '@/components/backoffice/errors/Error503AdminComponent.vue'
+import TestComponent from '@/components/backoffice/products/test/TestComponent.vue'
+import VariosComponent from '@/components/Varios.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,6 +55,12 @@ const router = createRouter({
       name: 'register',
       component: Register
     },
+    {
+      path: '/varios',
+      name: 'varios',
+      component: VariosComponent
+    },
+
     /********** fin routes frontoffice **********/
 
     /********** routes backoffice **********/
