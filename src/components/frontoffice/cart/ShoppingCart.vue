@@ -61,7 +61,7 @@
           <td class="text-right">Total:</td>
           <td class="text-right">$ {{ totalGeneral() }}</td>
           <td>
-            <v-btn :href="'/checkout-cart'" color="primary">Checkout</v-btn>
+            <v-btn color="success" class="mt-4" block @click="checkout"> Checkout </v-btn>
           </td>
           <td></td>
         </tr>
@@ -76,6 +76,7 @@ import type { Ref } from 'vue'
 import { computed } from 'vue'
 import { onMounted } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
 import NumberFormatterService from '@app/shared/application/NumberFormatterService'
@@ -86,6 +87,7 @@ import { useCartStore } from '@/stores/cartStore'
 import CartProductQuantityUpdaterService from '@app/frontoffice/cart/application/update/CartProductQuantityUpdaterService'
 import type { ISessionCartItemResponse } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse'
 
+const router = useRouter();
 const errorHandling = new ErrorHandlingService()
 const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([])
 const visible = ref(false)
@@ -192,6 +194,12 @@ const modifyCartItemQuantity = async (productId: string, productQty: number) => 
     await getCartData()
   } catch (error) {
     console.log(error)
+  }
+}
+
+const checkout = async () => {
+  if(sessionCartItems.value.length !==0) {
+    router.push({ name: 'checkout-cart' })
   }
 }
 </script>

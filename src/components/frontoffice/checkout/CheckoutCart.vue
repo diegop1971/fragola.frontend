@@ -13,17 +13,17 @@
               outlined
             ></v-text-field>
             <v-text-field
-              label="First name" 
+              label="First name"
               required
               v-model="firstName"
               :rules="nameRules"
             ></v-text-field>
             <v-text-field
               label="Last name"
-              required 
+              required
               v-model="lastName"
               :rules="nameRules"
-              ></v-text-field>
+            ></v-text-field>
             <v-select
               v-model="selectedPaymentMethod"
               label="Payment methods"
@@ -56,6 +56,7 @@
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 axios.defaults.withCredentials = true
@@ -71,6 +72,7 @@ import CartProductsGetterService from '@app/frontoffice/cart/application/find/Ca
 import type { ISessionCartItem } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItem'
 import type { ISessionCartItemResponse } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse'
 import VuetifyValidationCheckoutFormService from '@app/frontoffice/checkout/rules/VuetifyValidationCheckoutFormService'
+import { onBeforeMount } from 'vue'
 
 const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([])
 const cartStore = useCartStore()
@@ -79,6 +81,7 @@ const cartTotalAmount: Ref<ISessionCartItemResponse['cartTotalAmount']> = ref(0)
 const currentStep = ref(1)
 const errorRedirectService = new ErrorRedirectService()
 
+const router = useRouter()
 const form = ref<HTMLFormElement | null>(null)
 const customerEmail = ref<string>('')
 const firstName = ref<string>('')
@@ -102,7 +105,7 @@ const selectedPaymentMethod = ref<string>('')
 })*/
 
 const emailRules = [(v: string) => validateCheckoutRuleEmail(v)]
-const nameRules  = [(v: string) => validateCheckoutRuleName(v)]
+const nameRules = [(v: string) => validateCheckoutRuleName(v)]
 
 const validateCheckoutRuleEmail = async (value: string): Promise<string | boolean> => {
   const validationResult = VuetifyValidationCheckoutFormService.validateRuleEmail(value)
@@ -113,6 +116,13 @@ const validateCheckoutRuleName = async (value: string): Promise<string | boolean
   const validationResult = VuetifyValidationCheckoutFormService.validateName(value)
   return validationResult
 }
+
+onBeforeMount(async () => {
+  let cart = await getCartData()
+  if (cart['cartTotalItemCount'] === 0) {
+    router.push('/cart')
+  }
+})
 
 onMounted(async () => {
   await getPaymentMethods()
