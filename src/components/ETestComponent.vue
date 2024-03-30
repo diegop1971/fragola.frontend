@@ -14,7 +14,7 @@
         <div class="price" style="margin-top: 8px">USD {{ product.price }}</div>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="deep-purple-lighten-2" variant="outlined" dark @click="onAddToCart(product.id)">
+        <v-btn color="deep-purple-lighten-2" variant="outlined" dark @click="onAddToCart">
           Agregar al carrito
         </v-btn>
       </v-card-actions>
@@ -134,10 +134,11 @@ const getCartData = async (): Promise<void> => {
 </script>
 
 <style lang="scss" scoped>
+
 .product-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: center; /* Alinea las tarjetas al centro */
   max-width: 1500px;
 }
 

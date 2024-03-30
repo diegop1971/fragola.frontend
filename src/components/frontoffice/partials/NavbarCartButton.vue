@@ -58,6 +58,9 @@
         </v-card-text>
 
         <v-card-actions>
+          <router-link :to="{ name: 'cart' }" class="text-decoration-none text-light">
+            <v-btn class="v-btn--contained"> Cart </v-btn>
+          </router-link>
           <v-spacer></v-spacer>
           <v-btn text="Cerrar" @click="isActive.value = false"></v-btn>
         </v-card-actions>

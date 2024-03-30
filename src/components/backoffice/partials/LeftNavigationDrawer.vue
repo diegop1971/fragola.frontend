@@ -62,7 +62,7 @@
       catalog: [
         ['Categories', 'mdi-chevron-double-right', 'categories'],
         ['Products', 'mdi-chevron-double-right', 'products'],
-        ['Test', 'mdi-chevron-double-right', 'test'],
+        ['Test', 'mdi-chevron-double-right', 'etest'],
         ['Stock', 'mdi-chevron-double-right', 'stock'],
       ],
       cruds: [

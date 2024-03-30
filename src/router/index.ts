@@ -23,7 +23,7 @@ import Error404AdminComponent from '@/components/backoffice/errors/Error404Admin
 import Error422AdminComponent from '@/components/backoffice/errors/Error422AdminComponent.vue'
 import Error500AdminComponent from '@/components/backoffice/errors/Error500AdminComponent.vue'
 import Error503AdminComponent from '@/components/backoffice/errors/Error503AdminComponent.vue'
-import TestComponent from '@/components/backoffice/products/test/TestComponent.vue'
+import ETestComponent from '@/components/ETestComponent.vue'
 import VariosComponent from '@/components/Varios.vue'
 
 const router = createRouter({
@@ -59,6 +59,11 @@ const router = createRouter({
       path: '/varios',
       name: 'varios',
       component: VariosComponent
+    },
+    {
+      path: '/etest',
+      name: 'etest',
+      component: ETestComponent
     },
 
     /********** fin routes frontoffice **********/
@@ -140,11 +145,6 @@ const router = createRouter({
             }
           }
         },
-        {
-          path: 'products/test',
-          name: 'test',
-          component: TestComponent
-        }
 
         /********** fin routes backoffice **********/
       ]
