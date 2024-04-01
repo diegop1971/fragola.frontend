@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { onMounted } from 'vue'
 import { watch } from 'vue'
 import LogoutService from '@app/frontoffice/auth/application/LogoutService'
 import NavbarCartButton from '@/components/frontoffice/partials/NavbarCartButton.vue'
@@ -32,8 +33,15 @@ import logoFragola from '@/assets/brand/logo-fragola-93-60.png'
 const cartStore = useCartStore()
 const isButtonDisabled = ref(false)
 
-watch(() => cartStore.counter, (newState, oldState) => {
+onMounted(async () => {
+  if(cartStore.counter === 0) {
+    isButtonDisabled.value = true
+  }
+})
+
+watch(() => cartStore.counter, (newState) => {
   isButtonDisabled.value = newState === 0
+  console.log(cartStore.counter)
 })
 
 async function onLogout() {

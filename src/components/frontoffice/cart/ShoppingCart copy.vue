@@ -1,5 +1,6 @@
 <template>
   <v-container class="cart-container">
+    <div class="col-11">
       <table class="table">
         <thead>
           <tr>
@@ -67,6 +68,7 @@
           </tr>
         </tbody>
       </table>
+    </div>
   </v-container>
 </template>
 

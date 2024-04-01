@@ -7,7 +7,6 @@
       v-for="product in products.homeProducts"
       :key="product.id"
     >
-      <!-- Contenido de la tarjeta -->
       <v-img height="350" src="https://cdn.vuetifyjs.com/images/cards/cooking.png" cover></v-img>
       <v-card-text>
         {{ trimmedDescription(product.description) }}
