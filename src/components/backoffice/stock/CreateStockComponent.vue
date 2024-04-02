@@ -122,7 +122,6 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 const productId = route.params.productId?.toString() || null
-console.log(productId)
 
 const errorRedirectService = new ErrorRedirectService()
 const form = ref<HTMLFormElement | null>(null)

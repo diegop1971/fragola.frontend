@@ -1,5 +1,5 @@
 <template>
-  <v-container class="mb-6">
+  <v-container class="cart-container">
     <v-row>
       <v-col cols="8">
         <v-stepper alt-labels editable :items="['Step 1', 'Step 2', 'Step 3']" style="width: 60%">

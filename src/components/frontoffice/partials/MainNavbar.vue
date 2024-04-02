@@ -1,14 +1,11 @@
 <template>
-  <v-app-bar class="custom-app-bar">
-    <v-container class="product-container">
+  <v-app-bar class="custom-app-bar" style="position: static !important">
+    <v-container class="navbar-container">
       <v-app-bar-title>
         <img :src="logoFragola" alt="Logo" height="60" width="93" />
       </v-app-bar-title>
       <router-link :to="{ name: 'home' }" class="text-decoration-none text-light">
         Home
-      </router-link>
-      <router-link :to="{ name: 'cart' }" class="text-decoration-none text-light">
-        <v-btn class="v-btn--contained"> Cart </v-btn>
       </router-link>
       <v-btn :disabled="isButtonDisabled" outlined>
         <NavbarCartButton />
@@ -34,15 +31,18 @@ const cartStore = useCartStore()
 const isButtonDisabled = ref(false)
 
 onMounted(async () => {
-  if(cartStore.counter === 0) {
+  if (cartStore.counter === 0) {
     isButtonDisabled.value = true
   }
 })
 
-watch(() => cartStore.counter, (newState) => {
-  isButtonDisabled.value = newState === 0
-  console.log(cartStore.counter)
-})
+watch(
+  () => cartStore.counter,
+  (newState) => {
+    isButtonDisabled.value = newState === 0
+    console.log(cartStore.counter)
+  }
+)
 
 async function onLogout() {
   try {
@@ -54,19 +54,16 @@ async function onLogout() {
 </script>
 
 <style lang="scss" scoped>
-.product-container {
+.navbar-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center; /* Centra horizontalmente los elementos */
-  align-items: center; /* Centra verticalmente los elementos */
+  justify-content: center;
+  align-items: center;
   max-width: 1500px;
+  padding: 0 !important;
 }
 
 .custom-app-bar {
   height: 60px;
-}
-
-.v-app-bar-title img {
-  margin-left: 10px; /* Ajusta el valor según tus necesidades */
 }
 </style>

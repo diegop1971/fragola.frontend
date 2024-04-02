@@ -137,7 +137,9 @@ const getCartData = async (): Promise<void> => {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   max-width: 1500px;
+  padding: 0 !important;
 }
 
 .rounded-image {

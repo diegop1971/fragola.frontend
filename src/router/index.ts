@@ -2,8 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 /* frontoffice */
 import Register from '../components/Register.vue'
-import Home from '../views/frontoffice/catalog/MainCatalogView.vue'
-import Cart from '../views/frontoffice/cart/CartView.vue'
 import CheckoutCart from '@/components/frontoffice/checkout/CheckoutCart.vue'
 import Login from '../views/frontoffice/auth/UsersLogin.vue'
 import Error404EcommerceComponent from '@/components/frontoffice/errors/Error404EcommerceComponent.vue'
@@ -25,6 +23,9 @@ import Error500AdminComponent from '@/components/backoffice/errors/Error500Admin
 import Error503AdminComponent from '@/components/backoffice/errors/Error503AdminComponent.vue'
 import ETestComponent from '@/components/ETestComponent.vue'
 import VariosComponent from '@/components/Varios.vue'
+import ProductCards from '@/components/frontoffice/catalog/ProductCards.vue'
+import ShoppingCart from '@/components/frontoffice/cart/ShoppingCart.vue'
+import FrontOfficeMainLayout from '@/views/frontoffice/layouts/FrontOfficeMainLayout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,40 +33,45 @@ const router = createRouter({
     /********** routes frontoffice **********/
     {
       path: '/',
-      name: 'home',
-      component: Home
+      component: FrontOfficeMainLayout,
+      children: [
+        {
+          path: '/',
+          name: 'home',
+          component: ProductCards
+        },
+        {
+          path: '/cart',
+          name: 'cart',
+          component: ShoppingCart
+        },
+        {
+          path: '/checkout-cart',
+          name: 'checkout-cart',
+          component: CheckoutCart
+        },
+        {
+          path: '/login',
+          name: 'login',
+          component: Login
+        },
+        {
+          path: '/register',
+          name: 'register',
+          component: Register
+        },
+        {
+          path: '/varios',
+          name: 'varios',
+          component: VariosComponent
+        },
+        {
+          path: '/etest',
+          name: 'etest',
+          component: ETestComponent
+        }
+      ]
     },
-    {
-      path: '/cart',
-      name: 'cart',
-      component: Cart
-    },
-    {
-      path: '/checkout-cart',
-      name: 'checkout-cart',
-      component: CheckoutCart
-    },
-    {
-      path: '/login',
-      name: 'login',
-      component: Login
-    },
-    {
-      path: '/register',
-      name: 'register',
-      component: Register
-    },
-    {
-      path: '/varios',
-      name: 'varios',
-      component: VariosComponent
-    },
-    {
-      path: '/etest',
-      name: 'etest',
-      component: ETestComponent
-    },
-
     /********** fin routes frontoffice **********/
 
     /********** routes backoffice **********/
@@ -127,16 +133,16 @@ const router = createRouter({
           beforeEnter: (to, from, next) => {
             const isValidUUID = (uuid: string | string[] | undefined): boolean => {
               if (!uuid) {
-                return true;
+                return true
               }
               if (Array.isArray(uuid)) {
-                return uuid.every(id => isValidUUID(id));
+                return uuid.every((id) => isValidUUID(id))
               }
               const matchLetter: RegExpMatchArray | null = uuid.match(
                 /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
-              );
-              return matchLetter !== null;
-            };
+              )
+              return matchLetter !== null
+            }
 
             if (isValidUUID(to.params.productId)) {
               next()
@@ -144,7 +150,7 @@ const router = createRouter({
               next({ name: 'not-found-admin', replace: true }) // Muestra la página de error 404Admin sin cambiar la URL
             }
           }
-        },
+        }
 
         /********** fin routes backoffice **********/
       ]
