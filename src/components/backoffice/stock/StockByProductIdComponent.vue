@@ -81,7 +81,6 @@ const headers = [
 onMounted(async () => {
   await getStockData(productId)
   getStockLevel()
-  console.log(stockStatus.value)
 })
 
 const getStockLevel = (): void => {
