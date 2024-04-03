@@ -40,7 +40,6 @@ watch(
   () => cartStore.counter,
   (newState) => {
     isButtonDisabled.value = newState === 0
-    console.log(cartStore.counter)
   }
 )
 

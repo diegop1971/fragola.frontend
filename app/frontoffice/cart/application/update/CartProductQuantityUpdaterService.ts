@@ -17,8 +17,9 @@ class CartProductQuantityUpdaterService
     }
 
     public update = async () => {
+        const productQtyInt = this.productQty
         const cartRepository = container.get<ICartRepository>(TYPES.ICartRepository);
-        cartRepository.update(this.productId, this.productQty)
+        cartRepository.update(this.productId, productQtyInt)
     }
 }
 export default CartProductQuantityUpdaterService;

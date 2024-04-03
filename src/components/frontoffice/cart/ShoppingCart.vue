@@ -81,8 +81,8 @@ const getCartData = async (): Promise<void> => {
 }
 
 const cantItems = async () => {
-  let cant = await sessionCartItems.value.reduce((cant, item) => cant + item.productQty, 0)
-  return cant
+  let cantItems = await sessionCartItems.value.reduce((cant, item) => cant + item.productQty, 0)
+  return cantItems
 }
 
 const subtotal = (qty: number, price: number): number => {
@@ -97,15 +97,15 @@ const totalGeneral = () => {
 }
 
 const updateQuantity = async (sessionCartItem: ISessionCartItem) => {
+  sessionCartItem.productQty = Number(sessionCartItem.productQty);
   if (sessionCartItem.productQty < 1) {
-    sessionCartItem.productQty = 1;
+    sessionCartItem.productQty = 1
   }
   await modifyCartItemQuantity(sessionCartItem.productId, sessionCartItem.productQty)
   await cantItems()
   cartStore.refreshQty(cartTotalItemCount.value)
   cartStore.refreshTotalAmountCart(cartTotalAmount.value)
 }
-
 
 const modifyCartItemQuantity = async (productId: string, productQty: number) => {
   try {
@@ -119,6 +119,7 @@ const modifyCartItemQuantity = async (productId: string, productQty: number) => 
 
 const checkout = async () => {
   if (sessionCartItems.value.length !== 0) {
+    //revisar si router.push es conveniente
     router.push({ name: 'checkout-cart' })
   }
 }
@@ -132,69 +133,92 @@ function trimmedDescription(description: string): string {
 </script>
 
 <template>
-  <v-container class="cart-container">
-    <div>
-      <div v-if="sessionCartItems.length === 0">
-        <h3>Tu carrito está vacío</h3>
-      </div>
-      <div
-        v-else
-        v-for="(sessionCartItem, key) in sessionCartItems"
-        v-bind:key="sessionCartItem.productId"
-        class="card-margin"
-      >
-        <v-card class="no-shadow rounded-card padded-card">
-          <div class="card-content">
-            <v-img
-              class="product-image"
-              src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-              height="160px"
-              width="200px"
-              max-width="200px"
-              cover
-            ></v-img>
-            <div class="product-info" style="max-width: 350px">
-              <div class="product-title">
-                {{ sessionCartItem.productName }}
-              </div>
-              <div
-                class="description-container"
-                style="word-wrap: break-word; overflow-wrap: break-word"
-              >
-                {{ trimmedDescription(sessionCartItem.productDescription) }}
-              </div>
-              <div>$ {{ getProductUnitPrice(sessionCartItem) }}</div>
-            </div>
-            <div class="quantity-container">
-              <v-text-field
-                v-model="sessionCartItem.productQty"
-                density="compact"
-                style="width: 80px"
-                type="number"
-                variant="outlined"
-                hide-details
-                min="1"
-                @change="updateQuantity(sessionCartItem)"
-              ></v-text-field>
-            </div>
-            <div class="price-container">
-              <div>
-                $ {{ subtotal(sessionCartItem.productQty, sessionCartItem.productUnitPrice) }}
-              </div>
-            </div>
-          </div>
-          <v-card-actions>
-            <button v-on:click.prevent="onDeleteItem(key)">Eliminar</button>
-          </v-card-actions>
-        </v-card>
-      </div>
-      <div>
-        <div><strong>Total:</strong></div>
-        <div>
-          <strong>$ {{ totalGeneral() }}</strong>
+  <v-container class="cart-checkout-container">
+    <div class="flex-container">
+      <div class="cart-container">
+        <div v-if="sessionCartItems.length === 0">
+          <h3>Tu carrito está vacío</h3>
         </div>
-        <div>
-          <v-btn color="success" class="mt-4" block @click="checkout"> Checkout </v-btn>
+        <div
+          v-else
+          v-for="(sessionCartItem, key) in sessionCartItems"
+          v-bind:key="sessionCartItem.productId"
+          class="card-margin"
+        >
+          <v-card class="no-shadow rounded-card padded-card">
+            <div class="card-content">
+              <v-img
+                class="product-image"
+                src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+                height="160px"
+                width="200px"
+                max-width="200px"
+                cover
+              ></v-img>
+              <div class="product-info" style="max-width: 350px">
+                <div class="product-title">
+                  {{ sessionCartItem.productName }}
+                </div>
+                <div
+                  class="description-container"
+                  style="word-wrap: break-word; overflow-wrap: break-word"
+                >
+                  {{ trimmedDescription(sessionCartItem.productDescription) }}
+                </div>
+                <div>$ {{ getProductUnitPrice(sessionCartItem) }}</div>
+              </div>
+              <div class="quantity-container">
+                <v-text-field
+                  v-model="sessionCartItem.productQty"
+                  density="compact"
+                  style="width: 80px"
+                  type="number"
+                  variant="outlined"
+                  hide-details
+                  min="1"
+                  @change="updateQuantity(sessionCartItem)"
+                ></v-text-field>
+              </div>
+              <div class="price-container">
+                <div>
+                  $ {{ subtotal(sessionCartItem.productQty, sessionCartItem.productUnitPrice) }}
+                </div>
+              </div>
+              <div class="delete-button-container">
+                <v-card-actions>
+                  <v-btn delete-button icon v-on:click.prevent="onDeleteItem(key)">
+                    <v-icon style="margin-right: 10px">mdi-delete</v-icon>
+                  </v-btn>
+                </v-card-actions>
+              </div>
+            </div>
+          </v-card>
+        </div>
+      </div>
+      <div class="checkout-container summary-container">
+        <div class="summary-container">
+          <h4 class="order-summary-title">Resumen de la Compra</h4>
+          <hr class="separator-line" />
+          <div class="summary-item">
+            <div>Cantidad de artículos:</div>
+            <div>{{ cartStore.counter }}</div>
+          </div>
+          <div class="summary-item">
+            <div>Total de artículos:</div>
+            <div>U$S {{ totalGeneral() }}</div>
+          </div>
+          <div class="summary-item">
+            <div>Descuentos:</div>
+            <div>U$S 0.00</div>
+          </div>
+          <hr class="separator-line" />
+          <div class="summary-item order-total">
+            <div>Total a pagar:</div>
+            <div>U$S {{ totalGeneral() }}</div>
+          </div>
+          <div class="checkout-button-container">
+            <v-btn class="mt-4" block @click="checkout"> Checkout </v-btn>
+          </div>
         </div>
       </div>
     </div>
@@ -202,11 +226,18 @@ function trimmedDescription(description: string): string {
 </template>
 
 <style lang="scss" scoped>
-.cart-container {
+.cart-checkout-container {
+  display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 !important;
+}
+
+.cart-container {
+  width: 865px;
   max-width: 865px;
   padding: 0 !important;
+  margin-right: 30px;
 }
 
 .card-content {
@@ -305,11 +336,76 @@ function trimmedDescription(description: string): string {
 }
 
 .v-card-actions {
-  justify-content: center; /* Centra el botón en la v-card */
+  justify-content: center;
 }
 
 .v-card-actions button {
   font-size: 0.8rem;
   font-weight: 600;
+}
+
+.delete-button-container {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  align-self: flex-end;
+}
+
+.delete-button {
+  margin-right: 25px;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+.checkout-container.summary-container {
+  width: 400px;
+  max-width: 400px;
+  background-color: #f8f9fa; /* Color de fondo */
+  border: 1px solid #ced4da; /* Borde */
+  border-radius: 10px; /* Bordes redondeados */
+  padding: 20px; /* Espaciado interno */
+  font-family: 'Arial', sans-serif; /* Tipo de letra */
+  height: 403px;
+  font-family: 'Roboto', sans-serif;
+
+  .order-summary-title {
+    color: #020202; /* Color del título */
+    font-size: 1rem; /* Tamaño del título */
+    
+  }
+
+  .summary-item {
+    display: flex; /* Alineación de los elementos */
+    justify-content: space-between; /* Espaciado entre los elementos */
+    margin-bottom: 10px; /* Espaciado debajo de cada elemento */
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .order-total {
+    font-weight: 600;
+  }
+
+  .checkout-button-container {
+    text-align: center; /* Centrado del botón */
+  }
+
+  .checkout-button-container button {
+    background-color: #000000; /* Color de fondo del botón */
+    color: #fff; /* Color del texto del botón */
+    padding: 10px 20px; /* Espaciado interno del botón */
+    border-radius: 5px; /* Bordes redondeados del botón */
+    cursor: pointer; /* Cursor del botón */
+    font-size: 1.2rem; /* Tamaño del texto del botón */
+  }
+
+  .separator-line {
+    border: 0;
+    height: 1px;
+    background-color: #b9b6b6; /* Color gris */
+    margin: 10px 0; /* Margen superior e inferior */
+  }
 }
 </style>

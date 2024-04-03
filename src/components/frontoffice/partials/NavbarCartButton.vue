@@ -13,7 +13,6 @@ import { useCartStore } from '@/stores/cartStore'
 import NumberFormatterService from '@app/shared/application/NumberFormatterService'
 
 const cartStore = useCartStore()
-
 const formatTotalCartAmount = computed(() => {
   return (numero: number) => {
     const numberFormater = new NumberFormatterService()
