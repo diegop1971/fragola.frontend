@@ -97,7 +97,7 @@ const totalGeneral = () => {
 }
 
 const updateQuantity = async (sessionCartItem: ISessionCartItem) => {
-  sessionCartItem.productQty = Number(sessionCartItem.productQty);
+  //sessionCartItem.productQty = Number(sessionCartItem.productQty);
   if (sessionCartItem.productQty < 1) {
     sessionCartItem.productQty = 1
   }
