@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 import NumberFormatterService from '@app/shared/application/NumberFormatterService'
 import { useCartStore } from '@/stores/cartStore'
+import { defineProps } from 'vue'
 
 const router = useRouter()
 const cartStore = useCartStore()
@@ -17,6 +18,13 @@ const formatNumber = (numberToFormat: number) => {
   })
 }
 
+defineProps({
+  showButton: {
+    type: Boolean,
+    default: true
+  }
+})
+
 const checkout = async () => {
   if (cartStore.counter > 0) {
     //revisar si router.push es conveniente
@@ -28,27 +36,29 @@ const checkout = async () => {
 <template>
   <div class="checkout-container summary-container">
     <div class="summary-container">
-      <h4 class="order-summary-title">Resumen de la Compra</h4>
+      <h4 class="order-summary-title">Order summary</h4>
       <hr class="separator-line" />
       <div class="summary-item">
-        <div>Cantidad de artículos:</div>
+        <div>Number of items:</div>
         <div>{{ cartStore.counter }}</div>
       </div>
       <div class="summary-item">
-        <div>Total de artículos:</div>
+        <div>Total items:</div>
         <div>U$S {{ formatNumber(cartStore.totalAmountCart) }}</div>
       </div>
       <div class="summary-item">
-        <div>Descuentos:</div>
+        <div>Discounts:</div>
         <div>U$S 0.00</div>
       </div>
       <hr class="separator-line" />
       <div class="summary-item order-total">
-        <div>Total a pagar:</div>
+        <div>Total to pay:</div>
         <div>U$S {{ formatNumber(cartStore.totalAmountCart) }}</div>
       </div>
-      <div class="checkout-button-container">
-        <v-btn class="mt-4" block @click="checkout" :disabled="!cartStore.counter"> Checkout </v-btn>
+      <div class="checkout-button-container" v-if="showButton">
+        <v-btn class="mt-4" block @click="checkout" :disabled="!cartStore.counter">
+          Checkout
+        </v-btn>
       </div>
     </div>
   </div>

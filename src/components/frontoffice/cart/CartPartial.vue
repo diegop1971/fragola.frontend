@@ -1,66 +1,3 @@
-<template>
-  <div class="cart-container">
-    <div v-if="sessionCartItems.length === 0">
-      <h3>Tu carrito está vacío</h3>
-    </div>
-    <div
-      v-else
-      v-for="(sessionCartItem, key) in sessionCartItems"
-      v-bind:key="sessionCartItem.productId"
-      class="card-margin"
-    >
-      <v-card class="no-shadow rounded-card padded-card">
-        <div class="card-content">
-          <v-img
-            class="product-image"
-            src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
-            height="160px"
-            width="200px"
-            max-width="200px"
-            cover
-          ></v-img>
-          <div class="product-info" style="max-width: 350px">
-            <div class="product-title">
-              {{ sessionCartItem.productName }}
-            </div>
-            <div
-              class="description-container"
-              style="word-wrap: break-word; overflow-wrap: break-word"
-            >
-              {{ trimmedDescription(sessionCartItem.productDescription) }}
-            </div>
-            <div>$ {{ getProductUnitPrice(sessionCartItem) }}</div>
-          </div>
-          <div class="quantity-container">
-            <v-text-field
-              v-model="sessionCartItem.productQty"
-              density="compact"
-              style="width: 80px"
-              type="number"
-              variant="outlined"
-              hide-details
-              min="1"
-              @change="updateQuantity(sessionCartItem)"
-            ></v-text-field>
-          </div>
-          <div class="price-container">
-            <div>
-              $ {{ subtotal(sessionCartItem.productQty, sessionCartItem.productUnitPrice) }}
-            </div>
-          </div>
-          <div class="delete-button-container">
-            <v-card-actions>
-              <v-btn delete-button icon v-on:click.prevent="onDeleteItem(key)">
-                <v-icon style="margin-right: 10px">mdi-delete</v-icon>
-              </v-btn>
-            </v-card-actions>
-          </div>
-        </div>
-      </v-card>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Ref } from 'vue'
@@ -181,6 +118,69 @@ function trimmedDescription(description: string): string {
 }
 </script>
 
+<template>
+  <div class="cart-container">
+    <div v-if="sessionCartItems.length === 0">
+      <h3>Tu carrito está vacío</h3>
+    </div>
+    <div
+      v-else
+      v-for="(sessionCartItem, key) in sessionCartItems"
+      v-bind:key="sessionCartItem.productId"
+      class="card-margin"
+    >
+      <v-card class="no-shadow rounded-card padded-card">
+        <div class="card-content">
+          <v-img
+            class="product-image"
+            src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+            height="160px"
+            width="200px"
+            max-width="200px"
+            cover
+          ></v-img>
+          <div class="product-info" style="max-width: 350px">
+            <div class="product-title">
+              {{ sessionCartItem.productName }}
+            </div>
+            <div
+              class="description-container"
+              style="word-wrap: break-word; overflow-wrap: break-word"
+            >
+              {{ trimmedDescription(sessionCartItem.productDescription) }}
+            </div>
+            <div>$ {{ getProductUnitPrice(sessionCartItem) }}</div>
+          </div>
+          <div class="quantity-container">
+            <v-text-field
+              v-model="sessionCartItem.productQty"
+              density="compact"
+              style="width: 80px"
+              type="number"
+              variant="outlined"
+              hide-details
+              min="1"
+              @change="updateQuantity(sessionCartItem)"
+            ></v-text-field>
+          </div>
+          <div class="price-container">
+            <div>
+              $ {{ subtotal(sessionCartItem.productQty, sessionCartItem.productUnitPrice) }}
+            </div>
+          </div>
+          <div class="delete-button-container">
+            <v-card-actions>
+              <v-btn delete-button icon v-on:click.prevent="onDeleteItem(key)">
+                <v-icon style="margin-right: 10px">mdi-delete</v-icon>
+              </v-btn>
+            </v-card-actions>
+          </div>
+        </div>
+      </v-card>
+    </div>
+  </div>
+</template>
+
 <style lang="scss" scoped>
 .cart-container {
   width: 865px;
@@ -198,16 +198,16 @@ function trimmedDescription(description: string): string {
   box-shadow: none;
 }
 
-.card-margin {
-  margin-bottom: 20px;
-}
-
 .rounded-card {
   border-radius: 10px;
 }
 
 .padded-card {
   padding: 15px;
+}
+
+.card-margin {
+  margin-bottom: 20px;
 }
 
 .product-image {
