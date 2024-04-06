@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useCartStore } from '@/stores/cartStore'
 
 /* frontoffice */
 import Register from '../components/Register.vue'
-import CheckoutCart from '@/components/frontoffice/checkout/CheckoutCart.vue'
+import CheckoutSuccess from '@/components/frontoffice/checkout-success/CheckoutSuccess.vue'
 import Login from '../views/frontoffice/auth/UsersLogin.vue'
 import Error404EcommerceComponent from '@/components/frontoffice/errors/Error404EcommerceComponent.vue'
 import Error500EcommerceComponent from '@/components/frontoffice/errors/Error500EcommerceComponent.vue'
@@ -26,6 +27,7 @@ import VariosComponent from '@/components/Varios.vue'
 import ProductCards from '@/components/frontoffice/catalog/ProductCards.vue'
 import ShoppingCart from '@/components/frontoffice/cart/ShoppingCart.vue'
 import FrontOfficeMainLayout from '@/views/frontoffice/layouts/FrontOfficeMainLayout.vue'
+import CheckoutCart from '@/components/frontoffice/checkout/CheckoutCart.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,7 +50,12 @@ const router = createRouter({
         {
           path: '/checkout-cart',
           name: 'checkout-cart',
-          component: CheckoutCart
+          component: CheckoutCart,
+        },
+        {
+          path: '/checkout-success',
+          name: 'checkout-success',
+          component: CheckoutSuccess
         },
         {
           path: '/login',
@@ -215,6 +222,20 @@ const router = createRouter({
     }
     /********** backoffice errors **********/
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const cartStore = useCartStore()
+
+  if (to.path === '/checkout-cart') {
+    if (cartStore.counter > 0) {
+      next();
+    } else {
+      next('/cart');
+    }
+  } else {
+    next();
+  }
 })
 
 export default router

@@ -13,6 +13,7 @@ import type { ISessionCartItem } from '@app/frontoffice/cart/domain/interfaces/I
 import { useCartStore } from '@/stores/cartStore'
 import CartProductQuantityUpdaterService from '@app/frontoffice/cart/application/update/CartProductQuantityUpdaterService'
 import type { ISessionCartItemResponse } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse'
+//import cartStoreWatcher from '@app/frontoffice/cart/infrastructure/persistence/cartStoreWatcher'
 
 const errorHandling = new ErrorHandlingService()
 const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([])
@@ -25,10 +26,18 @@ axios.defaults.withCredentials = true
 onMounted(async (): Promise<void> => {
   try {
     await getCartData()
-    let cant = await cantItems()
-    await cartStore.refreshQty(cant)
-    cartStore.refreshTotalAmountCart(cartTotalAmount.value)
-    cartStore.showCollapsed(false)
+    if (Object.keys(cartStore.cartItemsList).length === 0) {
+      let cant = await cantItems()
+      cartStore.refreshTotalAmountCart(cartTotalAmount.value)
+      cartStore.refreshQty(cant)
+      cartStore.refreshCartItems(sessionCartItems.value)
+      cartStore.showCollapsed(false)
+    }
+
+    /*let counter = localStorage.getItem('counter')
+    if (counter !== null) {
+      console.log('local storage: ', JSON.parse(counter))
+    }*/
   } catch (error: any) {
     errorHandling.handleApiError(error)
   }
@@ -72,7 +81,6 @@ const getCartData = async (): Promise<void> => {
     }))
     cartTotalItemCount.value = response.cartTotalItemCount
     cartTotalAmount.value = response.cartTotalAmount
-    cartStore.refreshCartItems(response.sessionCartItems)
   } catch (error) {
     errorHandling.handleApiError(error)
   }

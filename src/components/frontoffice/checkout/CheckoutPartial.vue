@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
+import type { Ref } from 'vue'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -27,6 +28,8 @@ const firstName = ref<string>('')
 const lastName = ref<string>('')
 const paymentMethodNamesWithIds = ref<IPaymentMethod[]>([])
 const selectedPaymentMethod = ref<string>('')
+let snackbar: Ref<boolean> = ref(false)
+let snackbarMessage: Ref<string> = ref('')
 const emailRules = [(v: string) => validateCheckoutRuleEmail(v)]
 const nameRules = [(v: string) => validateCheckoutRuleName(v)]
 
@@ -50,9 +53,7 @@ onBeforeMount(async () => {
 onMounted(async () => {
   await getPaymentMethods()
   if (Object.keys(cartStore.cartItemsList).length === 0) {
-    let cartData = await getCartData()
-    cartStore.refreshTotalAmountCart(cartData.cartTotalAmount)
-    cartStore.refreshQty(cartData.cartTotalItemCount)
+    refreshCartStore()
   }
 })
 
@@ -72,8 +73,8 @@ const getPaymentMethods = async (): Promise<void> => {
     } else {
       const apiErrorHandler = new ApiErrorHandler()
       apiErrorHandler.handleError(error.response.data.code)
-      //snackbarMessage.value = error.response.data.message
-      //snackbar.value = true
+      snackbarMessage.value = error.response.data.message
+      snackbar.value = true
     }
   }
 }
@@ -87,7 +88,6 @@ const getCartData = async (): Promise<ISessionCartItemResponse> => {
 const checkout = async () => {
   if (form.value !== null) {
     const { valid } = await form.value.validate()
-    console.log(valid)
     if (valid) {
       try {
         const cartData = await getCartData()
@@ -98,19 +98,28 @@ const checkout = async () => {
           selectedPaymentMethod.value,
           cartData
         )
-        await storeCheckoutCart.store()
+        let checkoutResponse = await storeCheckoutCart.store()
+        if (checkoutResponse.data.success) {
+          refreshCartStore()
+        }
       } catch (error: any) {
         if (error.code === 'ERR_NETWORK') {
           errorRedirectService.handleApiError(500)
         } else {
           const apiErrorHandler = new ApiErrorHandler()
           apiErrorHandler.handleError(error.response.data.code)
-          //snackbarMessage.value = error.response.data.message
-          //snackbar.value = true
+          snackbarMessage.value = error.response.data.message
+          snackbar.value = true
         }
       }
     }
   }
+}
+
+const refreshCartStore = async () => {
+  let cartData = await getCartData()
+  cartStore.refreshTotalAmountCart(cartData.cartTotalAmount)
+  cartStore.refreshQty(cartData.cartTotalItemCount)
 }
 
 const onPaymentMethodChange = (newSelectedPaymentMethod: string) => {
@@ -157,6 +166,12 @@ const onPaymentMethodChange = (newSelectedPaymentMethod: string) => {
 
         <v-btn color="success" class="mt-4" block @click="checkout"> Guardar </v-btn>
       </v-form>
+      <v-snackbar v-model="snackbar" multi-line>
+        {{ snackbarMessage }}
+        <template v-slot:actions>
+          <v-btn color="red" variant="text" @click="snackbar = false"> Close </v-btn>
+        </template>
+      </v-snackbar>
     </v-card>
   </div>
 </template>
