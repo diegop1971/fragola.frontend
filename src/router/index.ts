@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useCartStore } from '@/stores/cartStore'
 
 /* frontoffice */
 import Register from '../components/Register.vue'
@@ -50,7 +49,7 @@ const router = createRouter({
         {
           path: '/checkout-cart',
           name: 'checkout-cart',
-          component: CheckoutCart,
+          component: CheckoutCart
         },
         {
           path: '/checkout-success',
@@ -225,16 +224,15 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const cartStore = useCartStore()
-
+  const cartItemCount: number = Number(localStorage.getItem('cartItemCount'))
   if (to.path === '/checkout-cart') {
-    if (cartStore.counter > 0) {
-      next();
+    if (cartItemCount > 0) {
+      next()
     } else {
-      next('/cart');
+      next('/cart')
     }
   } else {
-    next();
+    next()
   }
 })
 

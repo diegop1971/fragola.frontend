@@ -2,7 +2,7 @@
   <router-link :to="{ name: 'cart' }" style="text-decoration: none; color: inherit">
     <v-btn class="v-btn--contained">
       <v-icon> mdi-cart </v-icon>
-      {{ cartStore.counter }} item(s) - $ {{ formatTotalCartAmount(cartStore.totalAmountCart) }}
+      {{ cartStore.cartItemCount }} item(s) - $ {{ formatTotalCartAmount(cartStore.totalCartValue) }}
     </v-btn>
   </router-link>
 </template>

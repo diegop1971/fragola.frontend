@@ -3,7 +3,6 @@ import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { computed } from 'vue'
 import { onMounted } from 'vue'
-import { watch } from 'vue'
 import axios from 'axios'
 import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
 import NumberFormatterService from '@app/shared/application/NumberFormatterService'
@@ -27,34 +26,12 @@ onMounted(async (): Promise<void> => {
   try {
     useCartStoreWatcher(cartStore)
     await getCartData()
-    //if (Object.keys(cartStore.cartItemsList).length === 0) {
-    if (cartStore.counter === 0) {
-      let cant = await cantItems()
-      cartStore.refreshTotalAmountCart(cartTotalAmount.value)
-      cartStore.refreshQty(cant)
-      console.log(
-        'CartPartial => onMounted => sessionCartItems.value.length',
-        sessionCartItems.value.length
-      )
-      //cartStore.refreshCartItems(sessionCartItems.value)
-      cartStore.showCollapsed(false)
-      //localStorage.clear()
-    }
+    cartStore.refreshQty(cartTotalItemCount.value)
+    cartStore.refreshTotalCartValue(cartTotalAmount.value)
   } catch (error: any) {
     errorHandling.handleApiError(error)
   }
 })
-
-const getProductUnitPrice = computed(() => {
-  return (sessionCartItem: ISessionCartItem) => {
-    return onFormatNumber(sessionCartItem.productUnitPrice)
-  }
-})
-
-const onFormatNumber = (numberToFormat: number) => {
-  let formattedNumber = new NumberFormatterService()
-  return formattedNumber.formatNumber(numberToFormat)
-}
 
 const getCartData = async (): Promise<void> => {
   try {
@@ -76,52 +53,15 @@ const getCartData = async (): Promise<void> => {
   }
 }
 
-const cantItems = async () => {
-  let cantItems = sessionCartItems.value.reduce((cant, item) => cant + item.productQty, 0)
-  return cantItems
-}
-
-const subtotal = (qty: number, price: number): number => {
-  let subtotal = qty * price
-  let subtotalFormated = onFormatNumber(subtotal)
-  return subtotalFormated
-}
-
 const updateQuantity = async (sessionCartItem: ISessionCartItem) => {
   sessionCartItem.productQty = Number(sessionCartItem.productQty)
   if (sessionCartItem.productQty < 1) {
     sessionCartItem.productQty = 1
   }
   await modifyCartItemQuantity(sessionCartItem.productId, sessionCartItem.productQty)
-  await cantItems()
   cartStore.refreshQty(cartTotalItemCount.value)
-  cartStore.refreshTotalAmountCart(cartTotalAmount.value)
+  cartStore.refreshTotalCartValue(cartTotalAmount.value)
 }
-
-const onDeleteItem = async (index: number): Promise<void> => {
-  try {
-    const cartItemRemover = new CartProductRemoverService(index)
-    await cartItemRemover.delete()
-    await getCartData()
-    cartStore.refreshQty(Number(cartTotalItemCount.value))
-    cartStore.refreshTotalAmountCart(cartTotalAmount.value)
-    console.log(cartStore.counter)
-  } catch (error) {
-    console.log(error)
-  }
-}
-
-/*watch(
-  () => cartStore.counter,
-  (newCounter) => {
-    console.log('watch:', newCounter)
-    localStorage.setItem('counter', JSON.stringify(newCounter))
-    console.log(
-      'CartPartial => onDeleteItem => localStorage.getItem(counter): ',
-      localStorage.getItem('counter')
-    )
-  }
-)*/
 
 const modifyCartItemQuantity = async (productId: string, productQty: number) => {
   try {
@@ -131,6 +71,36 @@ const modifyCartItemQuantity = async (productId: string, productQty: number) => 
   } catch (error) {
     console.log(error)
   }
+}
+
+const onDeleteItem = async (index: number): Promise<void> => {
+  try {
+    const cartItemRemover = new CartProductRemoverService(index)
+    await cartItemRemover.delete()
+    await getCartData()
+    cartStore.refreshQty(Number(cartTotalItemCount.value))
+    cartStore.refreshTotalCartValue(cartTotalAmount.value)
+    localStorage.setItem('cartItemCount', JSON.stringify(cartStore.cartItemCount))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const getProductUnitPrice = computed(() => {
+  return (sessionCartItem: ISessionCartItem) => {
+    return onFormatNumber(sessionCartItem.productUnitPrice)
+  }
+})
+
+const subtotal = (qty: number, price: number): number => {
+  let subtotal = qty * price
+  let subtotalFormated = onFormatNumber(subtotal)
+  return subtotalFormated
+}
+
+const onFormatNumber = (numberToFormat: number) => {
+  let formattedNumber = new NumberFormatterService()
+  return formattedNumber.formatNumber(numberToFormat)
 }
 
 function trimmedDescription(description: string): string {

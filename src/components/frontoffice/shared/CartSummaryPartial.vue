@@ -26,7 +26,7 @@ defineProps({
 })
 
 const checkout = async () => {
-  if (cartStore.counter > 0) {
+  if (cartStore.cartItemCount > 0) {
     //revisar si router.push es conveniente
     router.push({ name: 'checkout-cart' })
   }
@@ -40,11 +40,11 @@ const checkout = async () => {
       <hr class="separator-line" />
       <div class="summary-item">
         <div>Number of items:</div>
-        <div>{{ cartStore.counter }}</div>
+        <div>{{ cartStore.cartItemCount }}</div>
       </div>
       <div class="summary-item">
         <div>Total items:</div>
-        <div>U$S {{ formatNumber(cartStore.totalAmountCart) }}</div>
+        <div>U$S {{ formatNumber(cartStore.totalCartValue) }}</div>
       </div>
       <div class="summary-item">
         <div>Discounts:</div>
@@ -53,10 +53,10 @@ const checkout = async () => {
       <hr class="separator-line" />
       <div class="summary-item order-total">
         <div>Total to pay:</div>
-        <div>U$S {{ formatNumber(cartStore.totalAmountCart) }}</div>
+        <div>U$S {{ formatNumber(cartStore.totalCartValue) }}</div>
       </div>
       <div class="checkout-button-container" v-if="showButton">
-        <v-btn class="mt-4" block @click="checkout" :disabled="!cartStore.counter">
+        <v-btn class="mt-4" block @click="checkout" :disabled="!cartStore.cartItemCount">
           Checkout
         </v-btn>
       </div>

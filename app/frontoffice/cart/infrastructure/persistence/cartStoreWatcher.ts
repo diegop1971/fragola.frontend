@@ -2,16 +2,16 @@ import { watch } from 'vue'
 
 export default function useCartStoreWatcher(cartStore: any) {
   watch(
-    () => cartStore.counter,
-    (newCounter) => {
-      localStorage.setItem('counter', JSON.stringify(newCounter))
+    () => cartStore.cartItemCount,
+    (newCartItemCount) => {
+      localStorage.setItem('cartItemCount', JSON.stringify(newCartItemCount))
     }
   )
 
   watch(
-    () => cartStore.totalAmountCart,
-    (newTotalAmountCart) => {
-      localStorage.setItem('totalAmountCart', JSON.stringify(newTotalAmountCart))
+    () => cartStore.totalCartValue,
+    (newTotalCartValue) => {
+      localStorage.setItem('totalCartValue', JSON.stringify(newTotalCartValue))
     }
   )
 

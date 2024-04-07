@@ -20,16 +20,16 @@ const cartStore = useCartStore()
 const errorRedirectService = new ErrorRedirectService()
 const cartTotalItemCount: Ref<ISessionCartItemResponse['cartTotalItemCount']> = ref(0)
 const cartTotalAmount: Ref<ISessionCartItemResponse['cartTotalAmount']> = ref(0)
+const errorHandling = new ErrorHandlingService()
+const productQty: number = 1
+let snackbar: Ref<boolean> = ref(false)
+let snackbarMessage: Ref<string> = ref('')
+
 
 const products = ref<IApiProductCardsResponse>({
   title: '',
   homeProducts: []
 })
-
-const errorHandling = new ErrorHandlingService()
-
-let snackbar: Ref<boolean> = ref(false)
-let snackbarMessage: Ref<string> = ref('')
 
 axios.defaults.withCredentials = true
 
@@ -39,24 +39,22 @@ onMounted(async () => {
     await getCartData()
     await getProductCardsList()
     cartStore.refreshQty(cartTotalItemCount.value)
-    cartStore.refreshTotalAmountCart(cartTotalAmount.value)
+    cartStore.refreshTotalCartValue(cartTotalAmount.value)
     cartStore.showCollapsed(true)
-    /*let counter = localStorage.getItem('counter')
-    if (counter !== null) {
-      console.log('ProductCards - onMounted - local storage: ', JSON.parse(counter))
-    } else {
-      console.log('ProductCards - onMounted - local storage: null')
-    }*/
   } catch (error: any) {
     errorHandling.handleApiError(error)
   }
 })
 
-function trimmedDescription(description: string): string {
-  if (description.length <= 70) {
-    return description
+const getCartData = async (): Promise<void> => {
+  try {
+    const getCartProducts = new CartProductsGetterService()
+    const response = await getCartProducts.getCartProductsList()
+    cartTotalItemCount.value = response.cartTotalItemCount
+    cartTotalAmount.value = response.cartTotalAmount
+  } catch (error) {
+    console.log(error)
   }
-  return description.substring(0, 70) + '...'
 }
 
 const getProductCardsList = async (): Promise<void> => {
@@ -76,30 +74,23 @@ const getProductCardsList = async (): Promise<void> => {
   }
 }
 
-const productQty: number = 1
-
 const onAddToCart = async (productId: string) => {
   try {
     const cartProductCreatorService = new CartProductCreatorService(productId, productQty)
     await cartProductCreatorService.create()
     await getCartData()
     cartStore.refreshQty(cartTotalItemCount.value)
-    cartStore.refreshTotalAmountCart(cartTotalAmount.value)
-    
+    cartStore.refreshTotalCartValue(cartTotalAmount.value)
   } catch (error) {
     errorHandling.handleApiError(error)
   }
 }
 
-const getCartData = async (): Promise<void> => {
-  try {
-    const getCartProducts = new CartProductsGetterService()
-    const response = await getCartProducts.getCartProductsList()
-    cartTotalItemCount.value = response.cartTotalItemCount
-    cartTotalAmount.value = response.cartTotalAmount
-  } catch (error) {
-    console.log(error)
+function trimmedDescription(description: string): string {
+  if (description.length <= 70) {
+    return description
   }
+  return description.substring(0, 70) + '...'
 }
 </script>
 
@@ -118,7 +109,12 @@ const getCartData = async (): Promise<void> => {
         <div class="price" style="margin-top: 8px">USD {{ product.price }}</div>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="deep-purple-lighten-2" variant="outlined" dark @click="onAddToCart(product.id)">
+        <v-btn
+          color="deep-purple-lighten-2"
+          variant="outlined"
+          dark
+          @click="onAddToCart(product.id)"
+        >
           Agregar al carrito
         </v-btn>
       </v-card-actions>

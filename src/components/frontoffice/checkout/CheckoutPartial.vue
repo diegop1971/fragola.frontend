@@ -118,7 +118,7 @@ const checkout = async () => {
 
 const refreshCartStore = async () => {
   let cartData = await getCartData()
-  cartStore.refreshTotalAmountCart(cartData.cartTotalAmount)
+  cartStore.refreshTotalCartValue(cartData.cartTotalAmount)
   cartStore.refreshQty(cartData.cartTotalItemCount)
 }
 

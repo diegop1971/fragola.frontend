@@ -31,13 +31,13 @@ const cartStore = useCartStore()
 const isButtonDisabled = ref(false)
 
 onMounted(async () => {
-  if (cartStore.counter === 0) {
+  if (cartStore.cartItemCount === 0) {
     isButtonDisabled.value = true
   }
 })
 
 watch(
-  () => cartStore.counter,
+  () => cartStore.cartItemCount,
   (newState) => {
     isButtonDisabled.value = newState === 0
   }

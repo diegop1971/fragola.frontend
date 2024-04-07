@@ -3,7 +3,7 @@
     <template v-slot:activator="{ props }">
       <v-btn v-bind="props">
         <v-icon> mdi-cart </v-icon>
-        {{ cartStore.counter }} item(s) - $ {{ formatTotalCartAmount(cartStore.totalAmountCart) }}
+        {{ cartStore.cartItemCount }} item(s) - $ {{ formatTotalCartAmount(cartStore.totalCartValue) }}
       </v-btn>
     </template>
 
@@ -107,7 +107,7 @@ const onDeleteItem = async (index: number): Promise<void> => {
     await cartItemRemover.delete()
     await getCartData()
     cartStore.refreshQty(cartTotalItemCount.value)
-    cartStore.refreshTotalAmountCart(cartTotalAmount.value)
+    cartStore.refreshTotalCartValue(cartTotalAmount.value)
   } catch (error) {
     console.log(error)
   }
@@ -121,6 +121,7 @@ const getCartData = async (): Promise<void> => {
     sessionCartItems.value = response.sessionCartItems.map((item) => ({
       productId: item.productId,
       productName: item.productName,
+      productDescription: item.productDescription,
       productQty: item.productQty,
       productUnitPrice: item.productUnitPrice,
       subtotal: item.productQty * item.productUnitPrice

@@ -74,7 +74,7 @@ onMounted(async () => {
     await getProductCardsList()
 
     cartStore.refreshQty(cartTotalItemCount.value)
-    cartStore.refreshTotalAmountCart(cartTotalAmount.value)
+    cartStore.refreshTotalCartValue(cartTotalAmount.value)
     cartStore.showCollapsed(true)
   } catch (error: any) {
     errorHandling.handleApiError(error)
@@ -113,7 +113,7 @@ const onAddToCart = async (productId: string) => {
     await cartProductCreatorService.create()
     await getCartData()
     cartStore.refreshQty(cartTotalItemCount.value)
-    cartStore.refreshTotalAmountCart(cartTotalAmount.value)
+    cartStore.refreshTotalCartValue(cartTotalAmount.value)
   } catch (error) {
     errorHandling.handleApiError(error)
   }

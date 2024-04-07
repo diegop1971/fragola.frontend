@@ -1,42 +1,26 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { onMounted } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
 import CartPartial from '@/components/frontoffice/cart/CartPartial.vue'
 import CartSummaryPartial from '@/components/frontoffice/shared/CartSummaryPartial.vue'
 
 const cartStore = useCartStore()
-let showContent = ref(0)
 
 onMounted(async () => {
-  const counter = localStorage.getItem('counter')
-  cartStore.refreshQty(Number(counter))
-  showContent.value = cartStore.counter
+  const cartItemCount = localStorage.getItem('cartItemCount')
+  cartStore.refreshQty(Number(cartItemCount))
 })
-
-watch(
-  () => cartStore.counter,
-  (newCounter) => {
-    showContent.value = newCounter
-  }
-)
-
-watch(
-  () => showContent,
-  (newShowContent) => {
-    console.log('watch newShowContent:', newShowContent)
-  }
-)
 </script>
 
 <template>
   <v-container class="cart-checkout-container">
     <div class="flex-container">
-      <template v-if="showContent > 0">
+      <template v-if="cartStore.cartItemCount > 0">
         <CartPartial />
         <CartSummaryPartial :showButton="true" />
       </template>
       <template v-else>
-        <h1>Tu carrito está vacío!!!</h1>
+        <h1>Your cart is empty</h1>
       </template>
     </div>
   </v-container>

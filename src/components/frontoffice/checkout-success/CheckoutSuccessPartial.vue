@@ -26,6 +26,7 @@ let snackbarMessage: Ref<string> = ref('')
 
 onBeforeMount(async () => {
   let cart = await getCartData()
+  console.log('onBeforeMount: ', cart['cartTotalItemCount'])
   if (cart['cartTotalItemCount'] === 0) {
     router.push('/cart')
   }
@@ -33,9 +34,10 @@ onBeforeMount(async () => {
 
 onMounted(async () => {
   await getPaymentMethods()
-  if (Object.keys(cartStore.cartItemsList).length === 0) {
+  //if (Object.keys(cartStore.cartItemsList).length === 0) {
+  if (cartStore.cartItemCount === 0) {
     let cartData = await getCartData()
-    cartStore.refreshTotalAmountCart(cartData.cartTotalAmount)
+    cartStore.refreshTotalCartValue(cartData.cartTotalAmount)
     cartStore.refreshQty(cartData.cartTotalItemCount)
   }
 })
