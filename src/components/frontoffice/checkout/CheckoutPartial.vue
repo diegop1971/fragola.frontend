@@ -101,6 +101,7 @@ const checkout = async () => {
         let checkoutResponse = await storeCheckoutCart.store()
         if (checkoutResponse.data.success) {
           refreshCartStore()
+          router.push('/checkout-success')
         }
       } catch (error: any) {
         if (error.code === 'ERR_NETWORK') {
@@ -130,7 +131,7 @@ const onPaymentMethodChange = (newSelectedPaymentMethod: string) => {
 <template>
   <div class="checkout-container">
     <v-card style="width: 100%" class="no-shadow rounded-card padded-card">
-      <h2>Completa el formulario</h2>
+      <h2>Checkout</h2>
       <v-form ref="form" style="width: 100%">
         <v-text-field
           label="Email"
@@ -164,7 +165,7 @@ const onPaymentMethodChange = (newSelectedPaymentMethod: string) => {
           variant="outlined"
         ></v-select>
 
-        <v-btn color="success" class="mt-4" block @click="checkout"> Guardar </v-btn>
+        <v-btn color="success" class="mt-4" block @click="checkout"> Confirm order </v-btn>
       </v-form>
       <v-snackbar v-model="snackbar" multi-line>
         {{ snackbarMessage }}
@@ -178,8 +179,8 @@ const onPaymentMethodChange = (newSelectedPaymentMethod: string) => {
 
 <style lang="scss" scoped>
 .checkout-container {
-  width: 865px;
-  max-width: 865px;
+  width: 1500px;
+  max-width: 1500px;
   padding: 0 !important;
   margin-right: 30px;
 }
