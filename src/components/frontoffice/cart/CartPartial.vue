@@ -3,8 +3,8 @@ import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { computed } from 'vue'
 import { onMounted } from 'vue'
+import { watch } from 'vue'
 import axios from 'axios'
-
 import ErrorHandlingService from '@app/shared/application/ErrorHandlingService'
 import NumberFormatterService from '@app/shared/application/NumberFormatterService'
 import CartProductRemoverService from '@app/frontoffice/cart/application/delete/CartProductRemoverService'
@@ -13,7 +13,7 @@ import type { ISessionCartItem } from '@app/frontoffice/cart/domain/interfaces/I
 import { useCartStore } from '@/stores/cartStore'
 import CartProductQuantityUpdaterService from '@app/frontoffice/cart/application/update/CartProductQuantityUpdaterService'
 import type { ISessionCartItemResponse } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse'
-//import cartStoreWatcher from '@app/frontoffice/cart/infrastructure/persistence/cartStoreWatcher'
+import useCartStoreWatcher from '@app/frontoffice/cart/infrastructure/persistence/cartStoreWatcher'
 
 const errorHandling = new ErrorHandlingService()
 const sessionCartItems: Ref<Array<ISessionCartItem>> = ref([])
@@ -25,35 +25,25 @@ axios.defaults.withCredentials = true
 
 onMounted(async (): Promise<void> => {
   try {
+    useCartStoreWatcher(cartStore)
     await getCartData()
-    if (Object.keys(cartStore.cartItemsList).length === 0) {
+    //if (Object.keys(cartStore.cartItemsList).length === 0) {
+    if (cartStore.counter === 0) {
       let cant = await cantItems()
       cartStore.refreshTotalAmountCart(cartTotalAmount.value)
       cartStore.refreshQty(cant)
-      cartStore.refreshCartItems(sessionCartItems.value)
+      console.log(
+        'CartPartial => onMounted => sessionCartItems.value.length',
+        sessionCartItems.value.length
+      )
+      //cartStore.refreshCartItems(sessionCartItems.value)
       cartStore.showCollapsed(false)
+      //localStorage.clear()
     }
-
-    /*let counter = localStorage.getItem('counter')
-    if (counter !== null) {
-      console.log('local storage: ', JSON.parse(counter))
-    }*/
   } catch (error: any) {
     errorHandling.handleApiError(error)
   }
 })
-
-const onDeleteItem = async (index: number): Promise<void> => {
-  try {
-    const cartItemRemover = await new CartProductRemoverService(index)
-    await cartItemRemover.delete()
-    await getCartData()
-    cartStore.refreshQty(cartTotalItemCount.value)
-    cartStore.refreshTotalAmountCart(cartTotalAmount.value)
-  } catch (error) {
-    console.log(error)
-  }
-}
 
 const getProductUnitPrice = computed(() => {
   return (sessionCartItem: ISessionCartItem) => {
@@ -87,7 +77,7 @@ const getCartData = async (): Promise<void> => {
 }
 
 const cantItems = async () => {
-  let cantItems = await sessionCartItems.value.reduce((cant, item) => cant + item.productQty, 0)
+  let cantItems = sessionCartItems.value.reduce((cant, item) => cant + item.productQty, 0)
   return cantItems
 }
 
@@ -107,6 +97,31 @@ const updateQuantity = async (sessionCartItem: ISessionCartItem) => {
   cartStore.refreshQty(cartTotalItemCount.value)
   cartStore.refreshTotalAmountCart(cartTotalAmount.value)
 }
+
+const onDeleteItem = async (index: number): Promise<void> => {
+  try {
+    const cartItemRemover = new CartProductRemoverService(index)
+    await cartItemRemover.delete()
+    await getCartData()
+    cartStore.refreshQty(Number(cartTotalItemCount.value))
+    cartStore.refreshTotalAmountCart(cartTotalAmount.value)
+    console.log(cartStore.counter)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+/*watch(
+  () => cartStore.counter,
+  (newCounter) => {
+    console.log('watch:', newCounter)
+    localStorage.setItem('counter', JSON.stringify(newCounter))
+    console.log(
+      'CartPartial => onDeleteItem => localStorage.getItem(counter): ',
+      localStorage.getItem('counter')
+    )
+  }
+)*/
 
 const modifyCartItemQuantity = async (productId: string, productQty: number) => {
   try {
@@ -128,11 +143,7 @@ function trimmedDescription(description: string): string {
 
 <template>
   <div class="cart-container">
-    <div v-if="sessionCartItems.length === 0">
-      <h3>Tu carrito está vacío</h3>
-    </div>
     <div
-      v-else
       v-for="(sessionCartItem, key) in sessionCartItems"
       v-bind:key="sessionCartItem.productId"
       class="card-margin"

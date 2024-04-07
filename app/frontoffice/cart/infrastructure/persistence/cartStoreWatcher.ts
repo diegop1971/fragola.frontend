@@ -15,7 +15,7 @@ export default function useCartStoreWatcher(cartStore: any) {
     }
   )
 
-  watch(
+  /*watch(
     () => cartStore.cartItemsList,
     (newCartItemsList) => {
       localStorage.setItem('cartItemsList', JSON.stringify(newCartItemsList))
@@ -27,5 +27,5 @@ export default function useCartStoreWatcher(cartStore: any) {
     (newCollapsedState) => {
       localStorage.setItem('collapsedState', JSON.stringify(newCollapsedState))
     }
-  )
+  )*/
 }

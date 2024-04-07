@@ -1,38 +1,3 @@
-<template>
-  <v-container class="product-container">
-    <v-card
-      class="mx-auto my-2 product-card"
-      max-width="350"
-      elevation="4"
-      v-for="product in products.homeProducts"
-      :key="product.id"
-    >
-      <v-img height="350" src="https://cdn.vuetifyjs.com/images/cards/cooking.png" cover></v-img>
-      <v-card-text>
-        {{ trimmedDescription(product.description) }}
-        <div class="price" style="margin-top: 8px">USD {{ product.price }}</div>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn color="deep-purple-lighten-2" variant="outlined" dark @click="onAddToCart(product.id)">
-          Agregar al carrito
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-container>
-  <v-container>
-    <v-row no-gutters>
-      <v-col class="col1 d-flex justify-end mr-10">
-        <p><a href="#">Back to top</a></p>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <Footer />
-      </v-col>
-    </v-row>
-  </v-container>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Ref } from 'vue'
@@ -49,6 +14,7 @@ import CartProductsGetterService from '@app/frontoffice/cart/application/find/Ca
 import type { ISessionCartItemResponse } from '@app/frontoffice/cart/domain/interfaces/ISessionCartItemResponse'
 import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
 import ApiErrorHandler from '@app/frontoffice/shared/application/errors/ApiErrorHandlerService'
+import useCartStoreWatcher from '@app/frontoffice/cart/infrastructure/persistence/cartStoreWatcher'
 
 const cartStore = useCartStore()
 const errorRedirectService = new ErrorRedirectService()
@@ -69,12 +35,18 @@ axios.defaults.withCredentials = true
 
 onMounted(async () => {
   try {
+    useCartStoreWatcher(cartStore)
     await getCartData()
     await getProductCardsList()
-
     cartStore.refreshQty(cartTotalItemCount.value)
     cartStore.refreshTotalAmountCart(cartTotalAmount.value)
     cartStore.showCollapsed(true)
+    /*let counter = localStorage.getItem('counter')
+    if (counter !== null) {
+      console.log('ProductCards - onMounted - local storage: ', JSON.parse(counter))
+    } else {
+      console.log('ProductCards - onMounted - local storage: null')
+    }*/
   } catch (error: any) {
     errorHandling.handleApiError(error)
   }
@@ -113,6 +85,7 @@ const onAddToCart = async (productId: string) => {
     await getCartData()
     cartStore.refreshQty(cartTotalItemCount.value)
     cartStore.refreshTotalAmountCart(cartTotalAmount.value)
+    
   } catch (error) {
     errorHandling.handleApiError(error)
   }
@@ -122,15 +95,48 @@ const getCartData = async (): Promise<void> => {
   try {
     const getCartProducts = new CartProductsGetterService()
     const response = await getCartProducts.getCartProductsList()
-
     cartTotalItemCount.value = response.cartTotalItemCount
     cartTotalAmount.value = response.cartTotalAmount
-    cartStore.refreshCartItems(response.sessionCartItems)
   } catch (error) {
     console.log(error)
   }
 }
 </script>
+
+<template>
+  <v-container class="product-container">
+    <v-card
+      class="mx-auto my-2 product-card"
+      max-width="350"
+      elevation="4"
+      v-for="product in products.homeProducts"
+      :key="product.id"
+    >
+      <v-img height="350" src="https://cdn.vuetifyjs.com/images/cards/cooking.png" cover></v-img>
+      <v-card-text>
+        {{ trimmedDescription(product.description) }}
+        <div class="price" style="margin-top: 8px">USD {{ product.price }}</div>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn color="deep-purple-lighten-2" variant="outlined" dark @click="onAddToCart(product.id)">
+          Agregar al carrito
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-container>
+  <v-container>
+    <v-row no-gutters>
+      <v-col class="col1 d-flex justify-end mr-10">
+        <p><a href="#">Back to top</a></p>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <Footer />
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
 
 <style lang="scss" scoped>
 .product-container {
