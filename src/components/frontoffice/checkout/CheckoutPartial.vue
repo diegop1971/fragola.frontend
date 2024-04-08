@@ -101,6 +101,9 @@ const checkout = async () => {
         let checkoutResponse = await storeCheckoutCart.store()
         if (checkoutResponse.data.success) {
           refreshCartStore()
+          cartStore.refreshQty(0)
+          cartStore.refreshTotalCartValue(0)
+          cartStore.refreshIsCheckoutSuccessAccessible(true)
           router.push('/checkout-success')
         }
       } catch (error: any) {
@@ -179,8 +182,8 @@ const onPaymentMethodChange = (newSelectedPaymentMethod: string) => {
 
 <style lang="scss" scoped>
 .checkout-container {
-  width: 1500px;
-  max-width: 1500px;
+  width: 865px;
+  max-width: 865px;
   padding: 0 !important;
   margin-right: 30px;
 }

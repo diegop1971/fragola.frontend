@@ -44,7 +44,6 @@
 
 <script setup lang="ts">
     import {ref} from 'vue';
-    import { Ref } from 'vue';
     import axios from 'axios';
     
     axios.defaults.withCredentials = true;
@@ -134,8 +133,8 @@
         const response = await axios.post("http://localhost:8000/api/products/store/", {
                 id: uuid,
                 name: formCreateProduct.value.name,
-                description: formCreateProduct.description, 
-                descriptionShort: formCreateProduct.descriptionShort, 
+                description: formCreateProduct.value.description, 
+                descriptionShort: formCreateProduct.value.descriptionShort, 
                 price: 0, 
                 category_id: '',
                 low_stock_threshold: 1,

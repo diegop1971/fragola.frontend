@@ -42,16 +42,16 @@ const getProductData = async (): Promise<void> => {
   }
 }
 
-const headers: readonly { key: string; title: string; align?: string; value: SelectItemKey }[] = [
-  { key: 'name', title: 'Product', value: 'name' },
-  { key: 'price', title: 'Price', value: 'price' },
-  { key: 'category_name', title: 'Category', value: 'category_name' },
-  { key: 'enabled', title: 'Enabled', value: 'enabled' },
-  { key: 'low_stock_alert', title: 'Low stock alert', value: 'low_stock_alert' },
-  { key: 'low_stock_threshold', title: 'Low stock threshold', value: 'low_stock_threshold' },
-  { key: 'out_of_stock', title: 'Out of stock', value: 'out_of_stock' },
-  { key: 'actions', title: 'Actions', align: 'center', value: 'actions' }
-] as const;
+const headers = [
+  { title: 'Product', key: 'name' },
+  { title: 'Price', key: 'price' },
+  { title: 'Category', key: 'category_name' },
+  { title: 'Enabled', key: 'enabled' },
+  { title: 'Low stock alert', key: 'low_stock_alert' },
+  { title: 'Low stock threshold', key: 'low_stock_threshold' },
+  { title: 'Out of stock', key: 'out_of_stock' },
+  { title: 'Actions', key: 'actions', align: 'center' }
+]
 
 const createNewProduct = () => {
   router.push({ name: 'create-product' })

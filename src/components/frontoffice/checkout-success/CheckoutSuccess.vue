@@ -1,7 +1,18 @@
 <script setup lang="ts">
+import { onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
+import { useCartStore } from '@/stores/cartStore'
 
 const router = useRouter()
+
+const cartStore = useCartStore()
+
+onBeforeMount(async () => {
+  if (!cartStore.isCheckoutSuccessAccessible) {
+    router.push('/')
+  }
+  cartStore.refreshIsCheckoutSuccessAccessible(false)
+})
 
 const redirectToHome = async () => {
   router.push('/')

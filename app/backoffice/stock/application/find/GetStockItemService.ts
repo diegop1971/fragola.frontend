@@ -16,6 +16,7 @@ class GetStockItemService {
         id: '',
         product_id: '',
         movement_type_id: '',
+        quantity: 0,
         date: '',
         notes: '',
         enabled: 0,

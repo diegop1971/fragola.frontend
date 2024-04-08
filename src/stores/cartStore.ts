@@ -7,6 +7,7 @@ export const useCartStore = defineStore('cartStore', () => {
   const cartItemCount = ref(0)
   const totalCartValue = ref(0)
   const cartItemsList: Ref<Array<ISessionCartItem>> = ref([])
+  const isCheckoutSuccessAccessible: Ref<boolean> = ref(false)
   const collapsedState: Ref<boolean> = ref(true)
 
   function refreshQty(value: number) {
@@ -19,6 +20,10 @@ export const useCartStore = defineStore('cartStore', () => {
 
   function refreshCartItems(cartItems: Array<ISessionCartItem>) {
     cartItemsList.value = cartItems
+  }
+
+  function refreshIsCheckoutSuccessAccessible(value: boolean) {
+    isCheckoutSuccessAccessible.value = value
   }
 
   function showCollapsed(state: boolean) {
@@ -37,10 +42,12 @@ export const useCartStore = defineStore('cartStore', () => {
     cartItemCount,
     totalCartValue,
     cartItemsList,
+    isCheckoutSuccessAccessible,
     collapsedState,
     refreshQty,
     refreshTotalCartValue,
     refreshCartItems,
+    refreshIsCheckoutSuccessAccessible,
     showCollapsed,
     incrementBy,
     decrementBy
