@@ -1,3 +1,79 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import type { Ref } from 'vue'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
+import type { IStockItem } from '@app/backoffice/stock/domain/interfaces/IStockItem'
+import GetStockListGroupedByProductIdService from '@app/backoffice/stock/application/find/GetStockListGroupedByProductIdService'
+import ApiErrorHandler from '@app/backoffice/shared/application/errors/ApiErrorHandlerService'
+import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
+
+const errorRedirectService = new ErrorRedirectService()
+const stockList = ref()
+const pageTitle = ref()
+let snackbar: Ref<boolean> = ref(false)
+let snackbarMessage: Ref<string> = ref('')
+
+const router = useRouter()
+
+onMounted(async () => {
+  await getStockData()
+})
+
+const getStockData = async (): Promise<void> => {
+  try {
+    const getStockListService = new GetStockListGroupedByProductIdService()
+    const response = await getStockListService.getApiResponse()
+    stockList.value = response.stockItem
+    pageTitle.value = `${response.pageTitle}`
+  } catch (error: any) {
+    if (error.code === 'ERR_NETWORK') {
+      errorRedirectService.handleApiError(500)
+    } else {
+      const apiErrorHandler = new ApiErrorHandler()
+      apiErrorHandler.handleError(error.response.data.code)
+      snackbarMessage.value = error.response.data.message
+      snackbar.value = true
+    }
+  }
+}
+
+interface Header {
+  key: string
+  title: string
+  value: string
+  align?: 'start' | 'end' | 'center'
+}
+
+const headers: Header[] = [
+  { title: 'Product', key: 'product_name' , value:'product_name'},
+  { title: 'Physical Quantity', key: 'physical_quantity', value:'physical_quantity' },
+  { title: 'Usable Quantity', key: 'usable_quantity' , value:'usable_quantity'},
+  { title: 'Low stock threshold', key: 'low_stock_threshold', value:'low_stock_threshold' },
+  { title: 'Low stock alert', key: 'low_stock_alert', value:'low_stock_alert' },
+  { title: 'Out of stock', key: 'out_of_stock', value:'out_of_stock' },
+  { title: 'Product enabled', key: 'enabled', value:'enabled' },
+  { title: 'Actions', key: 'actions', align: 'center', value:'center' }
+]
+
+const viewItem = (item: IStockItem) => {
+  router.push({ name: 'stock-by-product-id', params: { productId: item.id } })
+}
+
+const addItem = (item?: IStockItem) => {
+  if (item) {
+    router.push({ name: 'create-stock-item', params: { productId: item.id } });
+  } else {
+    router.push({ name: 'create-stock-item' });
+  }
+}
+
+const goBack = () => {
+  router.push({ name: 'dashboard' })
+}
+</script>
+
 <template>
   <v-main class="d-flex justify-center">
     <v-container fluid>
@@ -42,72 +118,3 @@
     </v-container>
   </v-main>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import type { Ref } from 'vue'
-import { onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-
-import type { IStockItem } from '@app/backoffice/stock/domain/interfaces/IStockItem'
-import GetStockListGroupedByProductIdService from '@app/backoffice/stock/application/find/GetStockListGroupedByProductIdService'
-import ApiErrorHandler from '@app/backoffice/shared/application/errors/ApiErrorHandlerService'
-import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
-
-const errorRedirectService = new ErrorRedirectService()
-const stockList = ref()
-const pageTitle = ref()
-let snackbar: Ref<boolean> = ref(false)
-let snackbarMessage: Ref<string> = ref('')
-
-const router = useRouter()
-
-onMounted(async () => {
-  await getStockData()
-})
-
-const getStockData = async (): Promise<void> => {
-  try {
-    const getStockListService = new GetStockListGroupedByProductIdService()
-    const response = await getStockListService.getApiResponse()
-    stockList.value = response.stockItem
-    pageTitle.value = `${response.pageTitle}`
-  } catch (error: any) {
-    if (error.code === 'ERR_NETWORK') {
-      errorRedirectService.handleApiError(500)
-    } else {
-      const apiErrorHandler = new ApiErrorHandler()
-      apiErrorHandler.handleError(error.response.data.code)
-      snackbarMessage.value = error.response.data.message
-      snackbar.value = true
-    }
-  }
-}
-
-const headers = [
-  { title: 'Product', key: 'product_name' },
-  { title: 'Physical Quantity', key: 'physical_quantity' },
-  { title: 'Usable Quantity', key: 'usable_quantity' },
-  { title: 'Low stock threshold', key: 'low_stock_threshold' },
-  { title: 'Low stock alert', key: 'low_stock_alert' },
-  { title: 'Out of stock', key: 'out_of_stock' },
-  { title: 'Product enabled', key: 'enabled' },
-  { title: 'Actions', key: 'actions', align: 'center' }
-]
-
-const viewItem = (item: IStockItem) => {
-  router.push({ name: 'stock-by-product-id', params: { productId: item.id } })
-}
-
-const addItem = (item?: IStockItem) => {
-  if (item) {
-    router.push({ name: 'create-stock-item', params: { productId: item.id } });
-  } else {
-    router.push({ name: 'create-stock-item' });
-  }
-}
-
-const goBack = () => {
-  router.push({ name: 'dashboard' })
-}
-</script>

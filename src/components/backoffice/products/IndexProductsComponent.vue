@@ -42,7 +42,14 @@ const getProductData = async (): Promise<void> => {
   }
 }
 
-const headers: readonly { key: string; title: string; align?: string; value: SelectItemKey }[] = [
+interface Header {
+  key: string
+  title: string
+  value: string
+  align?: 'start' | 'end' | 'center'
+}
+
+const headers: Header[] = [
   { key: 'name', title: 'Product', value: 'name' },
   { key: 'price', title: 'Price', value: 'price' },
   { key: 'category_name', title: 'Category', value: 'category_name' },
@@ -51,7 +58,7 @@ const headers: readonly { key: string; title: string; align?: string; value: Sel
   { key: 'low_stock_threshold', title: 'Low stock threshold', value: 'low_stock_threshold' },
   { key: 'out_of_stock', title: 'Out of stock', value: 'out_of_stock' },
   { key: 'actions', title: 'Actions', align: 'center', value: 'actions' }
-] as const;
+]
 
 const createNewProduct = () => {
   router.push({ name: 'create-product' })
