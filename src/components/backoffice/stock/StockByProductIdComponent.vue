@@ -26,9 +26,10 @@
                 <p class="mb-2">
                   Product name: <strong>{{ productName }}</strong>
                 </p>
-                <p class="mb-2">Physical quantity: <strong> {{ stockAvailable }} </strong></p>
+                <p class="mb-2">System quantity: <strong> {{ systemQuantity }} </strong></p>
+                <p class="mb-2">Physical quantity: <strong> {{ physicalQuantity }} </strong></p>
                 <p class="mb-2">Low stock threshold: <strong> {{ lowStockThreshold }} </strong></p>
-                <p v-if="stockAvailable > lowStockThreshold" class="green--text">Product available!</p>
+                <p v-if="systemQuantity > lowStockThreshold" class="green--text">Product available!</p>
                 <p v-else class="red--text">{{ stockStatus }}</p>
               </v-card-text>
             </v-card>
@@ -62,7 +63,8 @@ const route = useRoute()
 const errorRedirectService = new ErrorRedirectService()
 const pageTitle = ref()
 const productName = ref()
-const stockAvailable = ref()
+const systemQuantity = ref()
+const physicalQuantity = ref()
 const lowStockThreshold = ref()
 const stockStatus = ref()
 let snackbar: Ref<boolean> = ref(false)
@@ -74,7 +76,8 @@ const productId: string[] | string = route.params.productId
 const headers = [
   { title: 'Entry date', key: 'date' },
   { title: 'Movement tipe', key: 'movement_type' },
-  { title: 'Quantity', key: 'quantity' },
+  { title: 'System Quantity', key: 'system_quantity' },
+  { title: 'Physical Quantity', key: 'physical_quantity' },
   { title: 'Notes', key: 'notes' }
 ]
 
@@ -84,9 +87,9 @@ onMounted(async () => {
 })
 
 const getStockLevel = (): void => {
-      if(stockAvailable.value > lowStockThreshold.value) {
+      if(systemQuantity.value > lowStockThreshold.value) {
         stockStatus.value = 'Product available!!'
-      } else if(stockAvailable.value <= lowStockThreshold.value && stockAvailable.value >= 0){
+      } else if(systemQuantity.value <= lowStockThreshold.value && systemQuantity.value >= 0){
         stockStatus.value = 'Low stock'
       } else {
         stockStatus.value = 'Out of stock'
@@ -103,15 +106,20 @@ const getStockData = async (productId: string[] | string): Promise<void> => {
     lowStockThreshold.value = response.product.low_stock_threshold
     
     //está mal ya que toma los números negativos como  positivos y suma todo
-    stockAvailable.value = response.stockMovements.reduce((total: number, item) => {
-      return total + item.quantity
+    systemQuantity.value = response.stockMovements.reduce((total: number, item) => {
+      return total + item.system_quantity
+    }, 0)
+
+    physicalQuantity.value = response.stockMovements.reduce((total: number, item) => {
+      return total + item.physical_quantity
     }, 0)
 
     customStockList.value = response.stockMovements.map((element: any) => ({
       date: element.date.slice(0, 10),
       movement_type: element.movement_type,
       product_name: element.product_name,
-      quantity: element.quantity,
+      system_quantity: element.system_quantity,
+      physical_quantity: element.physical_quantity,
       notes: element.notes
     }))
 

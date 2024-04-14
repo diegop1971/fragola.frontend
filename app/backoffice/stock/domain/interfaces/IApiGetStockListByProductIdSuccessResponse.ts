@@ -16,7 +16,8 @@ export interface IApiGetStockListByProductIdSuccessResponse {
       id: string
       product_id: string
       name: string
-      quantity: number
+      system_quantity: number
+      physical_quantity: number
     }
   ]
 }
