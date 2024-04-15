@@ -48,8 +48,8 @@ interface Header {
 
 const headers: Header[] = [
   { title: 'Product', key: 'product_name' , value:'product_name'},
-  { title: 'Physical Quantity', key: 'physical_quantity', value:'physical_quantity' },
-  { title: 'Usable Quantity', key: 'usable_quantity' , value:'usable_quantity'},
+  { title: 'Physical quantity', key: 'physical_quantity', value:'physical_quantity' },
+  { title: 'System quantity', key: 'system_quantity' , value:'system_quantity'},
   { title: 'Low stock threshold', key: 'low_stock_threshold', value:'low_stock_threshold' },
   { title: 'Low stock alert', key: 'low_stock_alert', value:'low_stock_alert' },
   { title: 'Out of stock', key: 'out_of_stock', value:'out_of_stock' },
