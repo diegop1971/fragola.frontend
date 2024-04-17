@@ -41,9 +41,9 @@ class UpdateProductService {
   }
 
   public update = async (): Promise<IUpdateProductResponse> => {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie')
+    await axios.get('/sanctum/csrf-cookie')
     const response: IUpdateProductResponse = await axios.put(
-      'http://localhost:8000/api/products/update',
+      '/api/products/update',
       {
         id: this.id,
         name: this.name,

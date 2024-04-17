@@ -27,9 +27,9 @@ class CheckoutCartService {
   }
 
   public store = async (): Promise<ICheckoutCartResponse> => {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie')
+    await axios.get('/sanctum/csrf-cookie')
     const response: ICheckoutCartResponse = await axios.post(
-      'http://localhost:8000/api/checkout-cart/store',
+      '/api/checkout-cart/store',
       {
         customerId: '40cdbdb0-c5f5-4d0e-b72f-18c63cdb439e',
         customerEmail: this.customerEmail,

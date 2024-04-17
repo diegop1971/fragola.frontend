@@ -1,0 +1,1 @@
+VITE_API_BASE_URL=http://fragola.harlan.com.ar/fragola.backend

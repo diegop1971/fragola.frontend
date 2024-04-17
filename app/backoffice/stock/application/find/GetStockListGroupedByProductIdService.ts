@@ -23,7 +23,7 @@ class GetStockListGroupedByProductIdService {
   }
 
   private async getProductList(): Promise<void> {
-    const response = await axios.get<IApiGetStockListGroupedByProductIdSuccessResponse>('http://localhost:8000/api/stock/')
+    const response = await axios.get<IApiGetStockListGroupedByProductIdSuccessResponse>('/api/stock/')
     this.apiGetStockListResponse = response.data
   }
 }

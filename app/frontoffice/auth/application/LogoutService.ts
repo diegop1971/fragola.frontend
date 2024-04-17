@@ -8,7 +8,7 @@ class LogoutService
 
     async logout():Promise<void> {
         try {
-            const response = await axios.post("http://localhost:8000/logout");
+            const response = await axios.post("/logout");
 
             if (response.status === 204) {
                 console.log("Sesión cerrada exitosamente.");

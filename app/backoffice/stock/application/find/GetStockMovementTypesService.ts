@@ -22,7 +22,7 @@ class GetStockMovementTypesService {
   }
 
   private async getStockMovementTypes(): Promise<void> {
-    const response = await axios.get<IStockMovementTypesResponse>(`http://localhost:8000/api/stock-movement-types/limited-fields-list`)
+    const response = await axios.get<IStockMovementTypesResponse>(`/api/stock-movement-types/limited-fields-list`)
     this.apiStockMovementTypesResponse = response.data
   }
 }

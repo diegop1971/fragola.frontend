@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import type { Ref } from 'vue'
 import { onMounted } from 'vue'
-import axios from 'axios'
 import { useCartStore } from '@/stores/cartStore'
 
 import Footer from '@/components/frontoffice/partials/EcommerceFooter.vue'
@@ -31,10 +30,9 @@ const products = ref<IApiProductCardsResponse>({
   homeProducts: []
 })
 
-axios.defaults.withCredentials = true
-
 onMounted(async () => {
   try {
+    //console.log(axios.defaults.baseURL)
     useCartStoreWatcher(cartStore)
     await getCartData()
     await getProductCardsList()

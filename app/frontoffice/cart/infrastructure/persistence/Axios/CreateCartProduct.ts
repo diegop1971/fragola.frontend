@@ -11,7 +11,7 @@ constructor(productId: string, productQty: number) {
 }
 
     public create = async (): Promise<void> => {
-        await axios.post('http://localhost:8000/api/cart/add-to-cart', {
+        await axios.post('/api/cart/add-to-cart', {
             id: this.productId,
             qty: this.productQty,
         });

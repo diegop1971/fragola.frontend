@@ -16,7 +16,7 @@ class GetProductsService {
 
   public async getApiResponse(): Promise<IApiGetProductResponse> {
     const response = await axios.get<IApiGetProductResponse>(
-      `http://localhost:8000/api/products/product-list`
+      `/api/products/product-list`
     )
     this.apiProductResponse = response.data
     return this.apiProductResponse

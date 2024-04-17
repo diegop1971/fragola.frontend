@@ -6,7 +6,7 @@ class GetCartProducts
     constructor(){}
     
     public getProductsList = async (): Promise<ISessionCartItemResponse> => {
-        const productList = await axios.get<ISessionCartItemResponse>('http://localhost:8000/api/cart/get-cart-products');         
+        const productList = await axios.get<ISessionCartItemResponse>('/api/cart/get-cart-products');      
         return productList.data;         
     }
 } 
