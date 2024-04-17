@@ -12,7 +12,7 @@ class UpdateCartProductQuantity
     }
 
     public update = async (): Promise<void> => {
-        await axios.post('http://localhost:8000/api/cart/cart-item-qty', {
+        await axios.post('/api/cart/cart-item-qty', {
                 id: this.productId,
                 qty: this.productQty
         });

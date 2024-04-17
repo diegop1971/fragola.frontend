@@ -47,7 +47,6 @@
     import axios from 'axios';
     
     axios.defaults.withCredentials = true;
-    //axios.defaults.baseURL = "http://localhost:8000/";
 
     const form = ref({
         email: "usuario.prueba@gmail.com ",
@@ -74,9 +73,9 @@
 
     async function onLogin() {
         try {
-            await axios.get("http://localhost:8000/sanctum/csrf-cookie"); 
+            await axios.get("/sanctum/csrf-cookie"); 
 
-            const response = await axios.post("http://localhost:8000/login", {
+            const response = await axios.post("/login", {
                 email: form.value.email,
                 password: form.value.password,
             });
@@ -94,7 +93,7 @@
 
     async function onLogout() {
         try {
-            const response = await axios.post("http://localhost:8000/logout");
+            const response = await axios.post("/logout");
 
             if (response.status === 204) {
                 user.value = null;
@@ -108,21 +107,21 @@
     }
 
     async function onGetUser() {
-        let {data} = await axios.get("http://localhost:8000/api/user");
+        let {data} = await axios.get("/api/user");
         user.value = data;
         console.log(user.value);
     }
 
     async function onGetProducts() {
 
-        let products = await axios.get("http://localhost:8000/api/productsCardList");
+        let products = await axios.get("/api/productsCardList");
 
         console.log(products);
     }
 
     async function onDeleteStockProduct() {
 
-        const products = await axios.delete("http://localhost:8000/api/stock/3f70c254-576b-4fb0-9eb0-794287cf93c2");
+        const products = await axios.delete("/api/stock/3f70c254-576b-4fb0-9eb0-794287cf93c2");
 
         console.log(products);
     }
@@ -130,7 +129,7 @@
     async function onCreateProduct() {
         let uuid = self.crypto.randomUUID();
 
-        const response = await axios.post("http://localhost:8000/api/products/store/", {
+        const response = await axios.post("/api/products/store/", {
                 id: uuid,
                 name: formCreateProduct.value.name,
                 description: formCreateProduct.value.description, 

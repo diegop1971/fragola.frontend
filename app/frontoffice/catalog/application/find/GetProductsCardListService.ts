@@ -16,7 +16,7 @@ class GetProductCardListService
     }
 
     private async getProductList(): Promise<void> {
-        const response = await axios.get<IApiProductCardsResponse>("http://localhost:8000/api/productsCardList")
+        const response = await axios.get<IApiProductCardsResponse>(`/api/productsCardList`)
         this.apiResponse = response.data;
     }
 }

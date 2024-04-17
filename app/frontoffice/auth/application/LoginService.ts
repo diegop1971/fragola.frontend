@@ -20,9 +20,9 @@ class LoginService
 
     private async fetchAll(): Promise<IAuthenticationResult> {
 
-        await axios.get("http://localhost:8000/sanctum/csrf-cookie"); 
+        await axios.get("/sanctum/csrf-cookie"); 
 
-        const response = await axios.post("http://localhost:8000/login", {
+        const response = await axios.post("/login", {
             email: this.email,
             password: this.password,
         });

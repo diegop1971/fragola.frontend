@@ -9,7 +9,7 @@ class DeleteCartProduct
     }
 
     public delete = async ():Promise<void> => {
-        await axios.delete('http://localhost:8000/api/cart/delete-item/' + this.itemIndex);
+        await axios.delete('/api/cart/delete-item/' + this.itemIndex);
     }
 }
 export default DeleteCartProduct;

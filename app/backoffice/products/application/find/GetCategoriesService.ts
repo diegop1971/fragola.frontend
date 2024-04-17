@@ -21,7 +21,7 @@ class GetCategoriesService {
   }
 
   private async getCategoriesList(): Promise<void> {
-    const response = await axios.get<ICategoriesResponse>(`http://localhost:8000/api/categories`)
+    const response = await axios.get<ICategoriesResponse>(`/api/categories`)
     this.apiCategorieResponse = response.data
   }
 }

@@ -21,7 +21,7 @@ class GetPaymentMethodsService {
   }
 
   private async getPaymentMethodsList(): Promise<void> {
-    const response = await axios.get<IPaymentMethodsResponse>(`http://localhost:8000/api/payment-methods`)
+    const response = await axios.get<IPaymentMethodsResponse>(`/api/payment-methods`)
     this.apiPaymentMethodsResponse = response.data
   }
 }

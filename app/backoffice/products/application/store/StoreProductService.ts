@@ -41,9 +41,9 @@ class StoreProductService {
   }
 
   public store = async (): Promise<IStoreProductResponse> => {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie')
+    await axios.get('/sanctum/csrf-cookie')
     const response: IStoreProductResponse = await axios.post(
-      'http://localhost:8000/api/products/store',
+      '/api/products/store',
       {
         id: this.id,
         name: this.name,

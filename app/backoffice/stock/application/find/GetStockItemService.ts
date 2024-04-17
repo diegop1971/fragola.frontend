@@ -32,7 +32,7 @@ class GetStockItemService {
 
   public async getApiResponse(): Promise<IApiGetStockItemResponse> {
     const response = await axios.get<IApiGetStockItemResponse>(
-      `http://localhost:8000/api/stock/create`
+      `/api/stock/create`
     )
     this.getStockItemResponse = response.data
     return this.getStockItemResponse

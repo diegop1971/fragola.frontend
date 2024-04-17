@@ -12,9 +12,9 @@ class DeleteProductService {
   }
 
   public delete = async (item: string): Promise<IDeleteProductResponse> => {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie')
+    await axios.get('/sanctum/csrf-cookie')
     
-    this.deleteResponse = await axios.delete(`http://localhost:8000/api/products/${item}`)
+    this.deleteResponse = await axios.delete(`/api/products/${item}`)
 
     return this.deleteResponse
   }

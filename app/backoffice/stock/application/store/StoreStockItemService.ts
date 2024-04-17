@@ -29,9 +29,9 @@ class StoreStockItemService {
   }
 
   public store = async (): Promise<IStoreStockItemResponse> => {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie')
+    await axios.get('/sanctum/csrf-cookie')
     const response: IStoreStockItemResponse = await axios.post(
-      'http://localhost:8000/api/stock-movement/store',
+      '/api/stock-movement/store',
       {
         product_id: this.product_id,
         movement_type_id: this.movement_type_id,

@@ -30,7 +30,7 @@ class GetStockListService {
   }
 
   private async getProductList(): Promise<void> {
-    const response = await axios.get<IApiGetStockListSuccessResponse>('http://localhost:8000/api/stock/')
+    const response = await axios.get<IApiGetStockListSuccessResponse>('/api/stock/')
     this.apiGetStockListResponse = response.data
   }
 }
