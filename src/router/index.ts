@@ -9,6 +9,7 @@ import Error500EcommerceComponent from '@/components/frontoffice/errors/Error500
 
 /* backoffice */
 import AdminPanel from '@/views/backoffice/adminPanel/AdminPanelView.vue'
+import IndexOrdersComponent from '@/components/backoffice/orders/IndexOrdersComponent.vue'
 import IndexProductsComponent from '@/components/backoffice/products/IndexProductsComponent.vue'
 import IndexCategoriesComponent from '@/components/backoffice/categories/IndexCategoriesComponent.vue'
 import dashboardComponent from '@/components/backoffice/dashboard/dashboardComponent.vue'
@@ -89,6 +90,12 @@ const router = createRouter({
           path: '',
           name: 'dashboard',
           component: dashboardComponent
+        },
+        /* Orders */
+        {
+          path: 'orders',
+          name: 'orders',
+          component: IndexOrdersComponent
         },
         /* Categories */
         {

@@ -35,6 +35,36 @@
 </template>
 
 <script lang="ts" setup>
+import { onMounted } from 'vue'
+
+import type { IApiGetOrdersResponse } from '@app/backoffice/orders/domain/interfaces/IApiGetOrdersResponse'
+import GetOrdersService from '@app/backoffice/orders/application/find/GetOrdersService';
+import ApiErrorHandler from '@app/backoffice/shared/application/errors/ApiErrorHandlerService'
+import ErrorRedirectService from '@app/shared/application/ErrorRedirectService'
+
+const errorRedirectService = new ErrorRedirectService()
+
+onMounted(async () => {
+  await getOrders()
+})
+
+const getOrders = async (): Promise<void> => {
+  try {
+    const getOrdersService = new GetOrdersService()
+    const response: IApiGetOrdersResponse = await getOrdersService.getOrders()
+    console.log(response.orders)
+    //products.value = response.orders
+  } catch (error: any) {
+    if (error.code === 'ERR_NETWORK') {
+      errorRedirectService.handleApiError(500)
+    } else {
+      const apiErrorHandler = new ApiErrorHandler()
+      apiErrorHandler.handleError(error.response.data.code)
+      //snackbarMessage.value = error.response.data.message
+      //snackbar.value = true
+    }
+  }
+}
 
   const headers = [
                     {
