@@ -1,118 +1,3 @@
-<template>
-  <v-main class="d-flex align-center">
-    <v-container fluid text-left>
-      <v-row align-start>
-        <v-col cols="12" sm="8" md="6" xl="9">
-          <v-form ref="form">
-            <v-card class="mx-auto">
-              <template v-slot:title> Datos generales </template>
-
-              <v-card-text>
-                <v-text-field
-                  v-model="reactiveProductData.name"
-                  :counter="10"
-                  :rules="nameRules"
-                  label="Name"
-                  variant="outlined"
-                >
-                </v-text-field>
-
-                <v-select
-                  v-model="selectedCategory"
-                  label="Categoria"
-                  :items="categoryNamesWithIds"
-                  item-value="id"
-                  item-title="name"
-                  :rules="[(v) => !!v || 'Item is required']"
-                  :model="reactiveProductData.category_name"
-                  required
-                  @update:modelValue="onCategoryChange"
-                  variant="outlined"
-                ></v-select>
-
-                <v-textarea
-                  counter
-                  label="Description"
-                  :rules="descriptionRules"
-                  v-model="reactiveProductData.description"
-                  variant="outlined"
-                ></v-textarea>
-
-                <v-textarea
-                  counter
-                  label="Short description"
-                  :rules="descriptionShortRules"
-                  v-model="reactiveProductData.description_short"
-                  variant="outlined"
-                ></v-textarea>
-              </v-card-text>
-            </v-card>
-
-            <v-card class="mx-auto">
-              <template v-slot:title> Estado del producto </template>
-              <v-card-text>
-                <v-checkbox
-                  v-model="checkedOutOfStockProduct"
-                  :label="`Out of stock: ${checkedOutOfStockProduct === true ? 'yes' : 'no'}`"
-                  :rules="productEnabledRules"
-                  @update:model-value="onOutOfStockProduct"
-                ></v-checkbox>
-                <v-checkbox
-                  v-model="checkedEnabledProduct"
-                  :label="`Product enabled: ${checkedEnabledProduct === true ? 'yes' : 'no'}`"
-                  :rules="productEnabledRules"
-                  @update:model-value="onCheckedEnabledProduct"
-                ></v-checkbox>
-              </v-card-text>
-            </v-card>
-
-            <v-card class="mx-auto">
-              <template v-slot:title> Precio </template>
-              <v-card-text>
-                <v-text-field
-                  v-model="reactiveProductData.price"
-                  label="Price"
-                  :rules="priceRules"
-                  variant="outlined"
-                ></v-text-field>
-              </v-card-text>
-            </v-card>
-
-            <v-card class="mx-auto">
-              <template v-slot:title> Control de stock </template>
-
-              <v-card-text>
-                <v-switch
-                  v-model="lowStockAlertSwitchValue"
-                  hide-details
-                  :label="`Low Stock Alert: ${
-                    lowStockAlertSwitchValue == true ? 'enabled' : 'disabled'
-                  }`"
-                  :rules="priceLowAlertEnabled"
-                  @update:model-value="onSwitchedLowStockAlert"
-                ></v-switch>
-
-                <v-text-field
-                  v-model="reactiveProductData.low_stock_threshold"
-                  label="Low stock threshold"
-                  variant="outlined"
-                ></v-text-field>
-              </v-card-text>
-            </v-card>
-            <v-btn color="success" class="mt-4" block @click="save"> Save </v-btn>
-          </v-form>
-          <v-snackbar v-model="snackbar" multi-line>
-            {{ snackbarMessage }}
-            <template v-slot:actions>
-              <v-btn color="red" variant="text" @click="snackbar = false"> Close </v-btn>
-            </template>
-          </v-snackbar>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-main>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { Ref } from 'vue'
@@ -272,6 +157,7 @@ const getData = async (): Promise<void> => {
 }
 
 const onCategoryChange = (newSelectedCategory: string) => {
+  console.log(newSelectedCategory)
   selectedCategory.value = newSelectedCategory
 }
 
@@ -327,3 +213,118 @@ async function save() {
   }
 }
 </script>
+
+<template>
+  <v-main class="d-flex align-center">
+    <v-container fluid text-left>
+      <v-row align-start>
+        <v-col cols="12" sm="8" md="6" xl="9">
+          <v-form ref="form">
+            <v-card class="mx-auto">
+              <template v-slot:title> Datos generales </template>
+
+              <v-card-text>
+                <v-text-field
+                  v-model="reactiveProductData.name"
+                  :counter="10"
+                  :rules="nameRules"
+                  label="Name"
+                  variant="outlined"
+                >
+                </v-text-field>
+
+                <v-select
+                  v-model="selectedCategory"
+                  label="Categoria"
+                  :items="categoryNamesWithIds"
+                  item-value="id"
+                  item-title="name"
+                  :rules="[(v) => !!v || 'Item is required']"
+                  :model="reactiveProductData.category_name"
+                  required
+                  @update:modelValue="onCategoryChange"
+                  variant="outlined"
+                ></v-select>
+
+                <v-textarea
+                  counter
+                  label="Description"
+                  :rules="descriptionRules"
+                  v-model="reactiveProductData.description"
+                  variant="outlined"
+                ></v-textarea>
+
+                <v-textarea
+                  counter
+                  label="Short description"
+                  :rules="descriptionShortRules"
+                  v-model="reactiveProductData.description_short"
+                  variant="outlined"
+                ></v-textarea>
+              </v-card-text>
+            </v-card>
+
+            <v-card class="mx-auto">
+              <template v-slot:title> Estado del producto </template>
+              <v-card-text>
+                <v-checkbox
+                  v-model="checkedOutOfStockProduct"
+                  :label="`Out of stock: ${checkedOutOfStockProduct === true ? 'yes' : 'no'}`"
+                  :rules="productEnabledRules"
+                  @update:model-value="onOutOfStockProduct"
+                ></v-checkbox>
+                <v-checkbox
+                  v-model="checkedEnabledProduct"
+                  :label="`Product enabled: ${checkedEnabledProduct === true ? 'yes' : 'no'}`"
+                  :rules="productEnabledRules"
+                  @update:model-value="onCheckedEnabledProduct"
+                ></v-checkbox>
+              </v-card-text>
+            </v-card>
+
+            <v-card class="mx-auto">
+              <template v-slot:title> Precio </template>
+              <v-card-text>
+                <v-text-field
+                  v-model="reactiveProductData.price"
+                  label="Price"
+                  :rules="priceRules"
+                  variant="outlined"
+                ></v-text-field>
+              </v-card-text>
+            </v-card>
+
+            <v-card class="mx-auto">
+              <template v-slot:title> Control de stock </template>
+
+              <v-card-text>
+                <v-switch
+                  v-model="lowStockAlertSwitchValue"
+                  hide-details
+                  :label="`Low Stock Alert: ${
+                    lowStockAlertSwitchValue == true ? 'enabled' : 'disabled'
+                  }`"
+                  :rules="priceLowAlertEnabled"
+                  @update:model-value="onSwitchedLowStockAlert"
+                ></v-switch>
+
+                <v-text-field
+                  v-model="reactiveProductData.low_stock_threshold"
+                  label="Low stock threshold"
+                  variant="outlined"
+                ></v-text-field>
+              </v-card-text>
+            </v-card>
+            <v-btn color="success" class="mt-4" block @click="save"> Save </v-btn>
+          </v-form>
+          <v-snackbar v-model="snackbar" multi-line>
+            {{ snackbarMessage }}
+            <template v-slot:actions>
+              <v-btn color="red" variant="text" @click="snackbar = false"> Close </v-btn>
+            </template>
+          </v-snackbar>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-main>
+</template>
