@@ -82,6 +82,11 @@ const editItem = (item: IViewProduct) => {
   router.push({ name: 'edit-product', params: { productId: item.id } })
 }
 
+const onOrderStatusChange = (newSelectedOrderStatus: string) => {
+  console.log(newSelectedOrderStatus)
+  selectedOrderStatus.value = newSelectedOrderStatus
+}
+
 const deleteItem = async (item: IViewProduct) => {
   try {
     const deleteProduct = new DeleteProductService()
@@ -131,8 +136,9 @@ const deleteItem = async (item: IViewProduct) => {
                   <v-select
                     v-model="item.order_status_name"
                     :items="orderStatusNamesWithIds"
-                    item-value="name"
+                    item-value="id"
                     item-title="name"
+                    @update:modelValue="onOrderStatusChange"
                     label="Select"
                   ></v-select>
                 </template>
