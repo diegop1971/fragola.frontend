@@ -11,7 +11,7 @@
     },
     "sourceMap": true,
     "lib": ["es6", "es2017", "dom"],
-    "types": ["reflect-metadata"],
+    "types": ["reflect-metadata", "vuetify"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   }

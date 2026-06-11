@@ -13,7 +13,7 @@
                 <label for="floatingPassword">Password</label>
             </div>
             
-            <button class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
+            <button class="btn btn-primary w-100 py-2" type="submit">Log in</button>
             
             <p class="mt-5 mb-3 text-body-secondary">&copy; 2017–2023</p>
             
