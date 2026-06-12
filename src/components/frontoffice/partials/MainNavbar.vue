@@ -26,7 +26,9 @@ import LogoutService from '@app/frontoffice/auth/application/LogoutService'
 import NavbarCartButton from '@/components/frontoffice/partials/NavbarCartButton.vue'
 import { useCartStore } from '@/stores/cartStore'
 import logoFragola from '@/assets/brand/logo-fragola-93-60.png'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const cartStore = useCartStore()
 const isButtonDisabled = ref(false)
 
@@ -46,6 +48,7 @@ watch(
 async function onLogout() {
   try {
     new LogoutService()
+    router.push({ name: 'home' })
   } catch (error) {
     console.log(error)
   }
