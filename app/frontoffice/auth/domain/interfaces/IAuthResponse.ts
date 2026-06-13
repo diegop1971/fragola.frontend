@@ -1,4 +1,4 @@
-export interface IAuthenticationResult {
+export interface IAuthResponse {
     success: boolean;
     data?: {
         id: string;
