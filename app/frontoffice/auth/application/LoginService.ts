@@ -1,9 +1,9 @@
 import axios from 'axios';
-import type { IAuthenticationResult } from '@app/frontoffice/auth/domain/interfaces/IAuthenticationResult';
+import type { IAuthResponse } from '@app/frontoffice/auth/domain/interfaces/IAuthResponse';
 
 class LoginService 
 {
-    private loginData: IAuthenticationResult;
+    private loginData: IAuthResponse;
     private email: string;
     private password: string;
 
@@ -18,7 +18,7 @@ class LoginService
         return this.loginData ;
     }
 
-    private async fetchAll(): Promise<IAuthenticationResult> {
+    private async fetchAll(): Promise<IAuthResponse> {
 
         await axios.get("/sanctum/csrf-cookie"); 
 
