@@ -4,12 +4,12 @@
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
     
             <div class="form-floating">
-                <input v-model="form.email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
+                <input v-model="form.email" type="email" autocomplete="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
                 <label for="floatingInput">Email address</label>
             </div>
             
             <div class="form-floating">
-                <input v-model="form.password" type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
+                <input v-model="form.password" type="password" autocomplete="password" class="form-control" id="floatingPassword" placeholder="Password" required>
                 <label for="floatingPassword">Password</label>
             </div>
             
@@ -25,12 +25,12 @@
 </template>
 
 <script setup lang="ts">
-    import {ref} from 'vue';
-    import axios from 'axios';
-    import LoginService from '@app/frontoffice/auth/application/LoginService';
-    import ErrorHandlingService from '@app/shared/application/ErrorHandlingService';
-
-    axios.defaults.withCredentials = true;
+    import { ref } from "vue";
+    import container from "@app/shared/infrastructure/inversifyServiceProvider/inversify.config";
+    import { LoginService } from "@app/frontoffice/auth/application/LoginService";
+    import ErrorHandlingService from "@app/shared/application/ErrorHandlingService";
+    import type { IAuthRepository } from "@app/frontoffice/auth/domain/interfaces/IAuthRepository";
+    import TYPES from "@app/shared/infrastructure/inversifyServiceProvider/types";
 
     const form = ref({
         email: "",
@@ -38,18 +38,18 @@
     });
 
     const errorHandling = new ErrorHandlingService();
+    const authRepository = container.get<IAuthRepository>(TYPES.IAuthRepository);
+    const loginService = new LoginService(authRepository);
 
     async function onLogin() {
         try {
-            let email = form.value.email;
-            let password = form.value.password;
-            
-            const loginService = new LoginService(email, password);
-            const loginData = await loginService.getLoginData();
+            const loginData = await loginService.execute(
+                form.value.email,
+                form.value.password
+            );
             console.log(loginData.data?.email);
-        } catch (error: any) {
-            let errorData;
-            errorData = await errorHandling.handleApiError(error);
+        } catch (error: unknown) {
+            const errorData = await errorHandling.handleApiError(error);
             console.error(errorData);
         }
     }

@@ -1,5 +1,4 @@
 import { injectable } from "inversify";
-import "reflect-metadata";
 import container from '@app/shared/infrastructure/inversifyServiceProvider/inversify.config';
 import TYPES from '@app/shared/infrastructure/inversifyServiceProvider/types';
 import type { ICartRepository } from '@app/frontoffice/cart/domain/interfaces/ICartRepository';
