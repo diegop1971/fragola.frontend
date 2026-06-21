@@ -26,12 +26,14 @@
 
 <script setup lang="ts">
     import { ref } from "vue";
+    import { useRouter } from 'vue-router'
     import container from "@app/shared/infrastructure/inversifyServiceProvider/inversify.config";
     import { LoginService } from "@app/frontoffice/auth/application/LoginService";
     import ErrorHandlingService from "@app/shared/application/ErrorHandlingService";
     import type { IAuthRepository } from "@app/frontoffice/auth/domain/interfaces/IAuthRepository";
     import TYPES from "@app/shared/infrastructure/inversifyServiceProvider/types";
 
+    const router = useRouter()
     const form = ref({
         email: "",
         password: "",
@@ -48,6 +50,7 @@
                 form.value.password
             );
             console.log(loginData.data?.email);
+            router.push({ name: 'home' })
         } catch (error: unknown) {
             const errorData = await errorHandling.handleApiError(error);
             console.error(errorData);
