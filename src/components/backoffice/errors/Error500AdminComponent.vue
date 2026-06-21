@@ -8,7 +8,7 @@
           <img :src="logoUrl" alt="Logo" style="margin: 0px" />
           <div class="content-wrapper">
             <p>
-              Lo sentimos, ha ocurrido un error interno del servidor. Por favor, inténtelo de nuevo
+              Lo sentimos, ha ocurrido un error en el servidor. Por favor, inténtelo de nuevo
               más tarde. Si el problema persiste, póngase en contacto con el administrador del
               sitio.
             </p>
